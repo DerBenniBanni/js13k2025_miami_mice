@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Black Belt Cats</title>
+    <script src="game/main.js" type="module"></script>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden; /* Prevent scrolling */
+            background-color: #000; /* Set body background to black */
+            display: flex; /* Center the canvas */
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+        }
+        canvas {
+            display: block; /* Remove default inline-block spacing */
+            background-color: #000; /* Ensure canvas has a black background */
+            aspect-ratio: 16 / 9; /* Maintain a 16:9 aspect ratio */
+            max-width: 100vw; /* Limit canvas width to viewport width */
+            max-height: 100vh; /* Limit canvas height to viewport height */
+            background-color: #555;
+            
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="1920" height="1080"></canvas>
+</body>
+</html>
