@@ -20,7 +20,11 @@ export class Game {
     }
 
     update() {
-        // Update game logic here
+        // Todo: delta!
+        let delta = 1/60;
+        this.gameObjects.forEach(obj => {
+            obj.update(delta);
+        });
     }
 
     render() {
