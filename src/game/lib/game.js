@@ -4,6 +4,8 @@ export class Game {
         this.ctx = this.canvas.getContext("2d");
         this.isGameRunning = false;
         this.gameObjects = [];
+        this.lastUpdateTime = 0;
+
     }
 
     start() {
@@ -12,18 +14,22 @@ export class Game {
     }
 
     gameLoop() {
+        if (!this.isGameRunning) return;
+
+        const currentTime = performance.now();
+        const deltaTime = (currentTime - this.lastUpdateTime) / 1000; // Convert to seconds
+        this.lastUpdateTime = currentTime;
+
         if (this.isGameRunning) {
-            this.update();
+            this.update(deltaTime);
             this.render();
             requestAnimationFrame(() => this.gameLoop());
         }
     }
 
-    update() {
-        // Todo: delta!
-        let delta = 1/60;
+    update(deltaTime) {
         this.gameObjects.forEach(obj => {
-            obj.update(delta);
+            obj.update(deltaTime);
         });
     }
 

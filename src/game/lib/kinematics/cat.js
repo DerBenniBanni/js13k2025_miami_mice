@@ -1,7 +1,7 @@
 import { toRad } from "../utils.js";
 import { Bone } from "./kinematics.js";
 
-const sizing = 0.5;
+const sizing = 0.7;
 const headsize = 40;
 
 const BONE_ROOT = 0;
@@ -17,6 +17,10 @@ const BONE_SHOULDER_RIGHT = 9;
 const BONE_ARM_RIGHT = 10;
 const BONE_FOREARM_RIGHT = 11;
 const BONE_NECK = 12;
+const BONE_TAIL1 = 13;
+const BONE_TAIL2 = 14;
+const BONE_TAIL3 = 15;
+
 
 const POSE_STAND = [];
 POSE_STAND[BONE_ROOT] = 0;
@@ -40,6 +44,15 @@ POSE_PUNCH[BONE_UPPER_LEG_LEFT] = 70;
 POSE_PUNCH[BONE_LOWER_LEG_LEFT] = 40;
 POSE_PUNCH[BONE_UPPER_LEG_RIGHT] = 110;
 
+const POSE_PUNCH2 = [...POSE_STAND];
+POSE_PUNCH2[BONE_ARM_LEFT] = 110;
+POSE_PUNCH2[BONE_FOREARM_LEFT] = -90;
+POSE_PUNCH2[BONE_ARM_RIGHT] = -160;
+POSE_PUNCH2[BONE_FOREARM_RIGHT] = -10;
+POSE_PUNCH2[BONE_UPPER_LEG_LEFT] = 70;
+POSE_PUNCH2[BONE_LOWER_LEG_LEFT] = 40;
+POSE_PUNCH2[BONE_UPPER_LEG_RIGHT] = 110;
+
 const POSE_KICK = [...POSE_STAND];
 POSE_KICK[BONE_UPPER_LEG_LEFT] = -30;
 POSE_KICK[BONE_LOWER_LEG_LEFT] = 10;
@@ -49,6 +62,10 @@ POSE_KICK[BONE_ARM_LEFT] = 80;
 POSE_KICK[BONE_FOREARM_LEFT] = -150;
 POSE_KICK[BONE_ARM_RIGHT] = -0;
 POSE_KICK[BONE_FOREARM_RIGHT] = -130;
+
+
+const LINE_ROUND = "round";
+const LINE_BUTT = "butt";
 
 export class CatKinematics {
     constructor(x,y) {
@@ -83,7 +100,11 @@ export class CatKinematics {
         this.addBone(BONE_SHOULDER_RIGHT, 10, toRad(-100), BONE_BODY);
         this.addBone(BONE_ARM_RIGHT, 80, toRad(-30), BONE_SHOULDER_RIGHT);
         this.addBone(BONE_FOREARM_RIGHT, 80, toRad(-90), BONE_ARM_RIGHT);
-       
+
+        this.addBone(BONE_TAIL1, 60, toRad(150), BONE_ROOT);
+        this.addBone(BONE_TAIL2, 60, toRad(50), BONE_TAIL1);
+        this.addBone(BONE_TAIL3, 60, toRad(-50), BONE_TAIL2);
+
         this.updateAngles();
     }
 
@@ -98,6 +119,9 @@ export class CatKinematics {
     morph(poseName, duration) {
         this.morphFrom = this.bones.map(bone => bone.angle);
         this.morphTo = this.getPoseDefinition(poseName).map(angle => toRad(angle));
+        this.morphTo[BONE_TAIL1] = toRad(120 + Math.random() * 30);
+        this.morphTo[BONE_TAIL2] = toRad(20 + Math.random() * 90);
+        this.morphTo[BONE_TAIL3] = toRad(-80 + Math.random() * 90);
         this.morphDuration = duration;
         this.morphTimer = duration;
     }
@@ -108,6 +132,8 @@ export class CatKinematics {
                 return POSE_STAND;
             case "punch":
                 return POSE_PUNCH;
+            case "punch2":
+                return POSE_PUNCH2;
             case "kick":
                 return POSE_KICK;
             default:
@@ -132,29 +158,124 @@ export class CatKinematics {
         }
     }
 
+    renderCat(bone, ctx, renderChildren = true) {
+        ctx.strokeStyle = "black";
+        ctx.lineWidth = 40*sizing;
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.moveTo(bone.x, bone.y);
+        ctx.lineTo(bone.endX, bone.endY);
+        ctx.stroke();
+        // Render children
+        if(renderChildren) {
+            for (const child of bone.children) {
+                this.renderCat(child, ctx, true);
+            }
+        }
+    }
+    renderSuit(bone, ctx, renderChildren = true, scale = 1) {
+        [[50,'#aaa',LINE_BUTT],[48,'#fff', LINE_ROUND]].forEach(([linewidth, color, lineCap]) => {
+            linewidth = linewidth * scale;
+            this.renderBoneLine(bone, ctx, linewidth * sizing, color, lineCap, renderChildren);
+        });
+    }
+
+    renderBoneLine(bone, ctx, width, color, lineCap, renderChildren = true) {
+        ctx.strokeStyle = color;
+        ctx.lineWidth = width;
+        ctx.lineCap = lineCap ? lineCap : LINE_ROUND;
+        if(bone.children.length == 0) {
+            ctx.lineCap = LINE_BUTT;
+        }
+        ctx.beginPath();
+        ctx.moveTo(bone.x, bone.y);
+        ctx.lineTo(bone.endX, bone.endY);
+        ctx.stroke();
+        if(renderChildren) {
+            for (const child of bone.children) {
+                this.renderBoneLine(child, ctx, width, color, renderChildren);
+            }
+        }
+    }
+
     render(ctx) {
-        this.rootBone.render(ctx);
+        this.renderCat(this.bones[BONE_SHOULDER_LEFT], ctx);
+        this.renderSuit(this.bones[BONE_SHOULDER_LEFT], ctx);
+
+        this.renderCat(this.bones[BONE_UPPER_LEG_LEFT], ctx);
+        this.renderSuit(this.bones[BONE_UPPER_LEG_LEFT], ctx);
+
+        //tail
+        ctx.strokeStyle = "black";
+        ctx.lineWidth = 15*sizing;
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.moveTo(this.bones[BONE_TAIL1].x, this.bones[BONE_TAIL1].y);
+        ctx.bezierCurveTo(
+            this.bones[BONE_TAIL2].x, this.bones[BONE_TAIL2].y, 
+            this.bones[BONE_TAIL3].x, this.bones[BONE_TAIL3].y, 
+            this.bones[BONE_TAIL3].endX, this.bones[BONE_TAIL3].endY
+        );
+        ctx.stroke();
+
+        this.renderSuit(this.bones[BONE_BODY], ctx, false, 1.4);
+        
+        this.renderCat(this.bones[BONE_UPPER_LEG_RIGHT], ctx);
+        this.renderSuit(this.bones[BONE_UPPER_LEG_RIGHT], ctx);
+
+        this.renderCat(this.bones[BONE_SHOULDER_RIGHT], ctx);
+        this.renderSuit(this.bones[BONE_SHOULDER_RIGHT], ctx);
+        
+       
+
+        // Head
+        
+        ctx.fillStyle = "#000";
         let neck = this.bones[BONE_NECK];
         ctx.beginPath();
         ctx.arc(neck.endX, neck.endY, headsize*sizing, 0, 2*Math.PI);
         ctx.fill();
 
         ctx.beginPath();
-        ctx.lineWidth = 25;
+        ctx.lineWidth = headsize * 1.4  * sizing;
+        ctx.strokeStyle = "black";
+        ctx.lineCap = "round";
         ctx.moveTo(neck.endX, neck.endY);
-        let angle = neck.worldAngle + toRad(110);
+        let angle = neck.angle + toRad(20);
         ctx.lineTo(neck.endX + Math.cos(angle) * (headsize - 20) * sizing, neck.endY + Math.sin(angle) * (headsize - 20) * sizing);
         ctx.stroke();
 
-        [0,-30].forEach((angleOffset) => {
+        [-80,-100].forEach((angleOffset) => {
             ctx.beginPath();
             ctx.lineWidth = 1;
             ctx.moveTo(neck.endX, neck.endY);
-            let angle = neck.worldAngle + toRad(angleOffset+10);
-            ctx.lineTo(neck.endX + Math.cos(angle) * (headsize + 20) * sizing, neck.endY + Math.sin(angle) * (headsize + 20) * sizing);
-            angle = neck.worldAngle + toRad(angleOffset-20);
+            let angle = neck.angle + toRad(angleOffset+10);
+            ctx.lineTo(neck.endX + Math.cos(angle) * (headsize + 30) * sizing, neck.endY + Math.sin(angle) * (headsize + 30) * sizing);
+            angle = neck.angle + toRad(angleOffset-20);
             ctx.lineTo(neck.endX + Math.cos(angle) * (headsize) * sizing, neck.endY + Math.sin(angle) * (headsize) * sizing);
             ctx.fill();
         });
+
+        ctx.beginPath();
+        let noseX = neck.endX + Math.cos(neck.angle+toRad(0)) * (headsize + 5) * sizing;
+        let noseY = neck.endY + Math.sin(neck.angle+toRad(0)) * (headsize + 5) * sizing;
+        ctx.fillStyle = "#844";
+        ctx.arc(noseX, noseY, 5 * sizing, 0, 2 * Math.PI);
+        ctx.fill();
+
+        ctx.beginPath();
+        let eyeX = neck.endX + Math.cos(neck.angle+toRad(-20)) * (headsize - 3) * sizing;
+        let eyeY = neck.endY + Math.sin(neck.angle+toRad(-20)) * (headsize - 3) * sizing;
+        ctx.fillStyle = "#ff0";
+        ctx.arc(eyeX, eyeY, 3 * sizing, 0, 2 * Math.PI);
+        ctx.fill();
+        
+        ctx.beginPath();
+        let eye2X = neck.endX + Math.cos(neck.angle+toRad(-24)) * (headsize - 10) * sizing;
+        let eye2Y = neck.endY + Math.sin(neck.angle+toRad(-24)) * (headsize - 10) * sizing;
+        ctx.fillStyle = "#ff0";
+        ctx.arc(eye2X, eye2Y, 3 * sizing, 0, 2 * Math.PI);
+        ctx.fill();
+
     }
 }
