@@ -9,16 +9,16 @@ Theme announced: Black Cat
 * ...
 * 2d cat fighting game like interational karate plus, "Black Belt Cat" fighting ninjas
 
-implemented first sketch with stickfigures
+* implemented first sketch with stickfigures
+
 ![cat stickmen](img/001_stickcat_kinematics.png)
 
 **devtime:** 1h brainstoming during commute, 1h evening dev
 
 ## 2025-08-14 
 
-refactored posing to use definitions (only an angle for each bone)
-
-added morphing between poses
+* refactored posing to use definitions (only an angle for each bone)
+* added morphing between poses
 
 ![cat stickmen](img/002_stick_morph_poses.gif)
 
@@ -26,11 +26,11 @@ added morphing between poses
 
 ## 2025-08-17
 
-added a suit 
+* added a suit 
 
 ![cat stickmen](img/003_pawrate_suit.gif)
 
-and a tail
+* and a tail
 
 ![cat stickmen](img/004_now_with_tail.gif)
 
@@ -39,8 +39,17 @@ and a tail
 
 ## 2025-08-18
 
-added a background
+* added a background
 
 ![cat stickmen](img/005_background.gif)
+
+**devtime:** 1.5h evening dev
+
+## 2025-08-19
+
+* added basic shadow (and prepared the cat for jumping)
+* fixed rendering to be able to mirror the fighter
+
+![cat stickmen](img/006_mirrored_fighter.mp4)
 
 **devtime:** 1.5h evening dev

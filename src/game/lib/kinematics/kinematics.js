@@ -1,7 +1,8 @@
 export class Bone {
-    constructor(length, angle) {
+    constructor(length, angle, kinematicObject) {
         this.x = 0;
         this.y = 0;
+        this.kinematicObject = kinematicObject; // Reference to the kinematic object this bone belongs to
         this.length = length;
         this.angle = angle; // Angle in radians
         this.worldAngle = 0;
@@ -20,9 +21,15 @@ export class Bone {
     calculateEndPosition(parentAngle = 0) {
         
         this.worldAngle = this.angle + parentAngle;
-        // Update bone position based on angle and length
-        this.endX = this.x + Math.cos(this.worldAngle) * this.length;
-        this.endY = this.y + Math.sin(this.worldAngle) * this.length;
+        if (this.kinematicObject && this.kinematicObject.invertX) {
+            // Update bone position based on angle and length
+            this.endX = this.x - Math.cos(this.worldAngle) * this.length;
+            this.endY = this.y + Math.sin(this.worldAngle) * this.length;
+        } else {
+            // Update bone position based on angle and length
+            this.endX = this.x + Math.cos(this.worldAngle) * this.length;
+            this.endY = this.y + Math.sin(this.worldAngle) * this.length;
+        }
         // Update children's positions
         for (const child of this.children) {
             child.x = this.endX;

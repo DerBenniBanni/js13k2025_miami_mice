@@ -8,11 +8,13 @@ document.addEventListener("DOMContentLoaded", () => {
     game = new Game("gameCanvas");
     game.start();
 
-    let cat1 = new CatKinematics(600, 700);
-    let cat2 = new CatKinematics(1200, 700);
+    let cat1 = new CatKinematics(800, 900);
+    let cat2 = new CatKinematics(1200, 900);
+    cat2.invertX = true;
+    cat2.giColors = ['#d00', '#600'];
     game.gameObjects.push(cat1);
-    //game.gameObjects.push(cat2);
-    cat2.pose("bow");
+    game.gameObjects.push(cat2);
+    cat2.pose("stand");
     /*
     let cat2 = new CatKinematics(250, 200);
     let cat3 = new CatKinematics(400, 200);
@@ -27,11 +29,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     window.setInterval(()=>{
         window.setTimeout(()=>{cat1.morph("bow",0.5)},10);
-        window.setTimeout(()=>{cat1.morph("stand",0.5)},1000);
+        window.setTimeout(()=>{cat1.morph("stand",0.5)},1100);
         window.setTimeout(()=>{cat1.morph("kick",0.2)},2100);
         window.setTimeout(()=>{cat1.morph("punch",0.1)},2500);
         window.setTimeout(()=>{cat1.morph("punch2",0.1)},2900);
         window.setTimeout(()=>{cat1.morph("stand",0.3)},3200);
+        
+        window.setTimeout(()=>{cat2.morph("bow",0.5)},90);
+        window.setTimeout(()=>{cat2.morph("stand",0.5)},1000);
+        window.setTimeout(()=>{cat2.morph("punch2",0.2)},1900);
+        window.setTimeout(()=>{cat2.morph("kick",0.1)},2300);
+        window.setTimeout(()=>{cat2.morph("punch",0.1)},3100);
+        window.setTimeout(()=>{cat2.morph("stand",0.3)},3800);
     }, 5000);
     //game.gameObjects.push(new Bone(100, 100, 100, Math.PI / 4));
     
