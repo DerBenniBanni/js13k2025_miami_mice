@@ -22,9 +22,9 @@ added morphing between poses
 
 ![cat stickmen](img/002_stick_morph_poses.gif)
 
-**devtime:** 1h dev during commute, 0,75h evening dev
+**devtime:** 1h dev during commute, 0.75h evening dev
 
-## 2025-08-18
+## 2025-08-17
 
 added a suit 
 
@@ -34,3 +34,13 @@ and a tail
 
 ![cat stickmen](img/004_now_with_tail.gif)
 
+**devtime:** 1.5h evening dev
+
+
+## 2025-08-18
+
+added a background
+
+![cat stickmen](img/005_background.gif)
+
+**devtime:** 1.5h evening dev

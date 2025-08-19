@@ -23,12 +23,19 @@
             max-height: 100vh; /* Limit canvas height to viewport height */
             z-index:1000;
         }
-        .water {
+        .a {
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
-            height: 5px;
+        }
+        .sky {
+            height: 50vh;
+            background: radial-gradient(circle, rgba(234, 252, 70, 1) 10%, rgb(252, 158, 70) 11%, rgb(107, 99, 255) 75%);
+        }
+        .water {
+            top: 50vh;
+            height: 0.55vh;
             background-color: rgba(79, 70, 252, 1);
             background: #4F46FC;
             overflow: hidden;
@@ -38,7 +45,7 @@
             height: 100%;
             margin-left: auto;
             margin-right: auto;
-            background: linear-gradient(90deg, rgba(79, 70, 252, 1) 25%, rgba(252, 70, 107, 1) 35%, rgba(234, 252, 70, 1) 45%, rgba(234, 252, 70, 1) 55%, rgba(252, 70, 107, 1) 65%, rgba(79, 70, 252, 1) 75%);
+            -background: linear-gradient(90deg, rgba(79, 70, 252, 1) 25%, rgba(252, 70, 107, 1) 35%, rgba(234, 252, 70, 1) 45%, rgba(234, 252, 70, 1) 55%, rgba(252, 70, 107, 1) 65%, rgba(79, 70, 252, 1) 75%);
             animation: 1s infinite alternate water-scale;
         }
         @keyframes water-scale {
@@ -50,13 +57,71 @@
                 width: 99%;
             }
         }
+        .torii {
+            background: #632727;
+        }
+        .v {
+            width: 2vw;
+            height: 50vh;
+            top: 10vh;
+        }
+        .l {
+            border-right:0.5vw solid #9a544e;
+            left:30vw;
+        }
+        .r {
+            border-left:0.5vw solid #9a544e;
+            left:auto;
+            right:30vw;
+        }
+        .h {
+            border-bottom:0.2vw solid #9a544e;
+            width:50vw;
+            height: 3vh;
+        }
+        .t1{
+            background: #171010;
+            top:3vh;
+            height: 3vh;
+            width:52vw;
+            left: 24vw;
+        }
+        .t2{
+            top:6vh;
+            height: 4vh;
+            left: 25vw;
+        }
+        .t3{
+            top:16vh;
+            height: 3vh;
+            width:44vw;
+            left: 28vw;
+        }
+
+        .ground {
+            top:50vh;
+            height:50vh;
+            background-size: 40px 30px;
+            background-image:
+            linear-gradient(to right, transparent 0, #0005 2px, #0005 4px, transparent 6px),
+            linear-gradient(to bottom, #0005 2px, transparent 6px);
+            transform: perspective(80vh) rotateX(60deg);
+            transform-origin: top center;
+        }
 
     </style>
 </head>
 <body>
-    <div class="water">
+    <div class="a sky"></div>
+    <div class="a ground"></div>
+    <div class="a water">
         <div class="water_sun"></div>
     </div>
+    <div class="a torii v l"></div>
+    <div class="a torii v r"></div>
+    <div class="a torii h t2"></div>
+    <div class="a torii h t1"></div>
+    <div class="a torii h t3"></div>
     <canvas id="gameCanvas" width="1920" height="1080"></canvas>
 </body>
 </html>

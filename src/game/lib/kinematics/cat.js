@@ -1,7 +1,7 @@
 import { toRad } from "../utils.js";
 import { Bone } from "./kinematics.js";
 
-const sizing = 0.7;
+const sizing = 1;
 const headsize = 40;
 
 const BONE_ROOT = 0;
@@ -23,12 +23,12 @@ const BONE_TAIL3 = 15;
 
 
 const POSE_STAND = [];
-POSE_STAND[BONE_ROOT] = 0;
-POSE_STAND[BONE_UPPER_LEG_LEFT] = 60;
+POSE_STAND[BONE_ROOT] = -90;
+POSE_STAND[BONE_UPPER_LEG_LEFT] = 150;
 POSE_STAND[BONE_LOWER_LEG_LEFT] = 30;
-POSE_STAND[BONE_UPPER_LEG_RIGHT] = 100;
+POSE_STAND[BONE_UPPER_LEG_RIGHT] = 190;
 POSE_STAND[BONE_LOWER_LEG_RIGHT] = 20;
-POSE_STAND[BONE_BODY] = -90;
+POSE_STAND[BONE_BODY] = 0;
 POSE_STAND[BONE_SHOULDER_LEFT] = 80;
 POSE_STAND[BONE_ARM_LEFT] = 40;
 POSE_STAND[BONE_FOREARM_LEFT] = -100;
@@ -40,28 +40,36 @@ POSE_STAND[BONE_NECK] = -10;
 const POSE_PUNCH = [...POSE_STAND];
 POSE_PUNCH[BONE_ARM_LEFT] = 15;
 POSE_PUNCH[BONE_FOREARM_LEFT] = -10;
-POSE_PUNCH[BONE_UPPER_LEG_LEFT] = 70;
+POSE_PUNCH[BONE_UPPER_LEG_LEFT] = 160;
 POSE_PUNCH[BONE_LOWER_LEG_LEFT] = 40;
-POSE_PUNCH[BONE_UPPER_LEG_RIGHT] = 110;
+POSE_PUNCH[BONE_UPPER_LEG_RIGHT] = 200;
 
 const POSE_PUNCH2 = [...POSE_STAND];
 POSE_PUNCH2[BONE_ARM_LEFT] = 110;
 POSE_PUNCH2[BONE_FOREARM_LEFT] = -90;
 POSE_PUNCH2[BONE_ARM_RIGHT] = -160;
 POSE_PUNCH2[BONE_FOREARM_RIGHT] = -10;
-POSE_PUNCH2[BONE_UPPER_LEG_LEFT] = 70;
+POSE_PUNCH2[BONE_UPPER_LEG_LEFT] = 160;
 POSE_PUNCH2[BONE_LOWER_LEG_LEFT] = 40;
-POSE_PUNCH2[BONE_UPPER_LEG_RIGHT] = 110;
+POSE_PUNCH2[BONE_UPPER_LEG_RIGHT] = 200;
 
 const POSE_KICK = [...POSE_STAND];
-POSE_KICK[BONE_UPPER_LEG_LEFT] = -30;
+POSE_KICK[BONE_UPPER_LEG_LEFT] = 60;
 POSE_KICK[BONE_LOWER_LEG_LEFT] = 10;
 POSE_KICK[BONE_BODY] = -105;
-POSE_KICK[BONE_UPPER_LEG_RIGHT] = 95;
+POSE_KICK[BONE_UPPER_LEG_RIGHT] = 185;
 POSE_KICK[BONE_ARM_LEFT] = 80;
 POSE_KICK[BONE_FOREARM_LEFT] = -150;
 POSE_KICK[BONE_ARM_RIGHT] = -0;
 POSE_KICK[BONE_FOREARM_RIGHT] = -130;
+
+
+const POSE_BOW = [...POSE_STAND];
+POSE_BOW[BONE_BODY] = 60;
+POSE_BOW[BONE_ARM_LEFT] = 50;
+POSE_BOW[BONE_ARM_RIGHT] = -130;
+POSE_BOW[BONE_NECK] = 40;
+POSE_BOW[BONE_UPPER_LEG_RIGHT] = 170;
 
 
 const LINE_ROUND = "round";
@@ -69,7 +77,7 @@ const LINE_BUTT = "butt";
 
 export class CatKinematics {
     constructor(x,y) {
-        this.rootBone = new Bone(0, 0);
+        this.rootBone = new Bone(0, -90);
         this.bones = [];
         this.x = x;
         this.y = y;
@@ -101,10 +109,11 @@ export class CatKinematics {
         this.addBone(BONE_ARM_RIGHT, 80, toRad(-30), BONE_SHOULDER_RIGHT);
         this.addBone(BONE_FOREARM_RIGHT, 80, toRad(-90), BONE_ARM_RIGHT);
 
-        this.addBone(BONE_TAIL1, 60, toRad(150), BONE_ROOT);
-        this.addBone(BONE_TAIL2, 60, toRad(50), BONE_TAIL1);
-        this.addBone(BONE_TAIL3, 60, toRad(-50), BONE_TAIL2);
+        this.addBone(BONE_TAIL1, 60, toRad(-90), BONE_ROOT);
+        this.addBone(BONE_TAIL2, 60, toRad(45), BONE_TAIL1);
+        this.addBone(BONE_TAIL3, 60, toRad(-45), BONE_TAIL2);
 
+        this.pose("stand");
         this.updateAngles();
     }
 
@@ -119,9 +128,9 @@ export class CatKinematics {
     morph(poseName, duration) {
         this.morphFrom = this.bones.map(bone => bone.angle);
         this.morphTo = this.getPoseDefinition(poseName).map(angle => toRad(angle));
-        this.morphTo[BONE_TAIL1] = toRad(120 + Math.random() * 30);
-        this.morphTo[BONE_TAIL2] = toRad(20 + Math.random() * 90);
-        this.morphTo[BONE_TAIL3] = toRad(-80 + Math.random() * 90);
+        this.morphTo[BONE_TAIL1] = toRad(-130 + Math.random() * 80);
+        this.morphTo[BONE_TAIL2] = toRad(-60 + Math.random() * 120);
+        this.morphTo[BONE_TAIL3] = toRad(-60 + Math.random() * 120);
         this.morphDuration = duration;
         this.morphTimer = duration;
     }
@@ -136,6 +145,8 @@ export class CatKinematics {
                 return POSE_PUNCH2;
             case "kick":
                 return POSE_KICK;
+            case "bow":
+                return POSE_BOW;
             default:
                 return POSE_STAND;
         }
