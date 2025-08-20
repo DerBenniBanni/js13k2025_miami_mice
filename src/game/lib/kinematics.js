@@ -39,12 +39,12 @@ export class Bone {
     }
 
     render(ctx) {
-        ctx.strokeStyle = "black";
+        ctxStrokeStyle(ctx, "black");
         ctx.lineWidth = 15;
         ctx.lineCap = "round";
-        ctx.beginPath();
-        ctx.moveTo(this.x, this.y);
-        ctx.lineTo(this.endX, this.endY);
+        ctxBeginPath(ctx)();
+        ctxMoveTo(ctx, this.x, this.y);
+        ctxLineTo(ctx, this.endX, this.endY);
         ctx.stroke();
         // Render children
         for (const child of this.children) {

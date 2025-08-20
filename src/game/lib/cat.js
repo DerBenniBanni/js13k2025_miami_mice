@@ -1,5 +1,7 @@
-import { toRad } from "../utils.js";
+import { GameObject } from "./gameobject.js";
+import { ctxArc, ctxBeginPath, ctxEllipse, ctxFill, ctxFillStyle, ctxLineTo, ctxLineWidth, ctxMoveTo, ctxStroke, ctxStrokeStyle, toRad } from "./utils.js";
 import { Bone } from "./kinematics.js";
+import { ACTION_MOVE_LEFT_PLAYER_1,ACTION_MOVE_RIGHT_PLAYER_1, ACTION_JUMP_PLAYER_1, ACTION_CROUCH_PLAYER_1 } from "./game.js";
 
 const sizing = 1;
 const headsize = 40;
@@ -87,12 +89,11 @@ POSE_BOW[BONE_UPPER_LEG_RIGHT] = 170;
 const LINE_ROUND = "round";
 const LINE_BUTT = "butt";
 
-export class CatKinematics {
+export class Cat extends GameObject {
     constructor(x,y) {
+        super(x,y);
         this.rootBone = null;
         this.bones = [];
-        this.x = x;
-        this.y = y;
         this.morphFrom = [];
         this.morphTo = [];
         this.morphDuration = 1; // seconds
@@ -174,8 +175,8 @@ export class CatKinematics {
     }
 
     updateAngles() {
-        this.rootBone.x = this.x;
-        this.rootBone.y = this.y;
+        this.rootBone.x = 0;
+        this.rootBone.y = 0;
         this.rootBone.calculateEndPosition();
     }
 
@@ -191,13 +192,13 @@ export class CatKinematics {
     }
 
     renderCat(bone, ctx, renderChildren = true) {
-        ctx.strokeStyle = "black";
-        ctx.lineWidth = 40*sizing;
+        ctxStrokeStyle(ctx, "black");
+        ctxLineWidth(ctx, 40 * sizing);
         ctx.lineCap = "round";
-        ctx.beginPath();
-        ctx.moveTo(bone.x, bone.y);
-        ctx.lineTo(bone.endX, bone.endY);
-        ctx.stroke();
+        ctxBeginPath(ctx);
+        ctxMoveTo(ctx, bone.x, bone.y);
+        ctxLineTo(ctx, bone.endX, bone.endY);
+        ctxStroke(ctx);
         // Render children
         if(renderChildren) {
             for (const child of bone.children) {
@@ -213,16 +214,16 @@ export class CatKinematics {
     }
 
     renderBoneLine(bone, ctx, width, color, lineCap, renderChildren = true) {
-        ctx.strokeStyle = color;
-        ctx.lineWidth = width;
+        ctxStrokeStyle(ctx, color);
+        ctxLineWidth(ctx, width);
         ctx.lineCap = lineCap ? lineCap : LINE_ROUND;
         if(bone.children.length == 0) {
             ctx.lineCap = LINE_BUTT;
         }
-        ctx.beginPath();
-        ctx.moveTo(bone.x, bone.y);
-        ctx.lineTo(bone.endX, bone.endY);
-        ctx.stroke();
+        ctxBeginPath(ctx);
+        ctxMoveTo(ctx, bone.x, bone.y);
+        ctxLineTo(ctx, bone.endX, bone.endY);
+        ctxStroke(ctx);
         if(renderChildren) {
             for (const child of bone.children) {
                 this.renderBoneLine(child, ctx, width, color, renderChildren);
@@ -232,14 +233,17 @@ export class CatKinematics {
     renderShadow(ctx) {
         ctx.save();
         ctx.globalAlpha = 0.3;
-        ctx.fillStyle = "black";
-        ctx.beginPath();
-        ctx.ellipse(this.bones[BONE_ROOT].x, this.bones[BONE_ROOT].y, 90 * sizing, 15 * sizing, 0, 0, 2 * Math.PI);
-        ctx.fill();
+        ctxFillStyle(ctx, "black");
+        ctxBeginPath(ctx);
+        ctxEllipse(ctx, this.bones[BONE_ROOT].x, this.bones[BONE_ROOT].y, 90 * sizing, 15 * sizing, 0, 0, 2 * Math.PI);
+        ctxFill(ctx);
         ctx.restore();
     }
 
     render(ctx) {
+        
+        ctx.save();
+        ctx.translate(this.x, this.y);
         this.renderShadow(ctx);
         this.renderCat(this.bones[BONE_SHOULDER_LEFT], ctx);
         this.renderSuit(this.bones[BONE_SHOULDER_LEFT], ctx);
@@ -248,17 +252,17 @@ export class CatKinematics {
         this.renderSuit(this.bones[BONE_UPPER_LEG_LEFT], ctx);
 
         //tail
-        ctx.strokeStyle = "black";
-        ctx.lineWidth = 15*sizing;
+        ctxStrokeStyle(ctx, "black");
+        ctxLineWidth(ctx, 15 * sizing);
         ctx.lineCap = "round";
-        ctx.beginPath();
-        ctx.moveTo(this.bones[BONE_TAIL1].x, this.bones[BONE_TAIL1].y);
+        ctxBeginPath(ctx);
+        ctxMoveTo(ctx, this.bones[BONE_TAIL1].x, this.bones[BONE_TAIL1].y);
         ctx.bezierCurveTo(
             this.bones[BONE_TAIL2].x, this.bones[BONE_TAIL2].y, 
             this.bones[BONE_TAIL3].x, this.bones[BONE_TAIL3].y, 
             this.bones[BONE_TAIL3].endX, this.bones[BONE_TAIL3].endY
         );
-        ctx.stroke();
+        ctxStroke(ctx);
 
         this.renderSuit(this.bones[BONE_BODY], ctx, false, 1.4);
         
@@ -271,50 +275,42 @@ export class CatKinematics {
        
 
         // Head
-        ctx.fillStyle = "#000";
+        ctxFillStyle(ctx, "#000");
         let neck = this.bones[BONE_NECK];
-        ctx.beginPath();
-        ctx.arc(neck.endX, neck.endY, headsize*sizing, 0, 2*Math.PI);
-        ctx.fill();
+        ctxBeginPath(ctx);
+        ctxArc(ctx, neck.endX, neck.endY, headsize * sizing, 0, 2 * Math.PI);
+        ctxFill(ctx);
         // Face
-        ctx.fillStyle = "#000";
-        ctx.beginPath();
-        ctx.arc(this.bones[BONE_FACE].endX, this.bones[BONE_FACE].endY, headsize*0.7*sizing, 0, 2*Math.PI);
-        ctx.fill();
+        ctxFillStyle(ctx, "#000");
+        ctxBeginPath(ctx);
+        ctxArc(ctx, this.bones[BONE_FACE].endX, this.bones[BONE_FACE].endY, headsize * 0.7 * sizing, 0, 2 * Math.PI);
+        ctxFill(ctx);
         // Nose
-        ctx.fillStyle = "#844";
-        ctx.beginPath();
-        ctx.arc(this.bones[BONE_NOSE].endX, this.bones[BONE_NOSE].endY, 5 * sizing, 0, 2 * Math.PI);
-        ctx.fill();
+        ctxFillStyle(ctx, "#844");
+        ctxBeginPath(ctx);
+        ctxArc(ctx, this.bones[BONE_NOSE].endX, this.bones[BONE_NOSE].endY, 5 * sizing, 0, 2 * Math.PI);
+        ctxFill(ctx);
         // ear1
         [BONE_EAR1, BONE_EAR2].forEach((boneId) => {
-            ctx.fillStyle = "#000";
-            ctx.beginPath();
-            ctx.lineWidth = 1;
-            ctx.moveTo(neck.endX, neck.endY);
-            ctx.lineTo(this.bones[boneId].endX, this.bones[boneId].endY);
+            ctxFillStyle(ctx, "#000");
+            ctxBeginPath(ctx);
+            ctxLineWidth(ctx, 1);
+            ctxMoveTo(ctx, neck.endX, neck.endY);
+            ctxLineTo(ctx, this.bones[boneId].endX, this.bones[boneId].endY);
             let angle = this.bones[boneId].worldAngle - toRad(90 * (this.invertX ? -1 : 1));
             let x = neck.endX + Math.cos(angle) * headsize * 0.8 * sizing;
             let y = neck.endY + Math.sin(angle) * headsize * 0.8 * sizing;
-            ctx.lineTo(x, y);
-            ctx.fill();
+            ctxLineTo(ctx, x, y);
+            ctxFill(ctx);
         });
         [BONE_EYE1, BONE_EYE2].forEach((boneId) => {
-            ctx.beginPath();
-            ctx.fillStyle = "#ff0";
-            ctx.arc(this.bones[boneId].endX, this.bones[boneId].endY, 3 * sizing, 0, 2 * Math.PI);
-            ctx.fill();
+            ctxBeginPath(ctx);
+            ctxFillStyle(ctx, "#ff0");
+            ctxArc(ctx, this.bones[boneId].endX, this.bones[boneId].endY, 3 * sizing, 0, 2 * Math.PI);
+            ctxFill(ctx);
         });
         
-
-        /*
-        ctx.beginPath();
-        let noseX = neck.endX + Math.cos(neck.angle+toRad(0)) * (headsize + 5) * sizing;
-        let noseY = neck.endY + Math.sin(neck.angle+toRad(0)) * (headsize + 5) * sizing;
-        ctx.fillStyle = "#844";
-        ctx.arc(noseX, noseY, 5 * sizing, 0, 2 * Math.PI);
-        ctx.fill();
-        */
+        ctx.restore();
 
 
 

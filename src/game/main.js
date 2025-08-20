@@ -1,6 +1,6 @@
 import { Game } from "./lib/game.js";
-import { CatKinematics } from "./lib/kinematics/cat.js";
-import { toRad } from "./lib/utils.js";
+import { Cat } from "./lib/cat.js";
+import { Player } from "./lib/player.js";
 
 
 window.game = null;
@@ -8,17 +8,18 @@ document.addEventListener("DOMContentLoaded", () => {
     game = new Game("gameCanvas");
     game.start();
 
-    let cat1 = new CatKinematics(800, 900);
-    let cat2 = new CatKinematics(1200, 900);
+    let cat1 = game.addGameObject(new Player(800, 900, 1));
+    cat1.giColors = ['#fff', '#777'];
+    let cat2 = game.addGameObject(new Cat(1200, 900));
     cat2.invertX = true;
     cat2.giColors = ['#d00', '#600'];
     game.gameObjects.push(cat1);
     game.gameObjects.push(cat2);
     cat2.pose("stand");
     /*
-    let cat2 = new CatKinematics(250, 200);
-    let cat3 = new CatKinematics(400, 200);
-    let cat4 = new CatKinematics(550, 200);
+    let cat2 = new Cat(250, 200);
+    let cat3 = new Cat(400, 200);
+    let cat4 = new Cat(550, 200);
     game.gameObjects.push(cat2);
     game.gameObjects.push(cat3);
     game.gameObjects.push(cat4);

@@ -1,3 +1,34 @@
 
 export const toRad = deg => deg * (Math.PI / 180);
 export const toDeg = rad => rad * (180 / Math.PI);
+
+export const ctxStrokeStyle = (ctx, style) => {
+  ctx.strokeStyle = style;
+};
+export const ctxFillStyle = (ctx, style) => {
+  ctx.fillStyle = style;
+};
+export const ctxBeginPath = (ctx) => {
+  ctx.beginPath();
+};
+export const ctxMoveTo = (ctx, x, y) => {
+  ctx.moveTo(x, y);
+};
+export const ctxLineTo = (ctx, x, y) => {
+  ctx.lineTo(x, y);
+};
+export const ctxArc = (ctx, x, y, radius, startAngle, endAngle, anticlockwise = false) => {
+  ctx.arc(x, y, radius, startAngle, endAngle, anticlockwise);
+}
+export const ctxEllipse = (ctx, x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise = false) => {
+  ctx.ellipse(x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise);
+};
+export const ctxFill = (ctx) => {
+  ctx.fill();
+};
+export const ctxStroke = (ctx) => {
+  ctx.stroke();
+};
+export const ctxLineWidth = (ctx, width) => {
+  ctx.lineWidth = width;
+};

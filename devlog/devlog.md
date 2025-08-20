@@ -50,6 +50,13 @@ Theme announced: Black Cat
 * added basic shadow (and prepared the cat for jumping)
 * fixed rendering to be able to mirror the fighter
 
-![cat stickmen](img/006_mirrored_fighter.mp4)
+![cat stickmen](img/006_mirrored_fighter.gif)
 
 **devtime:** 1.5h evening dev
+
+## 2025-08-19
+
+* added basic keyboardinput support
+* refactored class tree (GameObject, Cat, Player)
+
+**devtime:** 0.75h evening dev

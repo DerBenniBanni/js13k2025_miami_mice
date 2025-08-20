@@ -1,3 +1,15 @@
+export const ACTION_MOVE_LEFT_PLAYER_1 = 0;
+export const ACTION_MOVE_RIGHT_PLAYER_1 = 1;
+export const ACTION_JUMP_PLAYER_1 = 2;
+export const ACTION_CROUCH_PLAYER_1 = 3;
+
+const keyActionMap = {
+    "KeyA": ACTION_MOVE_LEFT_PLAYER_1,
+    "KeyD": ACTION_MOVE_RIGHT_PLAYER_1,
+    "KeyW": ACTION_JUMP_PLAYER_1,
+    "KeyS": ACTION_CROUCH_PLAYER_1
+};
+
 export class Game {
     constructor(canvasId) {
         this.canvas = document.getElementById(canvasId);
@@ -6,6 +18,26 @@ export class Game {
         this.gameObjects = [];
         this.lastUpdateTime = 0;
 
+        this.keys = {};
+        this.actions = [];
+        window.addEventListener("keydown", (e) => {
+            this.keys[e.code] = true;
+            this.actions[keyActionMap[e.code]] = true;
+        });
+        window.addEventListener("keyup", (e) => {
+            this.keys[e.code] = false;
+            this.actions[keyActionMap[e.code]] = false;
+        });
+    }
+
+    getActionState(action) {
+        return this.actions[action] || false;
+    }
+
+    addGameObject(obj) {
+        obj.game = this;
+        this.gameObjects.push(obj);
+        return obj;
     }
 
     start() {
