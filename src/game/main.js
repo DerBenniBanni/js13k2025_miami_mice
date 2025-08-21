@@ -1,5 +1,5 @@
 import { Game } from "./lib/game.js";
-import { Cat } from "./lib/cat.js";
+import { Cat, POSE_BOW, POSE_KICK, POSE_PUNCH, POSE_PUNCH2, POSE_STAND, POSE_WALK_1, POSE_WALK_2 } from "./lib/cat.js";
 import { Player } from "./lib/player.js";
 
 
@@ -16,18 +16,32 @@ document.addEventListener("DOMContentLoaded", () => {
     game.gameObjects.push(cat1);
     game.gameObjects.push(cat2);
     cat2.pose("stand");
-    /*
-    let cat2 = new Cat(250, 200);
-    let cat3 = new Cat(400, 200);
-    let cat4 = new Cat(550, 200);
-    game.gameObjects.push(cat2);
-    game.gameObjects.push(cat3);
-    game.gameObjects.push(cat4);
-    cat3.pose("kick");
-    cat4.pose("punch");
-    */
-    
 
+    /* 
+    cat1.queueMorph(null, 1);
+    cat1.queueMorph(POSE_BOW, 1);
+    cat1.queueMorph(null, 1);
+    cat1.queueMorph(POSE_STAND, 0.5);
+    cat1.queueMorph(null, 1);
+    cat1.queueMorph(POSE_KICK, 0.2);
+    cat1.queueMorph(null, 0.5);
+    cat1.queueMorph(POSE_PUNCH2, 0.3);
+    cat1.queueMorph(null, 0.2);
+    cat1.queueMorph(POSE_PUNCH, 0.3);
+    cat1.queueMorph(null, 0.5);
+    cat1.queueMorph(POSE_STAND, 0.5);
+
+    cat1.queueMorph(POSE_WALK_1, 1, true);
+    cat1.queueMorph(POSE_WALK_2, 1);
+    cat1.queueMorph(POSE_WALK_1, 1);
+    cat1.queueMorph(POSE_WALK_2, 1);
+    cat1.queueMorph(POSE_WALK_1, 1);
+    cat1.queueMorph(POSE_WALK_2, 1);
+    cat1.queueMorph(POSE_WALK_1, 1);
+    cat1.queueMorph(POSE_WALK_2, 1);
+    */
+
+    /*
     window.setInterval(()=>{
         window.setTimeout(()=>{cat1.morph("bow",0.5)},10);
         window.setTimeout(()=>{cat1.morph("stand",0.5)},1100);
@@ -43,6 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
         window.setTimeout(()=>{cat2.morph("punch",0.1)},3100);
         window.setTimeout(()=>{cat2.morph("stand",0.3)},3800);
     }, 5000);
+    */
     //game.gameObjects.push(new Bone(100, 100, 100, Math.PI / 4));
     
     let water = document.querySelector('.water');

@@ -29,62 +29,82 @@ const BONE_TAIL1 = 19;
 const BONE_TAIL2 = 20;
 const BONE_TAIL3 = 21;
 
+export const POSE_STAND = 1;
+const POSE_STAND_DATA = [];
+POSE_STAND_DATA[BONE_ROOT] = -90;
+POSE_STAND_DATA[BONE_UPPER_LEG_LEFT] = 150;
+POSE_STAND_DATA[BONE_LOWER_LEG_LEFT] = 30;
+POSE_STAND_DATA[BONE_UPPER_LEG_RIGHT] = 190;
+POSE_STAND_DATA[BONE_LOWER_LEG_RIGHT] = 20;
+POSE_STAND_DATA[BONE_BODY] = 0;
+POSE_STAND_DATA[BONE_SHOULDER_LEFT] = 80;
+POSE_STAND_DATA[BONE_ARM_LEFT] = 40;
+POSE_STAND_DATA[BONE_FOREARM_LEFT] = -100;
+POSE_STAND_DATA[BONE_SHOULDER_RIGHT] = -100;
+POSE_STAND_DATA[BONE_ARM_RIGHT] = -30;
+POSE_STAND_DATA[BONE_FOREARM_RIGHT] = -90;
+POSE_STAND_DATA[BONE_NECK] = -10;
+POSE_STAND_DATA[BONE_FACE] = 110;
+POSE_STAND_DATA[BONE_NOSE] = 90;
+POSE_STAND_DATA[BONE_EAR1] = 0;
+POSE_STAND_DATA[BONE_EAR2] = -20;
+POSE_STAND_DATA[BONE_EYE1] = 65;
+POSE_STAND_DATA[BONE_EYE2] = 62;
 
-const POSE_STAND = [];
-POSE_STAND[BONE_ROOT] = -90;
-POSE_STAND[BONE_UPPER_LEG_LEFT] = 150;
-POSE_STAND[BONE_LOWER_LEG_LEFT] = 30;
-POSE_STAND[BONE_UPPER_LEG_RIGHT] = 190;
-POSE_STAND[BONE_LOWER_LEG_RIGHT] = 20;
-POSE_STAND[BONE_BODY] = 0;
-POSE_STAND[BONE_SHOULDER_LEFT] = 80;
-POSE_STAND[BONE_ARM_LEFT] = 40;
-POSE_STAND[BONE_FOREARM_LEFT] = -100;
-POSE_STAND[BONE_SHOULDER_RIGHT] = -100;
-POSE_STAND[BONE_ARM_RIGHT] = -30;
-POSE_STAND[BONE_FOREARM_RIGHT] = -90;
-POSE_STAND[BONE_NECK] = -10;
-POSE_STAND[BONE_FACE] = 110;
-POSE_STAND[BONE_NOSE] = 90;
-POSE_STAND[BONE_EAR1] = 0;
-POSE_STAND[BONE_EAR2] = -20;
-POSE_STAND[BONE_EYE1] = 65;
-POSE_STAND[BONE_EYE2] = 62;
+export const POSE_WALK_1 = 2;
+const POSE_WALK_1_DATA = [...POSE_STAND_DATA];
+POSE_WALK_1_DATA[BONE_UPPER_LEG_LEFT] = 150;
+POSE_WALK_1_DATA[BONE_LOWER_LEG_LEFT] = 30;
+POSE_WALK_1_DATA[BONE_UPPER_LEG_RIGHT] = 190;
+POSE_WALK_1_DATA[BONE_LOWER_LEG_RIGHT] = 20;
 
-const POSE_PUNCH = [...POSE_STAND];
-POSE_PUNCH[BONE_ARM_LEFT] = 15;
-POSE_PUNCH[BONE_FOREARM_LEFT] = -10;
-POSE_PUNCH[BONE_UPPER_LEG_LEFT] = 160;
-POSE_PUNCH[BONE_LOWER_LEG_LEFT] = 40;
-POSE_PUNCH[BONE_UPPER_LEG_RIGHT] = 200;
+export const POSE_WALK_2 = 3;
+const POSE_WALK_2_DATA = [...POSE_STAND_DATA];
+POSE_WALK_2_DATA[BONE_UPPER_LEG_LEFT] = 190;
+POSE_WALK_2_DATA[BONE_LOWER_LEG_LEFT] = 20;
+POSE_WALK_2_DATA[BONE_UPPER_LEG_RIGHT] = 150;
+POSE_WALK_2_DATA[BONE_LOWER_LEG_RIGHT] = 30;
 
-const POSE_PUNCH2 = [...POSE_STAND];
-POSE_PUNCH2[BONE_ARM_LEFT] = 110;
-POSE_PUNCH2[BONE_FOREARM_LEFT] = -90;
-POSE_PUNCH2[BONE_ARM_RIGHT] = -160;
-POSE_PUNCH2[BONE_FOREARM_RIGHT] = -10;
-POSE_PUNCH2[BONE_UPPER_LEG_LEFT] = 160;
-POSE_PUNCH2[BONE_LOWER_LEG_LEFT] = 40;
-POSE_PUNCH2[BONE_UPPER_LEG_RIGHT] = 200;
+export const POSE_PUNCH = 4;
+const POSE_PUNCH_DATA = [...POSE_STAND_DATA];
+POSE_PUNCH_DATA[BONE_ARM_LEFT] = 15;
+POSE_PUNCH_DATA[BONE_FOREARM_LEFT] = -10;
+POSE_PUNCH_DATA[BONE_UPPER_LEG_LEFT] = 160;
+POSE_PUNCH_DATA[BONE_LOWER_LEG_LEFT] = 40;
+POSE_PUNCH_DATA[BONE_UPPER_LEG_RIGHT] = 200;
 
-const POSE_KICK = [...POSE_STAND];
-POSE_KICK[BONE_UPPER_LEG_LEFT] = 60;
-POSE_KICK[BONE_LOWER_LEG_LEFT] = 10;
-POSE_KICK[BONE_BODY] = -40;
-POSE_KICK[BONE_UPPER_LEG_RIGHT] = 185;
-POSE_KICK[BONE_ARM_LEFT] = 80;
-POSE_KICK[BONE_FOREARM_LEFT] = -150;
-POSE_KICK[BONE_ARM_RIGHT] = -0;
-POSE_KICK[BONE_FOREARM_RIGHT] = -130;
+export const POSE_PUNCH2 = 5;
+const POSE_PUNCH2_DATA = [...POSE_STAND_DATA];
+POSE_PUNCH2_DATA[BONE_ARM_LEFT] = 110;
+POSE_PUNCH2_DATA[BONE_FOREARM_LEFT] = -90;
+POSE_PUNCH2_DATA[BONE_ARM_RIGHT] = -160;
+POSE_PUNCH2_DATA[BONE_FOREARM_RIGHT] = -10;
+POSE_PUNCH2_DATA[BONE_UPPER_LEG_LEFT] = 160;
+POSE_PUNCH2_DATA[BONE_LOWER_LEG_LEFT] = 40;
+POSE_PUNCH2_DATA[BONE_UPPER_LEG_RIGHT] = 200;
 
+export const POSE_KICK = 6;
+const POSE_KICK_DATA = [...POSE_STAND_DATA];
+POSE_KICK_DATA[BONE_UPPER_LEG_LEFT] = 60;
+POSE_KICK_DATA[BONE_LOWER_LEG_LEFT] = 10;
+POSE_KICK_DATA[BONE_BODY] = -40;
+POSE_KICK_DATA[BONE_UPPER_LEG_RIGHT] = 185;
+POSE_KICK_DATA[BONE_ARM_LEFT] = 80;
+POSE_KICK_DATA[BONE_FOREARM_LEFT] = -150;
+POSE_KICK_DATA[BONE_ARM_RIGHT] = -0;
+POSE_KICK_DATA[BONE_FOREARM_RIGHT] = -130;
 
-const POSE_BOW = [...POSE_STAND];
-POSE_BOW[BONE_BODY] = 60;
-POSE_BOW[BONE_ARM_LEFT] = 50;
-POSE_BOW[BONE_ARM_RIGHT] = -130;
-POSE_BOW[BONE_NECK] = 40;
-POSE_BOW[BONE_UPPER_LEG_RIGHT] = 170;
+export const POSE_BOW = 7;
+const POSE_BOW_DATA = [...POSE_STAND_DATA];
+POSE_BOW_DATA[BONE_BODY] = 60;
+POSE_BOW_DATA[BONE_ARM_LEFT] = 50;
+POSE_BOW_DATA[BONE_ARM_RIGHT] = -130;
+POSE_BOW_DATA[BONE_NECK] = 40;
+POSE_BOW_DATA[BONE_UPPER_LEG_RIGHT] = 170;
 
+export const STATE_IDLE = 1;
+export const STATE_WALKING = 2;
+export const STATE_JUMPING = 3;
 
 const LINE_ROUND = "round";
 const LINE_BUTT = "butt";
@@ -94,12 +114,16 @@ export class Cat extends GameObject {
         super(x,y);
         this.rootBone = null;
         this.bones = [];
+        this.lastMorph = {poseName: null, duration: 1};
+        this.morphQueue = [];
         this.morphFrom = [];
         this.morphTo = [];
         this.morphDuration = 1; // seconds
         this.morphTimer = 0;
         this.invertX = false;
         this.giColors = ['#fff', '#aaa'];
+        this.state = STATE_IDLE;
+        this.subState = 0;
         this.createBones();
     }
 
@@ -135,7 +159,7 @@ export class Cat extends GameObject {
         this.addBone(BONE_TAIL2, 60, toRad(45), BONE_TAIL1);
         this.addBone(BONE_TAIL3, 60, toRad(-45), BONE_TAIL2);
 
-        this.pose("stand");
+        this.pose(POSE_STAND);
         this.updateAngles();
     }
 
@@ -148,8 +172,14 @@ export class Cat extends GameObject {
     }
 
     morph(poseName, duration) {
+        this.lastMorph = { poseName, duration };
         this.morphFrom = this.bones.map(bone => bone.angle);
-        this.morphTo = this.getPoseDefinition(poseName).map(angle => toRad(angle));
+        if(poseName) {
+            this.morphTo = this.getPoseDefinition(poseName).map(angle => toRad(angle));
+        } else {
+            // wiggle the tail
+            this.morphTo = this.bones.map(bone => bone.angle);
+        }
         this.morphTo[BONE_TAIL1] = toRad(-130 + Math.random() * 80);
         this.morphTo[BONE_TAIL2] = toRad(-60 + Math.random() * 120);
         this.morphTo[BONE_TAIL3] = toRad(-60 + Math.random() * 120);
@@ -157,20 +187,43 @@ export class Cat extends GameObject {
         this.morphTimer = duration;
     }
 
+    clearMorph() {
+        this.morphQueue = [];
+    }
+
+    queueMorph(poseName, duration, immediate = false) {
+        if(poseName) {
+            console.log("queueMorph", poseName, duration, immediate);
+        }
+        if (immediate) {
+            this.clearMorph();
+            this.morphTimer = 0
+        }
+        this.morphQueue.push({ poseName, duration });
+        if (this.morphTimer <= 0) {
+            const nextMorph = this.morphQueue.shift();
+            this.morph(nextMorph.poseName, nextMorph.duration);
+        }
+    }
+
     getPoseDefinition(poseName) {
         switch (poseName) {
-            case "stand":
-                return POSE_STAND;
-            case "punch":
-                return POSE_PUNCH;
-            case "punch2":
-                return POSE_PUNCH2;
-            case "kick":
-                return POSE_KICK;
-            case "bow":
-                return POSE_BOW;
+            case POSE_STAND:
+                return POSE_STAND_DATA;
+            case POSE_PUNCH:
+                return POSE_PUNCH_DATA;
+            case POSE_PUNCH2:
+                return POSE_PUNCH2_DATA;
+            case POSE_KICK:
+                return POSE_KICK_DATA;
+            case POSE_BOW:
+                return POSE_BOW_DATA;
+            case POSE_WALK_1:
+                return POSE_WALK_1_DATA;
+            case POSE_WALK_2:
+                return POSE_WALK_2_DATA;
             default:
-                return POSE_STAND;
+                return POSE_STAND_DATA;
         }
     }
 
@@ -188,6 +241,20 @@ export class Cat extends GameObject {
             }
             this.updateAngles();
             this.morphTimer -= delta;
+            if(this.morphTimer <= 0) {
+                if(this.morphQueue.length > 0) {
+                    const nextMorph = this.morphQueue.shift();
+                    this.morph(nextMorph.poseName, nextMorph.duration);
+                }
+            }
+        }
+        if(this.morphQueue.length === 0) {
+            if(this.state === STATE_WALKING) {
+                let poseName = this.lastMorph.poseName == POSE_WALK_2 ? POSE_WALK_1 : POSE_WALK_2;
+                this.queueMorph(poseName, 1);
+            } else {
+                this.queueMorph(null, 1);
+            }
         }
     }
 

@@ -60,3 +60,10 @@ Theme announced: Black Cat
 * refactored class tree (GameObject, Cat, Player)
 
 **devtime:** 0.75h evening dev
+
+## 2025-08-20
+
+* walking animation added
+* poses are now managed by a morph-queue
+
+**devtime:** 1.5h evening dev
