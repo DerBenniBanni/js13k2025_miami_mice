@@ -54,16 +54,22 @@ Theme announced: Black Cat
 
 **devtime:** 1.5h evening dev
 
-## 2025-08-19
+## 2025-08-20
 
 * added basic keyboardinput support
 * refactored class tree (GameObject, Cat, Player)
 
-**devtime:** 0.75h evening dev
+**devtime:** 1h evening dev
 
-## 2025-08-20
+## 2025-08-21
 
 * walking animation added
 * poses are now managed by a morph-queue
 
 **devtime:** 1.5h evening dev
+
+## 2025-08-22
+
+* music created (synthwave)
+
+**devtime:** 3h evening
