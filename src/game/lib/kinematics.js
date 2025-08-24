@@ -10,7 +10,7 @@ export class Bone {
         this.endY = 0;
         this.children = [];
         this.parent = null;
-        this.calculateEndPosition();
+        this.calculateEndPosition(1);
     }
 
     addChild(childBone) {
@@ -18,23 +18,22 @@ export class Bone {
         this.children.push(childBone);
     }
 
-    calculateEndPosition(parentAngle = 0) {
+    calculateEndPosition(sizing, parentAngle = 0) {
         
         this.worldAngle = this.angle + parentAngle;
         if (this.kinematicObject && this.kinematicObject.invertX) {
             // Update bone position based on angle and length
-            this.endX = this.x - Math.cos(this.worldAngle) * this.length;
-            this.endY = this.y + Math.sin(this.worldAngle) * this.length;
+            this.endX = this.x - Math.cos(this.worldAngle) * this.length * sizing;
         } else {
             // Update bone position based on angle and length
-            this.endX = this.x + Math.cos(this.worldAngle) * this.length;
-            this.endY = this.y + Math.sin(this.worldAngle) * this.length;
+            this.endX = this.x + Math.cos(this.worldAngle) * this.length * sizing;
         }
+        this.endY = this.y + Math.sin(this.worldAngle) * this.length * sizing;
         // Update children's positions
         for (const child of this.children) {
             child.x = this.endX;
             child.y = this.endY;
-            child.calculateEndPosition(this.worldAngle);
+            child.calculateEndPosition(sizing, this.worldAngle);
         }
     }
 

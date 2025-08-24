@@ -1,3 +1,5 @@
+import { Cat, POSE_BOW, POSE_KICK, POSE_PUNCH, POSE_PUNCH2, POSE_STAND } from "./cat.js";
+import { Player } from "./player.js";
 import SFXPlayer from "./soundbox/sfxplayer.js";
 
 export const ACTION_MOVE_LEFT_PLAYER_1 = 0;
@@ -44,10 +46,39 @@ export class Game {
         return obj;
     }
 
-    start() {
-        document.querySelectorAll('.mainmenu,.bigtext,.neon').forEach(div=>div.style.display='none');
+    start(callback) {
+        document.querySelectorAll('.mainmenu,.bigtext,.neon,.cast').forEach(div=>div.style.display='none');
         this.isGameRunning = true;
         this.gameLoop();
+        this.initObjects()
+    }
+    initObjects() {
+        let cat1 = this.addGameObject(new Player(800, 900, 1));
+        cat1.giColors = ['#fff', '#777'];
+        let cat2 = this.addGameObject(new Cat(1200, 900));
+        cat2.invertX = true;
+        cat2.giColors = ['#d00', '#600'];
+        this.gameObjects.push(cat1);
+        this.gameObjects.push(cat2);
+        cat2.pose(POSE_STAND);
+
+
+        let foo = ()=> {
+            cat2.queueMorph(null, 1);
+            cat2.queueMorph(POSE_BOW, 1);
+            cat2.queueMorph(null, 1);
+            cat2.queueMorph(POSE_STAND, 0.5);
+            cat2.queueMorph(null, 1);
+            cat2.queueMorph(POSE_KICK, 0.2);
+            cat2.queueMorph(null, 0.5);
+            cat2.queueMorph(POSE_PUNCH2, 0.3);
+            cat2.queueMorph(null, 0.2);
+            cat2.queueMorph(POSE_PUNCH, 0.3);
+            cat2.queueMorph(null, 0.5);
+            cat2.queueMorph(POSE_STAND, 0.5);
+        }
+        foo();
+        window.setInterval(foo, 7200);
     }
 
     gameLoop() {

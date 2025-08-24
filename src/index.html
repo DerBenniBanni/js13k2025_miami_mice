@@ -10,19 +10,19 @@
     <style>
         body {
             margin: 0;
-            overflow: hidden; /* Prevent scrolling */
-            background-color: #555; /* Set body background to black */
-            display: flex; /* Center the canvas */
-            justify-content: center; /* Center horizontally */
-            align-items: center; /* Center vertically */
+            overflow: hidden;
+            background-color: #555;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         canvas {
-            display: absolute; /* Remove default inline-block spacing */
+            display: absolute;
             top:0;
             left:0;
-            aspect-ratio: 16 / 9; /* Maintain a 16:9 aspect ratio */
-            max-width: 100vw; /* Limit canvas width to viewport width */
-            max-height: 100vh; /* Limit canvas height to viewport height */
+            aspect-ratio: 16 / 9;
+            max-width: 100vw;
+            max-height: 100vh;
             z-index:5;
         }
         .a {
@@ -33,7 +33,9 @@
         }
         .sky {
             height: 50vh;
-            background: radial-gradient(circle, rgba(234, 252, 70, 1) 10%, rgb(252, 158, 70) 11%, rgb(107, 99, 255) 75%);
+            background: 
+            linear-gradient(0deg, #ff9 0%, transparent 70%),
+            radial-gradient(circle, #ef4 10%, #fa4 11%, #40f 75%);
         }
         .water {
             top: 50vh;
@@ -43,12 +45,11 @@
             overflow: hidden;
         }
         .water_sun {
-            width: 100%;
+            width: 200%;
             height: 100%;
             margin-left: auto;
             margin-right: auto;
-            -background: linear-gradient(90deg, rgba(79, 70, 252, 1) 25%, rgba(252, 70, 107, 1) 35%, rgba(234, 252, 70, 1) 45%, rgba(234, 252, 70, 1) 55%, rgba(252, 70, 107, 1) 65%, rgba(79, 70, 252, 1) 75%);
-            animation: 1s infinite alternate water-scale;
+            animation: 3s infinite alternate water-scale;
         }
         @keyframes water-scale {
             from {
@@ -64,7 +65,7 @@
         }
         .v {
             width: 2vw;
-            height: 50vh;
+            height: 47vh;
             top: 10vh;
         }
         .l {
@@ -101,9 +102,10 @@
         }
 
         .ground {
-            top:50vh;
+            top:54vh;
             height:50vh;
             background-size: 40px 30px;
+            background-color: #555;
             background-image:
             linear-gradient(to right, transparent 0, #0005 2px, #0005 4px, transparent 6px),
             linear-gradient(to bottom, #0005 2px, transparent 6px);
@@ -162,10 +164,10 @@
 </head>
 <body>
     <div class="a sky"></div>
-    <div class="a ground"></div>
     <div class="a water">
         <div class="water_sun"></div>
     </div>
+    <div class="a ground"></div>
     <div class="a torii v l"></div>
     <div class="a torii v r"></div>
     <div class="a torii h t2"></div>
@@ -173,8 +175,8 @@
     <div class="a torii h t3"></div>
     <canvas id="gameCanvas" width="1920" height="1080"></canvas>
     <div class="a chrome bigtext">
-        <div class="a shadow">BLACK BELT</div>
-        <div class="a text">BLACK BELT</div>
+        <div class="a shadow">MIAMI MICE</div>
+        <div class="a text">MIAMI MICE</div>
     </div>
     <div class="a neon"><b>Paws of Steel</b></div>
     <div class="a cast">ARNOLD KITTENEGGER &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; JEAN CLAUDE VAN CLAWS</div>
