@@ -2,11 +2,17 @@ import { Game } from "./lib/game.js";
 import { Cat, POSE_BOW, POSE_KICK, POSE_PUNCH, POSE_PUNCH2, POSE_STAND, POSE_WALK_1, POSE_WALK_2 } from "./lib/cat.js";
 import { Player } from "./lib/player.js";
 
+import musicGame from "./lib/soundbox/music_game.js";
+
 
 window.game = null;
 document.addEventListener("DOMContentLoaded", () => {
     game = new Game("gameCanvas");
-    game.start();
+    
+    //game.sfxPlayer.add("gamemusic", musicGame, true);
+
+    //game.start();
+    //game.sfxPlayer.playAudio("gamemusic");
 
     let cat1 = game.addGameObject(new Player(800, 900, 1));
     cat1.giColors = ['#fff', '#777'];
@@ -16,6 +22,24 @@ document.addEventListener("DOMContentLoaded", () => {
     game.gameObjects.push(cat1);
     game.gameObjects.push(cat2);
     cat2.pose("stand");
+
+
+    let foo = ()=> {
+        cat2.queueMorph(null, 1);
+        cat2.queueMorph(POSE_BOW, 1);
+        cat2.queueMorph(null, 1);
+        cat2.queueMorph(POSE_STAND, 0.5);
+        cat2.queueMorph(null, 1);
+        cat2.queueMorph(POSE_KICK, 0.2);
+        cat2.queueMorph(null, 0.5);
+        cat2.queueMorph(POSE_PUNCH2, 0.3);
+        cat2.queueMorph(null, 0.2);
+        cat2.queueMorph(POSE_PUNCH, 0.3);
+        cat2.queueMorph(null, 0.5);
+        cat2.queueMorph(POSE_STAND, 0.5);
+    }
+    foo();
+    window.setInterval(foo, 7200);
 
     /* 
     cat1.queueMorph(null, 1);

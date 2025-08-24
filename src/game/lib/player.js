@@ -1,5 +1,5 @@
 import { Cat, POSE_STAND, POSE_WALK_1, POSE_WALK_2, STATE_IDLE, STATE_WALKING } from "./cat.js";
-import { ACTION_MOVE_LEFT_PLAYER_1, ACTION_MOVE_RIGHT_PLAYER_1 } from "./game.js";
+import { ACTION_MOVE_LEFT_PLAYER_1, ACTION_MOVE_RIGHT_PLAYER_1,ACTION_MOVE_UP_PLAYER_1, ACTION_MOVE_DOWN_PLAYER_1 } from "./game.js";
 
 export class Player extends Cat {
     constructor(x, y, playerNumber) {
@@ -19,9 +19,21 @@ export class Player extends Cat {
             this.x -= 100 * deltaTime;
             this.state = STATE_WALKING;
             noInput = false;
+            this.invertX = true
         }
         if (this.game.getActionState(ACTION_MOVE_RIGHT_PLAYER_1)) {
             this.x += 100 * deltaTime;
+            this.state = STATE_WALKING;
+            noInput = false;
+            this.invertX = false;
+        }
+        if (this.game.getActionState(ACTION_MOVE_UP_PLAYER_1)) {
+            this.y -= 100 * deltaTime;
+            this.state = STATE_WALKING;
+            noInput = false;
+        }
+        if (this.game.getActionState(ACTION_MOVE_DOWN_PLAYER_1)) {
+            this.y += 100 * deltaTime;
             this.state = STATE_WALKING;
             noInput = false;
         }

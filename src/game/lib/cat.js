@@ -1,7 +1,6 @@
 import { GameObject } from "./gameobject.js";
 import { ctxArc, ctxBeginPath, ctxEllipse, ctxFill, ctxFillStyle, ctxLineTo, ctxLineWidth, ctxMoveTo, ctxStroke, ctxStrokeStyle, toRad } from "./utils.js";
 import { Bone } from "./kinematics.js";
-import { ACTION_MOVE_LEFT_PLAYER_1,ACTION_MOVE_RIGHT_PLAYER_1, ACTION_JUMP_PLAYER_1, ACTION_CROUCH_PLAYER_1 } from "./game.js";
 
 const sizing = 1;
 const headsize = 40;
@@ -192,9 +191,6 @@ export class Cat extends GameObject {
     }
 
     queueMorph(poseName, duration, immediate = false) {
-        if(poseName) {
-            console.log("queueMorph", poseName, duration, immediate);
-        }
         if (immediate) {
             this.clearMorph();
             this.morphTimer = 0
