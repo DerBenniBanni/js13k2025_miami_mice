@@ -73,3 +73,17 @@ Theme announced: Black Cat
 * music created (synthwave)
 
 **devtime:** 3h evening
+
+
+## 2025-08-23
+
+* fake depth by sizing of the characters
+* changed gameplay to beat-em-up
+* renamed to BlackBElt - Paws of Steel
+
+**devtime:** 3h evening
+
+## 2025-08-24
+
+* renamed again: "Miami Mice" (idea from Alkor @ slack)
+* renamed "cast": "Arnold Schwarzenmouser" and "Jean Claws van Damme" (ideas Alkor & Randy @ slack)
