@@ -9,10 +9,10 @@ window.game = null;
 document.addEventListener("DOMContentLoaded", () => {
     game = new Game("gameCanvas");
     
-    game.sfxPlayer.add("gamemusic", musicGame, true);
+    //game.sfxPlayer.add("gamemusic", musicGame, true);
 
     //game.start();
-    game.sfxPlayer.playAudio("gamemusic");
+    //game.sfxPlayer.playAudio("gamemusic");
 
     
     

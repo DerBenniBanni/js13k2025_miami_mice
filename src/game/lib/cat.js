@@ -35,12 +35,12 @@ POSE_STAND_DATA[BONE_LOWER_LEG_LEFT] = 30;
 POSE_STAND_DATA[BONE_UPPER_LEG_RIGHT] = 190;
 POSE_STAND_DATA[BONE_LOWER_LEG_RIGHT] = 20;
 POSE_STAND_DATA[BONE_BODY] = 0;
-POSE_STAND_DATA[BONE_SHOULDER_LEFT] = 80;
+POSE_STAND_DATA[BONE_SHOULDER_LEFT] = 100;
 POSE_STAND_DATA[BONE_ARM_LEFT] = 40;
 POSE_STAND_DATA[BONE_FOREARM_LEFT] = -100;
 POSE_STAND_DATA[BONE_SHOULDER_RIGHT] = -100;
-POSE_STAND_DATA[BONE_ARM_RIGHT] = -30;
-POSE_STAND_DATA[BONE_FOREARM_RIGHT] = -90;
+POSE_STAND_DATA[BONE_ARM_RIGHT] = -50;
+POSE_STAND_DATA[BONE_FOREARM_RIGHT] = -100;
 POSE_STAND_DATA[BONE_NECK] = -10;
 POSE_STAND_DATA[BONE_FACE] = 110;
 POSE_STAND_DATA[BONE_NOSE] = 90;
@@ -65,7 +65,7 @@ POSE_WALK_2_DATA[BONE_LOWER_LEG_RIGHT] = 30;
 
 export const POSE_PUNCH = 4;
 const POSE_PUNCH_DATA = [...POSE_STAND_DATA];
-POSE_PUNCH_DATA[BONE_ARM_LEFT] = 15;
+POSE_PUNCH_DATA[BONE_ARM_LEFT] = -15;
 POSE_PUNCH_DATA[BONE_FOREARM_LEFT] = -10;
 POSE_PUNCH_DATA[BONE_UPPER_LEG_LEFT] = 160;
 POSE_PUNCH_DATA[BONE_LOWER_LEG_LEFT] = 40;
@@ -100,9 +100,22 @@ POSE_BOW_DATA[BONE_ARM_RIGHT] = -130;
 POSE_BOW_DATA[BONE_NECK] = 40;
 POSE_BOW_DATA[BONE_UPPER_LEG_RIGHT] = 170;
 
+export const POSE_BLOCK = 8;
+const POSE_BLOCK_DATA = [...POSE_STAND_DATA];
+POSE_BLOCK_DATA[BONE_ARM_LEFT] = 0;
+POSE_BLOCK_DATA[BONE_FOREARM_LEFT] = -100;
+POSE_BLOCK_DATA[BONE_ARM_RIGHT] = -30;
+POSE_BLOCK_DATA[BONE_FOREARM_RIGHT] = -50;
+POSE_BLOCK_DATA[BONE_UPPER_LEG_LEFT] = 110;
+POSE_BLOCK_DATA[BONE_LOWER_LEG_LEFT] = 70;
+POSE_BLOCK_DATA[BONE_UPPER_LEG_RIGHT] = 180;
+POSE_BLOCK_DATA[BONE_LOWER_LEG_RIGHT] = 20;
+
 export const STATE_IDLE = 1;
 export const STATE_WALKING = 2;
-export const STATE_JUMPING = 3;
+export const STATE_BLOCK = 3;
+export const STATE_PUNCH = 4;
+export const STATE_KICK = 5;
 
 const LINE_ROUND = "round";
 const LINE_BUTT = "butt";
@@ -123,6 +136,7 @@ export class Cat extends GameObject {
         this.state = STATE_IDLE;
         this.subState = 0;
         this.sizing = 1;
+        this.lastPunch = 0;
         this.createBones();
         this.updateSizing()
     }
@@ -176,6 +190,11 @@ export class Cat extends GameObject {
         this.morphFrom = this.bones.map(bone => bone.angle);
         if(poseName) {
             this.morphTo = this.getPoseDefinition(poseName).map(angle => toRad(angle));
+            if(poseName === POSE_PUNCH) {
+                this.lastPunch = 1;
+            } else if(poseName === POSE_PUNCH2) {
+                this.lastPunch = 2;
+            }
         } else {
             // wiggle the tail
             this.morphTo = this.bones.map(bone => bone.angle);
@@ -219,6 +238,8 @@ export class Cat extends GameObject {
                 return POSE_WALK_1_DATA;
             case POSE_WALK_2:
                 return POSE_WALK_2_DATA;
+            case POSE_BLOCK:
+                return POSE_BLOCK_DATA;
             default:
                 return POSE_STAND_DATA;
         }

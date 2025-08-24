@@ -77,9 +77,12 @@ Theme announced: Black Cat
 
 ## 2025-08-23
 
+* buildprocess added
+* music playback added
+* titlescreen added
 * fake depth by sizing of the characters
 * changed gameplay to beat-em-up
-* renamed to BlackBElt - Paws of Steel
+* renamed to Black Belt - Paws of Steel
 
 **devtime:** 3h evening
 
@@ -87,3 +90,6 @@ Theme announced: Black Cat
 
 * renamed again: "Miami Mice" (idea from Alkor @ slack)
 * renamed "cast": "Arnold Schwarzenmouser" and "Jean Claws van Damme" (ideas Alkor & Randy @ slack)
+* added keycontrols for block, punch and kick
+
+**devtime:** 1h morning, 1.5h evening
