@@ -1,10 +1,11 @@
 import { ctxFillStyle } from "./utils.js";
 
 export class GameObject {
-    constructor(x, y) {
+    constructor(x, y, type = "gameObject") {
         this.x = x;
         this.y = y;
         this.game = null;
+        this.type = type;
     }
 
     update(delta) {

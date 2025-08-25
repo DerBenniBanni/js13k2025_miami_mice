@@ -1,5 +1,7 @@
-import { Cat, POSE_BLOCK, POSE_BOW, POSE_KICK, POSE_PUNCH, POSE_PUNCH2, POSE_STAND } from "./cat.js";
+import { Cat } from "./cat.js";
+import { POSE_STAND } from "./kinematics.js";
 import { Player } from "./player.js";
+import { Rat } from "./rat.js";
 import SFXPlayer from "./soundbox/sfxplayer.js";
 
 export const ACTION_MOVE_LEFT_PLAYER_1 = 0;
@@ -66,9 +68,11 @@ export class Game {
         let cat2 = this.addGameObject(new Cat(1200, 900));
         cat2.invertX = true;
         cat2.giColors = ['#d00', '#600'];
-        this.gameObjects.push(cat1);
-        this.gameObjects.push(cat2);
         cat2.pose(POSE_STAND);
+        let rat = this.addGameObject(new Rat(700, 900));
+        rat.invertX = true;
+        let rat2 = this.addGameObject(new Rat(1000, 700));
+        rat2.invertX = true;
 
 /*
         let foo = ()=> {

@@ -20,7 +20,7 @@ Theme announced: Black Cat
 * refactored posing to use definitions (only an angle for each bone)
 * added morphing between poses
 
-![cat stickmen](img/002_stick_morph_poses.gif)
+![morph poses](img/002_stick_morph_poses.gif)
 
 **devtime:** 1h dev during commute, 0.75h evening dev
 
@@ -28,11 +28,11 @@ Theme announced: Black Cat
 
 * added a suit 
 
-![cat stickmen](img/003_pawrate_suit.gif)
+![suit](img/003_pawrate_suit.gif)
 
 * and a tail
 
-![cat stickmen](img/004_now_with_tail.gif)
+![tails](img/004_now_with_tail.gif)
 
 **devtime:** 1.5h evening dev
 
@@ -41,7 +41,7 @@ Theme announced: Black Cat
 
 * added a background
 
-![cat stickmen](img/005_background.gif)
+![background](img/005_background.gif)
 
 **devtime:** 1.5h evening dev
 
@@ -50,7 +50,7 @@ Theme announced: Black Cat
 * added basic shadow (and prepared the cat for jumping)
 * fixed rendering to be able to mirror the fighter
 
-![cat stickmen](img/006_mirrored_fighter.gif)
+![mirrored fighter](img/006_mirrored_fighter.gif)
 
 **devtime:** 1.5h evening dev
 
@@ -93,3 +93,12 @@ Theme announced: Black Cat
 * added keycontrols for block, punch and kick
 
 **devtime:** 1h morning, 1.5h evening
+
+## 2025-08-25
+
+* refactored cats implementing superclass KinematicObject
+* added rats!
+
+![rats](img/008_rats.png)
+
+**devtime:** 2h evening

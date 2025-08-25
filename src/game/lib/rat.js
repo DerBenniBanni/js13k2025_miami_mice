@@ -40,10 +40,10 @@ POSE_STAND_DATA[BONE_SHOULDER_RIGHT] = -100;
 POSE_STAND_DATA[BONE_ARM_RIGHT] = -50;
 POSE_STAND_DATA[BONE_FOREARM_RIGHT] = -100;
 POSE_STAND_DATA[BONE_NECK] = -10;
-POSE_STAND_DATA[BONE_FACE] = 110;
+POSE_STAND_DATA[BONE_FACE] = 30;
 POSE_STAND_DATA[BONE_NOSE] = 90;
 POSE_STAND_DATA[BONE_EAR1] = 0;
-POSE_STAND_DATA[BONE_EAR2] = -20;
+POSE_STAND_DATA[BONE_EAR2] = -40;
 POSE_STAND_DATA[BONE_EYE1] = 65;
 POSE_STAND_DATA[BONE_EYE2] = 62;
 
@@ -105,10 +105,12 @@ POSE_BLOCK_DATA[BONE_LOWER_LEG_RIGHT] = 20;
 const LINE_ROUND = "round";
 const LINE_BUTT = "butt";
 
-export class Cat extends KinematicObject {
-    constructor(x,y,type = "cat") {
+const FURCOLOR = "#462626ff";
+
+export class Rat extends KinematicObject {
+    constructor(x,y,type = "rat") {
         super(x,y,type);
-        this.giColors = ['#fff', '#aaa'];
+        this.giColors = ['#000', '#666'];
 
         this.poseDefs[POSE_STAND] = POSE_STAND_DATA;
         this.poseDefs[POSE_WALK_1] = POSE_WALK_1_DATA;
@@ -136,19 +138,19 @@ export class Cat extends KinematicObject {
         this.addBone(BONE_UPPER_LEG_RIGHT, 100, toRad(100), BONE_ROOT);
         this.addBone(BONE_LOWER_LEG_RIGHT, 80, toRad(20), BONE_UPPER_LEG_RIGHT);
         this.addBone(BONE_BODY, 100, toRad(-90), BONE_ROOT);
-        this.addBone(BONE_NECK, 50, toRad(-10), BONE_BODY);
+        this.addBone(BONE_NECK, headsize, toRad(-10), BONE_BODY);
         this.addBone(BONE_SHOULDER_LEFT, 10, toRad(80), BONE_BODY);
         this.addBone(BONE_ARM_LEFT, 80, toRad(40), BONE_SHOULDER_LEFT);
         this.addBone(BONE_FOREARM_LEFT, 80, toRad(-100), BONE_ARM_LEFT);
         this.addBone(BONE_SHOULDER_RIGHT, 10, toRad(-100), BONE_BODY);
         this.addBone(BONE_ARM_RIGHT, 80, toRad(-30), BONE_SHOULDER_RIGHT);
         this.addBone(BONE_FOREARM_RIGHT, 80, toRad(-90), BONE_ARM_RIGHT);
-        this.addBone(BONE_FACE, headsize*this.sizing*0.55, toRad(0), BONE_NECK);
-        this.addBone(BONE_NOSE, headsize*this.sizing*1.15, toRad(0), BONE_NECK);
-        this.addBone(BONE_EAR1, headsize*this.sizing*1.8, toRad(0), BONE_NECK);
-        this.addBone(BONE_EAR2, headsize*this.sizing*1.8, toRad(-20), BONE_NECK);
-        this.addBone(BONE_EYE1, headsize*this.sizing*0.95, toRad(70), BONE_NECK);
-        this.addBone(BONE_EYE2, headsize*this.sizing*0.75, toRad(65), BONE_NECK);
+        this.addBone(BONE_FACE, headsize*0.55, toRad(0), BONE_NECK);
+        this.addBone(BONE_NOSE, headsize*2.5, toRad(0), BONE_NECK);
+        this.addBone(BONE_EAR1, headsize*1.2, toRad(0), BONE_NECK);
+        this.addBone(BONE_EAR2, headsize*1.2, toRad(-20), BONE_NECK);
+        this.addBone(BONE_EYE1, headsize*0.95, toRad(70), BONE_NECK);
+        this.addBone(BONE_EYE2, headsize*0.75, toRad(65), BONE_NECK);
 
         this.addBone(BONE_TAIL1, 60, toRad(-90), BONE_ROOT);
         this.addBone(BONE_TAIL2, 60, toRad(45), BONE_TAIL1);
@@ -159,7 +161,7 @@ export class Cat extends KinematicObject {
     }
 
     renderCat(bone, ctx, renderChildren = true) {
-        ctxStrokeStyle(ctx, "black");
+        ctxStrokeStyle(ctx, FURCOLOR);
         ctxLineWidth(ctx, 40 * this.sizing);
         ctx.lineCap = "round";
         ctxBeginPath(ctx);
@@ -214,7 +216,7 @@ export class Cat extends KinematicObject {
         this.renderSuit(this.bones[BONE_UPPER_LEG_LEFT], ctx);
 
         //tail
-        ctxStrokeStyle(ctx, "#000");
+        ctxStrokeStyle(ctx, FURCOLOR);
         ctxLineWidth(ctx, 15 * this.sizing);
         ctx.lineCap = "round";
         ctxBeginPath(ctx);
@@ -235,39 +237,43 @@ export class Cat extends KinematicObject {
         this.renderSuit(this.bones[BONE_SHOULDER_RIGHT], ctx);
         
        
+        // ear1
+        ctxFillStyle(ctx, FURCOLOR);
+        ctxBeginPath(ctx);
+        ctxArc(ctx, this.bones[BONE_EAR1].endX, this.bones[BONE_EAR1].endY, headsize * this.sizing*0.6, 0, 2 * Math.PI);
+        ctxFill(ctx);
 
+        // ear2
+        ctxFillStyle(ctx, FURCOLOR);
+        ctxBeginPath(ctx);
+        ctxArc(ctx, this.bones[BONE_EAR2].endX, this.bones[BONE_EAR2].endY, headsize * this.sizing*0.6, 0, 2 * Math.PI);
+        ctxFill(ctx);
+        ctxFillStyle(ctx, "#844");
+        ctxBeginPath(ctx);
+        ctxArc(ctx, this.bones[BONE_EAR2].endX, this.bones[BONE_EAR2].endY, headsize * this.sizing*0.5, 0, 2 * Math.PI);
+        ctxFill(ctx);
         // Head
-        ctxFillStyle(ctx, "#000");
+        ctxFillStyle(ctx, FURCOLOR);
         let neck = this.bones[BONE_NECK];
         ctxBeginPath(ctx);
         ctxArc(ctx, neck.endX, neck.endY, headsize * this.sizing, 0, 2 * Math.PI);
         ctxFill(ctx);
         // Face
-        ctxFillStyle(ctx, "#000");
+        ctxFillStyle(ctx, FURCOLOR);
         ctxBeginPath(ctx);
-        ctxArc(ctx, this.bones[BONE_FACE].endX, this.bones[BONE_FACE].endY, headsize * 0.7 * this.sizing, 0, 2 * Math.PI);
+        ctxMoveTo(ctx, this.bones[BONE_FACE].endX, this.bones[BONE_FACE].endY);
+        ctxLineTo(ctx, this.bones[BONE_NOSE].endX, this.bones[BONE_NOSE].endY);
+        ctxLineTo(ctx, this.bones[BONE_NECK].x, this.bones[BONE_NECK].y);
         ctxFill(ctx);
         // Nose
         ctxFillStyle(ctx, "#844");
         ctxBeginPath(ctx);
         ctxArc(ctx, this.bones[BONE_NOSE].endX, this.bones[BONE_NOSE].endY, 5 * this.sizing, 0, 2 * Math.PI);
         ctxFill(ctx);
-        // ear1
-        [BONE_EAR1, BONE_EAR2].forEach((boneId) => {
-            ctxFillStyle(ctx, "#000");
-            ctxBeginPath(ctx);
-            ctxLineWidth(ctx, 1);
-            ctxMoveTo(ctx, neck.endX, neck.endY);
-            ctxLineTo(ctx, this.bones[boneId].endX, this.bones[boneId].endY);
-            let angle = this.bones[boneId].worldAngle - toRad(90 * (this.invertX ? -1 : 1));
-            let x = neck.endX + Math.cos(angle) * headsize * 0.8 * this.sizing;
-            let y = neck.endY + Math.sin(angle) * headsize * 0.8 * this.sizing;
-            ctxLineTo(ctx, x, y);
-            ctxFill(ctx);
-        });
+        //eyes
         [BONE_EYE1, BONE_EYE2].forEach((boneId) => {
             ctxBeginPath(ctx);
-            ctxFillStyle(ctx, "#ff0");
+            ctxFillStyle(ctx, "#f00");
             ctxArc(ctx, this.bones[boneId].endX, this.bones[boneId].endY, 3 * this.sizing, 0, 2 * Math.PI);
             ctxFill(ctx);
         });
