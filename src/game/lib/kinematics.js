@@ -1,19 +1,58 @@
 import { GameObject } from "./gameobject.js";
-import { ctxBeginPath, ctxEllipse, ctxFill, ctxFillStyle, toRad } from "./utils.js";
+import { ctxBeginPath, ctxEllipse, ctxFill, ctxFillStyle, ctxRect, ctxStroke, ctxStrokeStyle, toRad } from "./utils.js";
 
 export const POSE_STAND = 1;
 export const POSE_WALK_1 = 2;
 export const POSE_WALK_2 = 3;
 export const POSE_PUNCH = 4;
 export const POSE_PUNCH2 = 5;
-export const POSE_KICK = 6;
-export const POSE_BOW = 7;
-export const POSE_BLOCK = 8;
+export const POSE_KICK_A = 6;
+export const POSE_KICK_B = 7;
+export const POSE_BOW = 8;
+export const POSE_BLOCK = 9;
+
 export const STATE_IDLE = 1;
 export const STATE_WALKING = 2;
 export const STATE_BLOCK = 3;
 export const STATE_PUNCH = 4;
 export const STATE_KICK = 5;
+
+export const HITBOX_TYPE_UPPER = 1;
+export const HITBOX_TYPE_LOWER = 2;
+export const HITBOX_TYPE_ATTACK = 3;
+
+
+export class Hitbox {
+    constructor(x, y, width, height, type) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.bone = null;
+        this.type = type;
+    }
+
+    getRect() {
+        let w = this.width * this.bone.kinematicObject.sizing;
+        let h = this.height * this.bone.kinematicObject.sizing;
+        return {
+            x: this.x - w / 2,
+            y: this.y - h / 2,
+            w: w,
+            h: h
+        };
+    }
+
+    render(ctx) {
+        let rect = this.getRect();
+        let color="#ff02";
+        if(this.type == HITBOX_TYPE_ATTACK) color="#f002";
+        ctxFillStyle(ctx, color);
+        ctxBeginPath(ctx);
+        ctxRect(ctx, rect.x, rect.y, rect.w, rect.h);
+        ctxFill(ctx);
+    }
+}
 
 export class Bone {
     constructor(length, angle, kinematicObject) {
@@ -27,7 +66,23 @@ export class Bone {
         this.endY = 0;
         this.children = [];
         this.parent = null;
+        this.hitboxStart = null;
+        this.hitboxEnd = null;
         this.calculateEndPosition(1);
+    }
+
+    addHitboxStart(hitbox) {
+        hitbox.bone = this;
+        this.kinematicObject.hitboxes.push(hitbox);
+        this.hitboxStart = hitbox;
+        return this;
+    }
+
+    addHitboxEnd(hitbox) {
+        hitbox.bone = this;
+        this.kinematicObject.hitboxes.push(hitbox);
+        this.hitboxEnd = hitbox;
+        return this;
     }
 
     addChild(childBone) {
@@ -36,7 +91,11 @@ export class Bone {
     }
 
     calculateEndPosition(sizing, parentAngle = 0) {
-        
+        // Update starthitbox position
+        if(this.hitboxStart) {
+            this.hitboxStart.x = this.x;
+            this.hitboxStart.y = this.y;
+        }
         this.worldAngle = this.angle + parentAngle;
         if (this.kinematicObject && this.kinematicObject.invertX) {
             // Update bone position based on angle and length
@@ -46,6 +105,11 @@ export class Bone {
             this.endX = this.x + Math.cos(this.worldAngle) * this.length * sizing;
         }
         this.endY = this.y + Math.sin(this.worldAngle) * this.length * sizing;
+        // Update end-hitbox position
+        if(this.hitboxEnd) {
+            this.hitboxEnd.x = this.endX;
+            this.hitboxEnd.y = this.endY;
+        }
         // Update children's positions
         for (const child of this.children) {
             child.x = this.endX;
@@ -67,6 +131,7 @@ export class Bone {
             child.render(ctx);
         }
     }
+
 }
 
 
@@ -88,13 +153,17 @@ export class KinematicObject extends GameObject {
         this.lastPunch = 0;
         this.poseDefs = [[]];
         this.tailWiggle = [];
-        this.walkSpeed = 100; // pixels per second)
+        this.walkSpeed = 100; // pixels per second
+        this.hitboxes = [];
     }
+
+
 
     addBone(id, length, angle, parentId = BONE_ROOT) {
         let bone = new Bone(length * this.sizing, angle, this);
         this.bones[id] = bone;
         this.bones[parentId].addChild(bone);
+        return bone;
     }
 
     updateSizing() {
@@ -162,6 +231,9 @@ export class KinematicObject extends GameObject {
             this.kiUpdate(delta);
         }
         if(this.morphTimer > 0) {
+            if(this.morphTimer < delta) {
+                delta = this.morphTimer;
+            }
             for(let i = 0; i < this.morphFrom.length; i++) {
                 let step = ((this.morphTo[i]+100)-(this.morphFrom[i]+100)) / (this.morphDuration / delta);
                 this.bones[i].angle += step;
@@ -195,6 +267,12 @@ export class KinematicObject extends GameObject {
             ctxFill(ctx);
         });
         ctx.restore();
+    }
+
+    renderHitboxes(ctx) {
+        this.hitboxes.forEach(hitbox => {
+            hitbox.render(ctx);
+        });
     }
 }
 

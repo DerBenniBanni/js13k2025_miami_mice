@@ -81,7 +81,8 @@ export class Game {
             cat2.queueMorph(null, 1);
             cat2.queueMorph(POSE_STAND, 0.5);
             cat2.queueMorph(null, 1);
-            cat2.queueMorph(POSE_KICK, 0.2);
+            cat2.queueMorph(POSE_KICK_A, 0.2);
+            cat2.queueMorph(POSE_KICK_B, 0.2);
             cat2.queueMorph(null, 0.5);
             cat2.queueMorph(POSE_PUNCH2, 0.3);
             cat2.queueMorph(null, 0.2);

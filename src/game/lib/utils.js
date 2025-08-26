@@ -32,6 +32,9 @@ export const ctxStroke = (ctx) => {
 export const ctxLineWidth = (ctx, width) => {
   ctx.lineWidth = width;
 };
+export const ctxRect = (ctx, x, y, width, height) => {
+  ctx.rect(x, y, width, height);
+};
 export const ctxBezierCurveTo = (ctx, cp1x, cp1y, cp2x, cp2y, x, y) => {
   ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y);
 };

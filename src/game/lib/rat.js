@@ -1,5 +1,5 @@
 import { ctxArc, ctxBeginPath, ctxBezierCurveTo, ctxEllipse, ctxFill, ctxFillStyle, ctxLineTo, ctxLineWidth, ctxMoveTo, ctxStroke, ctxStrokeStyle, toRad } from "./utils.js";
-import { Bone, KinematicObject, POSE_BLOCK, POSE_BOW, POSE_KICK, POSE_PUNCH, POSE_PUNCH2, POSE_STAND, POSE_WALK_1, POSE_WALK_2, STATE_IDLE, STATE_WALKING } from "./kinematics.js";
+import { Bone, Hitbox, HITBOX_TYPE_ATTACK, HITBOX_TYPE_LOWER, HITBOX_TYPE_UPPER, KinematicObject, POSE_BLOCK, POSE_BOW, POSE_KICK_A, POSE_KICK_B, POSE_PUNCH, POSE_PUNCH2, POSE_STAND, POSE_WALK_1, POSE_WALK_2, STATE_IDLE, STATE_WALKING } from "./kinematics.js";
 
 const headsize = 40;
 
@@ -75,15 +75,25 @@ POSE_PUNCH2_DATA[BONE_UPPER_LEG_LEFT] = 160;
 POSE_PUNCH2_DATA[BONE_LOWER_LEG_LEFT] = 40;
 POSE_PUNCH2_DATA[BONE_UPPER_LEG_RIGHT] = 200;
 
-const POSE_KICK_DATA = [...POSE_STAND_DATA];
-POSE_KICK_DATA[BONE_UPPER_LEG_LEFT] = 60;
-POSE_KICK_DATA[BONE_LOWER_LEG_LEFT] = 10;
-POSE_KICK_DATA[BONE_BODY] = -40;
-POSE_KICK_DATA[BONE_UPPER_LEG_RIGHT] = 185;
-POSE_KICK_DATA[BONE_ARM_LEFT] = 80;
-POSE_KICK_DATA[BONE_FOREARM_LEFT] = -150;
-POSE_KICK_DATA[BONE_ARM_RIGHT] = -0;
-POSE_KICK_DATA[BONE_FOREARM_RIGHT] = -130;
+const POSE_KICK_A_DATA = [...POSE_STAND_DATA];
+POSE_KICK_A_DATA[BONE_UPPER_LEG_LEFT] = 40;
+POSE_KICK_A_DATA[BONE_LOWER_LEG_LEFT] = 90;
+POSE_KICK_A_DATA[BONE_BODY] = -40;
+POSE_KICK_A_DATA[BONE_UPPER_LEG_RIGHT] = 185;
+POSE_KICK_A_DATA[BONE_ARM_LEFT] = 80;
+POSE_KICK_A_DATA[BONE_FOREARM_LEFT] = -150;
+POSE_KICK_A_DATA[BONE_ARM_RIGHT] = -0;
+POSE_KICK_A_DATA[BONE_FOREARM_RIGHT] = -130;
+
+const POSE_KICK_B_DATA = [...POSE_STAND_DATA];
+POSE_KICK_B_DATA[BONE_UPPER_LEG_LEFT] = 90;
+POSE_KICK_B_DATA[BONE_LOWER_LEG_LEFT] = 10;
+POSE_KICK_B_DATA[BONE_BODY] = -40;
+POSE_KICK_B_DATA[BONE_UPPER_LEG_RIGHT] = 185;
+POSE_KICK_B_DATA[BONE_ARM_LEFT] = 80;
+POSE_KICK_B_DATA[BONE_FOREARM_LEFT] = -150;
+POSE_KICK_B_DATA[BONE_ARM_RIGHT] = -0;
+POSE_KICK_B_DATA[BONE_FOREARM_RIGHT] = -130;
 
 const POSE_BOW_DATA = [...POSE_STAND_DATA];
 POSE_BOW_DATA[BONE_BODY] = 60;
@@ -117,7 +127,8 @@ export class Rat extends KinematicObject {
         this.poseDefs[POSE_WALK_2] = POSE_WALK_2_DATA;
         this.poseDefs[POSE_PUNCH] = POSE_PUNCH_DATA;
         this.poseDefs[POSE_PUNCH2] = POSE_PUNCH2_DATA;
-        this.poseDefs[POSE_KICK] = POSE_KICK_DATA;
+        this.poseDefs[POSE_KICK_A] = POSE_KICK_A_DATA;
+        this.poseDefs[POSE_KICK_B] = POSE_KICK_B_DATA;
         this.poseDefs[POSE_BOW] = POSE_BOW_DATA;
         this.poseDefs[POSE_BLOCK] = POSE_BLOCK_DATA;
 
@@ -134,17 +145,22 @@ export class Rat extends KinematicObject {
         this.rootBone = new Bone(155, -90, this);
         this.bones[BONE_ROOT] = this.rootBone;
         this.addBone(BONE_UPPER_LEG_LEFT, 90, toRad(60), BONE_ROOT);
-        this.addBone(BONE_LOWER_LEG_LEFT, 60, toRad(30), BONE_UPPER_LEG_LEFT);
+        this.addBone(BONE_LOWER_LEG_LEFT, 60, toRad(30), BONE_UPPER_LEG_LEFT)
+            .addHitboxEnd(new Hitbox(0, 0, 40, 40, HITBOX_TYPE_ATTACK));
         this.addBone(BONE_UPPER_LEG_RIGHT, 90, toRad(100), BONE_ROOT);
         this.addBone(BONE_LOWER_LEG_RIGHT, 60, toRad(20), BONE_UPPER_LEG_RIGHT);
-        this.addBone(BONE_BODY, 80, toRad(-100), BONE_ROOT);
-        this.addBone(BONE_NECK, headsize, toRad(-10), BONE_BODY);
+        this.addBone(BONE_BODY, 80, toRad(-100), BONE_ROOT)
+            .addHitboxStart(new Hitbox(0, 0, 100, 100, HITBOX_TYPE_LOWER));
+        this.addBone(BONE_NECK, headsize, toRad(-10), BONE_BODY)
+            .addHitboxEnd(new Hitbox(0, 0, 100, 100, HITBOX_TYPE_UPPER));
         this.addBone(BONE_SHOULDER_LEFT, 10, toRad(80), BONE_BODY);
         this.addBone(BONE_ARM_LEFT, 80, toRad(40), BONE_SHOULDER_LEFT);
-        this.addBone(BONE_FOREARM_LEFT, 80, toRad(-100), BONE_ARM_LEFT);
+        this.addBone(BONE_FOREARM_LEFT, 80, toRad(-100), BONE_ARM_LEFT)
+            .addHitboxEnd(new Hitbox(0, 0, 40, 40, HITBOX_TYPE_ATTACK));
         this.addBone(BONE_SHOULDER_RIGHT, 10, toRad(-100), BONE_BODY);
         this.addBone(BONE_ARM_RIGHT, 80, toRad(-30), BONE_SHOULDER_RIGHT);
-        this.addBone(BONE_FOREARM_RIGHT, 80, toRad(-90), BONE_ARM_RIGHT);
+        this.addBone(BONE_FOREARM_RIGHT, 80, toRad(-90), BONE_ARM_RIGHT)
+            .addHitboxEnd(new Hitbox(0, 0, 40, 40, HITBOX_TYPE_ATTACK));
         this.addBone(BONE_FACE, headsize*0.55, toRad(0), BONE_NECK);
         this.addBone(BONE_NOSE, headsize*2.5, toRad(0), BONE_NECK);
         this.addBone(BONE_EAR1, headsize*1.2, toRad(0), BONE_NECK);
@@ -281,6 +297,9 @@ export class Rat extends KinematicObject {
             ctxArc(ctx, this.bones[boneId].endX, this.bones[boneId].endY, 3 * this.sizing, 0, 2 * Math.PI);
             ctxFill(ctx);
         });
+
+        
+        this.renderHitboxes(ctx);
         
         ctx.restore();
     }
