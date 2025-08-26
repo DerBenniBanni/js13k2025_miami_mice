@@ -102,3 +102,10 @@ Theme announced: Black Cat
 ![rats](img/008_rats.png)
 
 **devtime:** 2h evening
+
+## 2025-08-26
+
+* added hitboxes
+* made the postures of the rats more evil/agressive
+
+**devtime:** 1.5h evening
