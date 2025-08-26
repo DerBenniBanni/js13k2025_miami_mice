@@ -69,7 +69,7 @@ export class Game {
         cat2.invertX = true;
         cat2.giColors = ['#d00', '#600'];
         cat2.pose(POSE_STAND);
-        let rat = this.addGameObject(new Rat(700, 900));
+        let rat = this.addGameObject(new Rat(710, 900));
         rat.invertX = true;
         let rat2 = this.addGameObject(new Rat(1000, 700));
         rat2.invertX = true;

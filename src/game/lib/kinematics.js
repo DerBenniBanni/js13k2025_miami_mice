@@ -88,6 +88,7 @@ export class KinematicObject extends GameObject {
         this.lastPunch = 0;
         this.poseDefs = [[]];
         this.tailWiggle = [];
+        this.walkSpeed = 100; // pixels per second)
     }
 
     addBone(id, length, angle, parentId = BONE_ROOT) {
@@ -157,6 +158,9 @@ export class KinematicObject extends GameObject {
     }
 
     update(delta) {
+        if(this.kiUpdate) {
+            this.kiUpdate(delta);
+        }
         if(this.morphTimer > 0) {
             for(let i = 0; i < this.morphFrom.length; i++) {
                 let step = ((this.morphTo[i]+100)-(this.morphFrom[i]+100)) / (this.morphDuration / delta);
@@ -174,7 +178,7 @@ export class KinematicObject extends GameObject {
         if(this.morphQueue.length === 0) {
             if(this.state === STATE_WALKING) {
                 let poseName = this.lastMorph.poseName == POSE_WALK_2 ? POSE_WALK_1 : POSE_WALK_2;
-                this.queueMorph(poseName, 1);
+                this.queueMorph(poseName, 100 / this.walkSpeed);
             } else {
                 this.queueMorph(null, 1);
             }

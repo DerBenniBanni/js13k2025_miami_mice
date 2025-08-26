@@ -7,6 +7,7 @@ export class Player extends Cat {
         super(x,y);
         this.playerNumber = playerNumber;
         this.score = 0;
+        this.walkSpeed = 250;
     }
 
     incrementScore() {
@@ -43,25 +44,25 @@ export class Player extends Cat {
             moveAllowed = false;
         }
         if (moveAllowed && this.game.getActionState(ACTION_MOVE_LEFT_PLAYER_1)) {
-            this.x -= 100 * deltaTime;
+            this.x -= this.walkSpeed * deltaTime;
             this.state = STATE_WALKING;
             noInput = false;
             this.invertX = true
         }
         if (moveAllowed && this.game.getActionState(ACTION_MOVE_RIGHT_PLAYER_1)) {
-            this.x += 100 * deltaTime;
+            this.x += this.walkSpeed * deltaTime;
             this.state = STATE_WALKING;
             noInput = false;
             this.invertX = false;
         }
         if (moveAllowed && this.game.getActionState(ACTION_MOVE_UP_PLAYER_1)) {
-            this.y -= 100 * deltaTime;
+            this.y -= this.walkSpeed*0.8 * deltaTime;
             this.updateSizing();
             this.state = STATE_WALKING;
             noInput = false;
         }
         if (moveAllowed && this.game.getActionState(ACTION_MOVE_DOWN_PLAYER_1)) {
-            this.y += 100 * deltaTime;
+            this.y += this.walkSpeed*0.8 * deltaTime;
             this.updateSizing();
             this.state = STATE_WALKING;
             noInput = false;
@@ -74,7 +75,7 @@ export class Player extends Cat {
             }
         } else {
             if(this.state === STATE_WALKING && previousState !== STATE_WALKING) {
-                this.queueMorph(POSE_WALK_2, 1, true);
+                this.queueMorph(POSE_WALK_2, 100 / this.walkSpeed, true);
             }
         }
         

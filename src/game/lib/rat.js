@@ -32,14 +32,14 @@ POSE_STAND_DATA[BONE_UPPER_LEG_LEFT] = 150;
 POSE_STAND_DATA[BONE_LOWER_LEG_LEFT] = 30;
 POSE_STAND_DATA[BONE_UPPER_LEG_RIGHT] = 190;
 POSE_STAND_DATA[BONE_LOWER_LEG_RIGHT] = 20;
-POSE_STAND_DATA[BONE_BODY] = 0;
+POSE_STAND_DATA[BONE_BODY] = 10;
 POSE_STAND_DATA[BONE_SHOULDER_LEFT] = 100;
 POSE_STAND_DATA[BONE_ARM_LEFT] = 40;
 POSE_STAND_DATA[BONE_FOREARM_LEFT] = -100;
 POSE_STAND_DATA[BONE_SHOULDER_RIGHT] = -100;
 POSE_STAND_DATA[BONE_ARM_RIGHT] = -50;
 POSE_STAND_DATA[BONE_FOREARM_RIGHT] = -100;
-POSE_STAND_DATA[BONE_NECK] = -10;
+POSE_STAND_DATA[BONE_NECK] = 8;
 POSE_STAND_DATA[BONE_FACE] = 30;
 POSE_STAND_DATA[BONE_NOSE] = 90;
 POSE_STAND_DATA[BONE_EAR1] = 0;
@@ -131,13 +131,13 @@ export class Rat extends KinematicObject {
     }
 
     createBones() {
-        this.rootBone = new Bone(185, -90, this);
+        this.rootBone = new Bone(155, -90, this);
         this.bones[BONE_ROOT] = this.rootBone;
-        this.addBone(BONE_UPPER_LEG_LEFT, 100, toRad(60), BONE_ROOT);
-        this.addBone(BONE_LOWER_LEG_LEFT, 80, toRad(30), BONE_UPPER_LEG_LEFT);
-        this.addBone(BONE_UPPER_LEG_RIGHT, 100, toRad(100), BONE_ROOT);
-        this.addBone(BONE_LOWER_LEG_RIGHT, 80, toRad(20), BONE_UPPER_LEG_RIGHT);
-        this.addBone(BONE_BODY, 100, toRad(-90), BONE_ROOT);
+        this.addBone(BONE_UPPER_LEG_LEFT, 90, toRad(60), BONE_ROOT);
+        this.addBone(BONE_LOWER_LEG_LEFT, 60, toRad(30), BONE_UPPER_LEG_LEFT);
+        this.addBone(BONE_UPPER_LEG_RIGHT, 90, toRad(100), BONE_ROOT);
+        this.addBone(BONE_LOWER_LEG_RIGHT, 60, toRad(20), BONE_UPPER_LEG_RIGHT);
+        this.addBone(BONE_BODY, 80, toRad(-100), BONE_ROOT);
         this.addBone(BONE_NECK, headsize, toRad(-10), BONE_BODY);
         this.addBone(BONE_SHOULDER_LEFT, 10, toRad(80), BONE_BODY);
         this.addBone(BONE_ARM_LEFT, 80, toRad(40), BONE_SHOULDER_LEFT);
@@ -160,7 +160,11 @@ export class Rat extends KinematicObject {
         this.updateAngles();
     }
 
-    renderCat(bone, ctx, renderChildren = true) {
+    kiUpdate(delta) {
+        //this.x -= this.walkSpeed * delta;
+    }
+
+    renderRat(bone, ctx, renderChildren = true) {
         ctxStrokeStyle(ctx, FURCOLOR);
         ctxLineWidth(ctx, 40 * this.sizing);
         ctx.lineCap = "round";
@@ -171,7 +175,7 @@ export class Rat extends KinematicObject {
         // Render children
         if(renderChildren) {
             for (const child of bone.children) {
-                this.renderCat(child, ctx, true);
+                this.renderRat(child, ctx, true);
             }
         }
     }
@@ -209,10 +213,10 @@ export class Rat extends KinematicObject {
         ctx.save();
         ctx.translate(this.x, this.y);
         this.renderShadow(ctx);
-        this.renderCat(this.bones[BONE_SHOULDER_LEFT], ctx);
+        this.renderRat(this.bones[BONE_SHOULDER_LEFT], ctx);
         this.renderSuit(this.bones[BONE_SHOULDER_LEFT], ctx);
 
-        this.renderCat(this.bones[BONE_UPPER_LEG_LEFT], ctx);
+        this.renderRat(this.bones[BONE_UPPER_LEG_LEFT], ctx);
         this.renderSuit(this.bones[BONE_UPPER_LEG_LEFT], ctx);
 
         //tail
@@ -228,12 +232,12 @@ export class Rat extends KinematicObject {
         );
         ctxStroke(ctx);
 
-        this.renderSuit(this.bones[BONE_BODY], ctx, false, 1.4);
+        this.renderSuit(this.bones[BONE_BODY], ctx, false, 1.8);
         
-        this.renderCat(this.bones[BONE_UPPER_LEG_RIGHT], ctx);
+        this.renderRat(this.bones[BONE_UPPER_LEG_RIGHT], ctx);
         this.renderSuit(this.bones[BONE_UPPER_LEG_RIGHT], ctx);
 
-        this.renderCat(this.bones[BONE_SHOULDER_RIGHT], ctx);
+        this.renderRat(this.bones[BONE_SHOULDER_RIGHT], ctx);
         this.renderSuit(this.bones[BONE_SHOULDER_RIGHT], ctx);
         
        
