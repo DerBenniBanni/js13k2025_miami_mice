@@ -109,3 +109,11 @@ Theme announced: Black Cat
 * made the postures of the rats more evil/agressive
 
 **devtime:** 1.5h evening
+
+## 2025-08-27
+
+* added bone-animations for hits (configureable for each hitbox)
+
+![hit anim](img/010_hit_animations.gif)
+
+**devtime:** 0.5h workcommute, 1h evening

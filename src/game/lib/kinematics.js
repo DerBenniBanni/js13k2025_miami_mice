@@ -11,6 +11,8 @@ export const POSE_KICK_B = 7;
 export const POSE_BOW = 8;
 export const POSE_BLOCK = 9;
 export const POSE_CHECK_ATTACK = 10;
+export const POSE_HIT_HEAD = 11;
+export const POSE_HIT_BODY = 12;
 
 export const STATE_IDLE = 1;
 export const STATE_WALKING = 2;
@@ -24,13 +26,14 @@ export const HITBOX_TYPE_ATTACK = 3;
 
 
 export class Hitbox {
-    constructor(x, y, width, height, type) {
+    constructor(x, y, width, height, type, poseId = null) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
         this.bone = null;
         this.type = type;
+        this.poseId = poseId;
     }
 
     getRect() {
@@ -298,7 +301,11 @@ export class KinematicObject extends GameObject {
                         let hit = activeAttackHitboxes.find(activeHitbox => activeHitbox.intersects(hitbox))
                         if (hit) {
                             let direction = obj.x > this.x ? 1 : -1;
-                            obj.x += 50 * direction;
+                            //obj.x += 50 * direction;
+                            if(hitbox.poseId) {
+                                obj.queueMorph(hitbox.poseId, 0.1, true);
+                                obj.queueMorph(POSE_STAND, 0.2);
+                            }
                         }
                     });
                 });

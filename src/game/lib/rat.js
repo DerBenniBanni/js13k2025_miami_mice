@@ -1,5 +1,5 @@
 import { ctxArc, ctxBeginPath, ctxBezierCurveTo, ctxEllipse, ctxFill, ctxFillStyle, ctxLineTo, ctxLineWidth, ctxMoveTo, ctxStroke, ctxStrokeStyle, toRad } from "./utils.js";
-import { Bone, Hitbox, HITBOX_TYPE_ATTACK, HITBOX_TYPE_LOWER, HITBOX_TYPE_UPPER, KinematicObject, POSE_BLOCK, POSE_BOW, POSE_KICK_A, POSE_KICK_B, POSE_PUNCH, POSE_PUNCH2, POSE_STAND, POSE_WALK_1, POSE_WALK_2, STATE_IDLE, STATE_WALKING } from "./kinematics.js";
+import { Bone, Hitbox, HITBOX_TYPE_ATTACK, HITBOX_TYPE_LOWER, HITBOX_TYPE_UPPER, KinematicObject, POSE_BLOCK, POSE_BOW, POSE_HIT_BODY, POSE_HIT_HEAD, POSE_KICK_A, POSE_KICK_B, POSE_PUNCH, POSE_PUNCH2, POSE_STAND, POSE_WALK_1, POSE_WALK_2, STATE_IDLE, STATE_WALKING } from "./kinematics.js";
 
 const headsize = 40;
 
@@ -112,6 +112,17 @@ POSE_BLOCK_DATA[BONE_LOWER_LEG_LEFT] = 70;
 POSE_BLOCK_DATA[BONE_UPPER_LEG_RIGHT] = 180;
 POSE_BLOCK_DATA[BONE_LOWER_LEG_RIGHT] = 20;
 
+
+const POSE_HIT_BODY_DATA = [...POSE_STAND_DATA];
+POSE_HIT_BODY_DATA[BONE_ROOT] = -110;
+POSE_HIT_BODY_DATA[BONE_BODY] = 30;
+POSE_HIT_BODY_DATA[BONE_NECK] = 30;
+
+const POSE_HIT_HEAD_DATA = [...POSE_STAND_DATA];
+POSE_HIT_HEAD_DATA[BONE_BODY] = -15;
+POSE_HIT_HEAD_DATA[BONE_NECK] = -15;
+
+
 const LINE_ROUND = "round";
 const LINE_BUTT = "butt";
 
@@ -131,6 +142,8 @@ export class Rat extends KinematicObject {
         this.poseDefs[POSE_KICK_B] = POSE_KICK_B_DATA;
         this.poseDefs[POSE_BOW] = POSE_BOW_DATA;
         this.poseDefs[POSE_BLOCK] = POSE_BLOCK_DATA;
+        this.poseDefs[POSE_HIT_BODY] = POSE_HIT_BODY_DATA;
+        this.poseDefs[POSE_HIT_HEAD] = POSE_HIT_HEAD_DATA;
 
         this.tailWiggle = [
             [BONE_TAIL1, -130, 80],
@@ -150,9 +163,9 @@ export class Rat extends KinematicObject {
         this.addBone(BONE_UPPER_LEG_RIGHT, 90, toRad(100), BONE_ROOT);
         this.addBone(BONE_LOWER_LEG_RIGHT, 60, toRad(20), BONE_UPPER_LEG_RIGHT);
         this.addBone(BONE_BODY, 80, toRad(-100), BONE_ROOT)
-            .addHitboxStart(new Hitbox(0, 0, 100, 100, HITBOX_TYPE_LOWER));
+            .addHitboxStart(new Hitbox(0, 0, 100, 100, HITBOX_TYPE_LOWER, POSE_HIT_BODY));
         this.addBone(BONE_NECK, headsize, toRad(-10), BONE_BODY)
-            .addHitboxEnd(new Hitbox(0, 0, 100, 100, HITBOX_TYPE_UPPER));
+            .addHitboxEnd(new Hitbox(0, 0, 100, 100, HITBOX_TYPE_UPPER, POSE_HIT_HEAD));
         this.addBone(BONE_SHOULDER_LEFT, 10, toRad(80), BONE_BODY);
         this.addBone(BONE_ARM_LEFT, 80, toRad(40), BONE_SHOULDER_LEFT);
         this.addBone(BONE_FOREARM_LEFT, 80, toRad(-100), BONE_ARM_LEFT)
