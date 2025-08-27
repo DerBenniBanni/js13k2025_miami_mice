@@ -10,6 +10,7 @@ export const POSE_KICK_A = 6;
 export const POSE_KICK_B = 7;
 export const POSE_BOW = 8;
 export const POSE_BLOCK = 9;
+export const POSE_CHECK_ATTACK = 10;
 
 export const STATE_IDLE = 1;
 export const STATE_WALKING = 2;
@@ -43,7 +44,28 @@ export class Hitbox {
         };
     }
 
+    getWorldRect() {
+        if (!this.bone) return this.getRect();
+        let rect = this.getRect();
+        let obj = this.bone.kinematicObject;
+        rect.x += obj.x;
+        rect.y += obj.y;
+        return rect;
+    }   
+
+    intersects(other) {
+        let rect1 = this.getWorldRect();
+        let rect2 = other.getWorldRect();
+        return (
+            rect1.x < rect2.x + rect2.w &&
+            rect1.x + rect1.w > rect2.x &&
+            rect1.y < rect2.y + rect2.h &&
+            rect1.y + rect1.h > rect2.y
+        );
+    }
+
     render(ctx) {
+        /*
         let rect = this.getRect();
         let color="#ff02";
         if(this.type == HITBOX_TYPE_ATTACK) color="#f002";
@@ -51,6 +73,7 @@ export class Hitbox {
         ctxBeginPath(ctx);
         ctxRect(ctx, rect.x, rect.y, rect.w, rect.h);
         ctxFill(ctx);
+        */
     }
 }
 
@@ -140,7 +163,7 @@ export class KinematicObject extends GameObject {
         super(x,y, type);
         this.rootBone = new Bone(0, 0, this);
         this.bones = [];
-        this.lastMorph = {poseName: null, duration: 1};
+        this.lastMorph = {poseId: null, duration: 1};
         this.morphQueue = [];
         this.morphFrom = [];
         this.morphTo = [];
@@ -157,6 +180,9 @@ export class KinematicObject extends GameObject {
         this.hitboxes = [];
     }
 
+    getHitboxes(attack = false) {
+        return this.hitboxes.filter(h => attack ? h.type == HITBOX_TYPE_ATTACK : h.type != HITBOX_TYPE_ATTACK);
+    }
 
 
     addBone(id, length, angle, parentId = BONE_ROOT) {
@@ -177,26 +203,26 @@ export class KinematicObject extends GameObject {
     }
 
     
-    getPoseDefinition(poseName) {
+    getPoseDefinition(poseId) {
         return [];
     }
     
-    pose(poseName) {
-        const poseDef = this.poseDefs[poseName];
+    pose(poseId) {
+        const poseDef = this.poseDefs[poseId];
         for (let i = 0; i < poseDef.length; i++) {
             this.bones[i].angle = toRad(poseDef[i]);
         }
         this.updateAngles();
     }
 
-    morph(poseName, duration) {
-        this.lastMorph = { poseName, duration };
+    morph(poseId, duration) {
+        this.lastMorph = { poseId, duration };
         this.morphFrom = this.bones.map(bone => bone.angle);
-        if(poseName) {
-            this.morphTo = this.poseDefs[poseName].map(angle => toRad(angle));
-            if(poseName === POSE_PUNCH) {
+        if(poseId) {
+            this.morphTo = this.poseDefs[poseId].map(angle => toRad(angle));
+            if(poseId === POSE_PUNCH) {
                 this.lastPunch = 1;
-            } else if(poseName === POSE_PUNCH2) {
+            } else if(poseId === POSE_PUNCH2) {
                 this.lastPunch = 2;
             }
         } else {
@@ -214,15 +240,15 @@ export class KinematicObject extends GameObject {
         this.morphQueue = [];
     }
 
-    queueMorph(poseName, duration, immediate = false) {
+    queueMorph(poseId, duration, immediate = false) {
         if (immediate) {
             this.clearMorph();
             this.morphTimer = 0
         }
-        this.morphQueue.push({ poseName, duration });
+        this.morphQueue.push({ poseId, duration });
         if (this.morphTimer <= 0) {
             const nextMorph = this.morphQueue.shift();
-            this.morph(nextMorph.poseName, nextMorph.duration);
+            this.morph(nextMorph.poseId, nextMorph.duration);
         }
     }
 
@@ -243,17 +269,39 @@ export class KinematicObject extends GameObject {
             if(this.morphTimer <= 0) {
                 if(this.morphQueue.length > 0) {
                     const nextMorph = this.morphQueue.shift();
-                    this.morph(nextMorph.poseName, nextMorph.duration);
+                    if(nextMorph.poseId == POSE_CHECK_ATTACK) {
+                        this.checkAttackHitboxes();
+                    } else {
+                        this.morph(nextMorph.poseId, nextMorph.duration);
+                    }
                 }
             }
         }
         if(this.morphQueue.length === 0) {
             if(this.state === STATE_WALKING) {
-                let poseName = this.lastMorph.poseName == POSE_WALK_2 ? POSE_WALK_1 : POSE_WALK_2;
-                this.queueMorph(poseName, 100 / this.walkSpeed);
+                let poseId = this.lastMorph.poseId == POSE_WALK_2 ? POSE_WALK_1 : POSE_WALK_2;
+                this.queueMorph(poseId, 100 / this.walkSpeed);
             } else {
                 this.queueMorph(null, 1);
             }
+        }
+    }
+
+    checkAttackHitboxes() {
+        let activeAttackHitboxes = this.getHitboxes(true);
+        if (activeAttackHitboxes.length > 0) {
+            this.game.getGameObjects()
+                .filter(obj => obj !== this && obj.y>this.y-30 && obj.y<this.y+30)
+                .forEach(obj => {
+                    let hitboxes = obj.getHitboxes();
+                    hitboxes.forEach(hitbox => {
+                        let hit = activeAttackHitboxes.find(activeHitbox => activeHitbox.intersects(hitbox))
+                        if (hit) {
+                            let direction = obj.x > this.x ? 1 : -1;
+                            obj.x += 50 * direction;
+                        }
+                    });
+                });
         }
     }
 

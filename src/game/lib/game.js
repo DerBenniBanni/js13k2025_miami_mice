@@ -62,37 +62,29 @@ export class Game {
         this.gameLoop();
         this.initObjects()
     }
+
     initObjects() {
         let cat1 = this.addGameObject(new Player(300, 900, 1));
         cat1.giColors = ['#fff', '#777'];
+        /*
         let cat2 = this.addGameObject(new Cat(1200, 900));
         cat2.invertX = true;
         cat2.giColors = ['#d00', '#600'];
         cat2.pose(POSE_STAND);
+        */
         let rat = this.addGameObject(new Rat(710, 900));
         rat.invertX = true;
+        /*
         let rat2 = this.addGameObject(new Rat(1000, 700));
         rat2.invertX = true;
-
-/*
-        let foo = ()=> {
-            cat2.queueMorph(null, 1);
-            cat2.queueMorph(POSE_BOW, 1);
-            cat2.queueMorph(null, 1);
-            cat2.queueMorph(POSE_STAND, 0.5);
-            cat2.queueMorph(null, 1);
-            cat2.queueMorph(POSE_KICK_A, 0.2);
-            cat2.queueMorph(POSE_KICK_B, 0.2);
-            cat2.queueMorph(null, 0.5);
-            cat2.queueMorph(POSE_PUNCH2, 0.3);
-            cat2.queueMorph(null, 0.2);
-            cat2.queueMorph(POSE_PUNCH, 0.3);
-            cat2.queueMorph(null, 0.5);
-            cat2.queueMorph(POSE_STAND, 0.5);
-        }
-        foo();
-        window.setInterval(foo, 7200);
         */
+    }
+
+    getGameObjects(types) {
+        if (!types) {
+            return this.gameObjects;
+        }
+        return this.gameObjects.filter(obj => types.includes(obj.type));
     }
 
     gameLoop() {
