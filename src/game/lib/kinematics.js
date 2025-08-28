@@ -181,6 +181,9 @@ export class KinematicObject extends GameObject {
         this.tailWiggle = [];
         this.walkSpeed = 100; // pixels per second
         this.hitboxes = [];
+        this.forceX = 0;
+        this.forceY = 0;
+        this.kiTarget = null;
     }
 
     getHitboxes(attack = false) {
@@ -259,6 +262,17 @@ export class KinematicObject extends GameObject {
         if(this.kiUpdate) {
             this.kiUpdate(delta);
         }
+        if(this.forceX != 0) {
+            this.x += this.forceX * delta;
+            this.forceX *= 0.9;
+            if(Math.abs(this.forceX) < 0.05) {
+                this.forceX = 0;
+            } 
+        }
+        this.updateSizing();
+        this.updateMorph(delta);
+    }
+    updateMorph(delta) {
         if(this.morphTimer > 0) {
             if(this.morphTimer < delta) {
                 delta = this.morphTimer;
@@ -283,7 +297,7 @@ export class KinematicObject extends GameObject {
         if(this.morphQueue.length === 0) {
             if(this.state === STATE_WALKING) {
                 let poseId = this.lastMorph.poseId == POSE_WALK_2 ? POSE_WALK_1 : POSE_WALK_2;
-                this.queueMorph(poseId, 100 / this.walkSpeed);
+                this.queueMorph(poseId, 0.5);
             } else {
                 this.queueMorph(null, 1);
             }
@@ -301,6 +315,7 @@ export class KinematicObject extends GameObject {
                         let hit = activeAttackHitboxes.find(activeHitbox => activeHitbox.intersects(hitbox))
                         if (hit) {
                             let direction = obj.x > this.x ? 1 : -1;
+                            obj.forceX = 500 * direction;
                             //obj.x += 50 * direction;
                             if(hitbox.poseId) {
                                 obj.queueMorph(hitbox.poseId, 0.1, true);

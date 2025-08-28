@@ -117,3 +117,12 @@ Theme announced: Black Cat
 ![hit anim](img/010_hit_animations.gif)
 
 **devtime:** 0.5h workcommute, 1h evening
+
+## 2025-08-28
+
+* added an enemy-ki, they now move to the players area and dont overlap
+* random gi- and fur-colors for the enemies
+
+**devtime:** 0.5h workcommute, 1.5h evening
+
+

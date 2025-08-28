@@ -60,13 +60,11 @@ export class Player extends Cat {
         }
         if (moveAllowed && this.game.getActionState(ACTION_MOVE_UP_PLAYER_1)) {
             this.y -= this.walkSpeed*0.8 * deltaTime;
-            this.updateSizing();
             this.state = STATE_WALKING;
             noInput = false;
         }
         if (moveAllowed && this.game.getActionState(ACTION_MOVE_DOWN_PLAYER_1)) {
             this.y += this.walkSpeed*0.8 * deltaTime;
-            this.updateSizing();
             this.state = STATE_WALKING;
             noInput = false;
         }

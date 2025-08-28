@@ -28,6 +28,7 @@ export class Game {
         this.ctx = this.canvas.getContext("2d");
         this.isGameRunning = false;
         this.gameObjects = [];
+        this.enemies = []; // cache for enemy objects
         this.lastUpdateTime = 0;
 
         this.sfxPlayer = new SFXPlayer(); // Sound effect player
@@ -73,7 +74,9 @@ export class Game {
         cat2.pose(POSE_STAND);
         */
         let rat = this.addGameObject(new Rat(710, 900));
-        rat.invertX = true;
+        let rat2 = this.addGameObject(new Rat(715, 900));
+        let rat3 = this.addGameObject(new Rat(712, 900));
+        //rat.invertX = true;
         /*
         let rat2 = this.addGameObject(new Rat(1000, 700));
         rat2.invertX = true;
@@ -103,6 +106,7 @@ export class Game {
     }
 
     update(deltaTime) {
+        this.enemies = this.getGameObjects(["rat"]);
         this.gameObjects.forEach(obj => {
             obj.update(deltaTime);
         });

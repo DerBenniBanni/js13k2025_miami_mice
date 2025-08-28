@@ -126,12 +126,15 @@ POSE_HIT_HEAD_DATA[BONE_NECK] = -15;
 const LINE_ROUND = "round";
 const LINE_BUTT = "butt";
 
-const FURCOLOR = "#462626ff";
+const FURCOLORS = ["#462626","#777","#494034"];
+const GIOLORS = ["#000","#010","#100","#002"];
 
 export class Rat extends KinematicObject {
     constructor(x,y,type = "rat") {
         super(x,y,type);
-        this.giColors = ['#000', '#666'];
+        this.giColors = [GIOLORS[Math.floor(Math.random()*GIOLORS.length)], '#333'];
+        this.fur = FURCOLORS[Math.floor(Math.random()*FURCOLORS.length)];
+        this.walkSpeed = 60 + Math.random()*20;
 
         this.poseDefs[POSE_STAND] = POSE_STAND_DATA;
         this.poseDefs[POSE_WALK_1] = POSE_WALK_1_DATA;
@@ -165,7 +168,7 @@ export class Rat extends KinematicObject {
         this.addBone(BONE_BODY, 80, toRad(-100), BONE_ROOT)
             .addHitboxStart(new Hitbox(0, 0, 100, 100, HITBOX_TYPE_LOWER, POSE_HIT_BODY));
         this.addBone(BONE_NECK, headsize, toRad(-10), BONE_BODY)
-            .addHitboxEnd(new Hitbox(0, 0, 100, 100, HITBOX_TYPE_UPPER, POSE_HIT_HEAD));
+            .addHitboxEnd(new Hitbox(0, 0, 100, 80, HITBOX_TYPE_UPPER, POSE_HIT_HEAD));
         this.addBone(BONE_SHOULDER_LEFT, 10, toRad(80), BONE_BODY);
         this.addBone(BONE_ARM_LEFT, 80, toRad(40), BONE_SHOULDER_LEFT);
         this.addBone(BONE_FOREARM_LEFT, 80, toRad(-100), BONE_ARM_LEFT)
@@ -191,10 +194,53 @@ export class Rat extends KinematicObject {
 
     kiUpdate(delta) {
         //this.x -= this.walkSpeed * delta;
+        if(this.kiTarget == null) {
+            let targets = this.game.getGameObjects(["cat", "player"]);
+            this.kiTarget = targets[Math.floor(Math.random() * targets.length)];
+        } else {
+            // Move towards the target
+            let dx = this.kiTarget.x - this.x;
+            if(dx < 0) {
+                this.invertX = true;
+            } else {
+                this.invertX = false;
+            }
+            dx = this.kiTarget.x - this.x + 180 * (this.invertX ? 1 : -1) * this.sizing;
+            let dy = this.kiTarget.y - this.y;
+            let distance = Math.sqrt(dx * dx + dy * dy);
+            if (distance > 10) {
+                this.state = STATE_WALKING;
+                let x = this.x + (dx / distance) * this.walkSpeed * delta;
+                let y = this.y + (dy / distance) * this.walkSpeed * delta;
+                let blockingRat = this.game.enemies.find(rat => {
+                    if(rat == this) return false;
+                    let ex = rat.x - this.x;
+                    let ey = rat.y - this.y;
+                    let ed = Math.sqrt(ex * ex + ey * ey);
+                    if (ed < 120 * this.sizing) {
+                        return true;
+                    }
+                    return false;
+                });
+                if(blockingRat) {
+                    dx = this.x - blockingRat.x;
+                    dy = this.y - blockingRat.y;
+                    distance = Math.sqrt(dx * dx + dy * dy);
+                    x = this.x + (dx / distance) * this.walkSpeed * delta;
+                    y = this.y + (dy / distance) * this.walkSpeed * delta;
+                    
+                } 
+                this.x = x;
+                this.y = y;
+                
+            } else {
+                this.state = STATE_IDLE;    
+            }
+        }
     }
 
     renderRat(bone, ctx, renderChildren = true) {
-        ctxStrokeStyle(ctx, FURCOLOR);
+        ctxStrokeStyle(ctx, this.fur);
         ctxLineWidth(ctx, 40 * this.sizing);
         ctx.lineCap = "round";
         ctxBeginPath(ctx);
@@ -249,7 +295,7 @@ export class Rat extends KinematicObject {
         this.renderSuit(this.bones[BONE_UPPER_LEG_LEFT], ctx);
 
         //tail
-        ctxStrokeStyle(ctx, FURCOLOR);
+        ctxStrokeStyle(ctx, this.fur);
         ctxLineWidth(ctx, 15 * this.sizing);
         ctx.lineCap = "round";
         ctxBeginPath(ctx);
@@ -271,13 +317,13 @@ export class Rat extends KinematicObject {
         
        
         // ear1
-        ctxFillStyle(ctx, FURCOLOR);
+        ctxFillStyle(ctx, this.fur);
         ctxBeginPath(ctx);
         ctxArc(ctx, this.bones[BONE_EAR1].endX, this.bones[BONE_EAR1].endY, headsize * this.sizing*0.6, 0, 2 * Math.PI);
         ctxFill(ctx);
 
         // ear2
-        ctxFillStyle(ctx, FURCOLOR);
+        ctxFillStyle(ctx, this.fur);
         ctxBeginPath(ctx);
         ctxArc(ctx, this.bones[BONE_EAR2].endX, this.bones[BONE_EAR2].endY, headsize * this.sizing*0.6, 0, 2 * Math.PI);
         ctxFill(ctx);
@@ -286,13 +332,13 @@ export class Rat extends KinematicObject {
         ctxArc(ctx, this.bones[BONE_EAR2].endX, this.bones[BONE_EAR2].endY, headsize * this.sizing*0.5, 0, 2 * Math.PI);
         ctxFill(ctx);
         // Head
-        ctxFillStyle(ctx, FURCOLOR);
+        ctxFillStyle(ctx, this.fur);
         let neck = this.bones[BONE_NECK];
         ctxBeginPath(ctx);
         ctxArc(ctx, neck.endX, neck.endY, headsize * this.sizing, 0, 2 * Math.PI);
         ctxFill(ctx);
         // Face
-        ctxFillStyle(ctx, FURCOLOR);
+        ctxFillStyle(ctx, this.fur);
         ctxBeginPath(ctx);
         ctxMoveTo(ctx, this.bones[BONE_FACE].endX, this.bones[BONE_FACE].endY);
         ctxLineTo(ctx, this.bones[BONE_NOSE].endX, this.bones[BONE_NOSE].endY);
