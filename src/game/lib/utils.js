@@ -38,3 +38,15 @@ export const ctxRect = (ctx, x, y, width, height) => {
 export const ctxBezierCurveTo = (ctx, cp1x, cp1y, cp2x, cp2y, x, y) => {
   ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y);
 };
+export const ctxRotate = (ctx, angle) => {
+  ctx.rotate(angle);
+};
+export const ctxSave = (ctx) => {
+  ctx.save();
+};
+export const ctxRestore = (ctx) => {
+  ctx.restore();
+};
+export const ctxTranslate = (ctx, x, y) => {
+  ctx.translate(x, y);
+};

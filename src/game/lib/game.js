@@ -74,6 +74,7 @@ export class Game {
         cat2.pose(POSE_STAND);
         */
         let rat = this.addGameObject(new Rat(710, 900));
+        //rat.state = 6;
         let rat2 = this.addGameObject(new Rat(715, 900));
         let rat3 = this.addGameObject(new Rat(712, 900));
         //rat.invertX = true;
@@ -106,7 +107,7 @@ export class Game {
     }
 
     update(deltaTime) {
-        this.enemies = this.getGameObjects(["rat"]);
+        this.enemies = this.getGameObjects(["rat"]).filter(rat => rat.hp > 0);
         this.gameObjects.forEach(obj => {
             obj.update(deltaTime);
         });

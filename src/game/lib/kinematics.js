@@ -13,12 +13,14 @@ export const POSE_BLOCK = 9;
 export const POSE_CHECK_ATTACK = 10;
 export const POSE_HIT_HEAD = 11;
 export const POSE_HIT_BODY = 12;
+export const POSE_KO= 13;
 
 export const STATE_IDLE = 1;
 export const STATE_WALKING = 2;
 export const STATE_BLOCK = 3;
 export const STATE_PUNCH = 4;
 export const STATE_KICK = 5;
+export const STATE_KO = 6;
 
 export const HITBOX_TYPE_UPPER = 1;
 export const HITBOX_TYPE_LOWER = 2;
@@ -184,6 +186,7 @@ export class KinematicObject extends GameObject {
         this.forceX = 0;
         this.forceY = 0;
         this.kiTarget = null;
+        this.hp = 100;
     }
 
     getHitboxes(attack = false) {
@@ -259,6 +262,7 @@ export class KinematicObject extends GameObject {
     }
 
     update(delta) {
+        super.update(delta);
         if(this.kiUpdate) {
             this.kiUpdate(delta);
         }
@@ -270,6 +274,9 @@ export class KinematicObject extends GameObject {
             } 
         }
         this.updateSizing();
+        if(this.hp <= 0 && this.state !== STATE_KO) {
+            this.state = STATE_KO;
+        }
         this.updateMorph(delta);
     }
     updateMorph(delta) {
@@ -298,6 +305,10 @@ export class KinematicObject extends GameObject {
             if(this.state === STATE_WALKING) {
                 let poseId = this.lastMorph.poseId == POSE_WALK_2 ? POSE_WALK_1 : POSE_WALK_2;
                 this.queueMorph(poseId, 0.5);
+            } else if(this.state === STATE_KO) {
+                if(this.lastMorph.poseId !== POSE_KO) {
+                    this.queueMorph(POSE_KO, 0.4, true);
+                }
             } else {
                 this.queueMorph(null, 1);
             }
@@ -308,7 +319,7 @@ export class KinematicObject extends GameObject {
         let activeAttackHitboxes = this.getHitboxes(true);
         if (activeAttackHitboxes.length > 0) {
             this.game.getGameObjects()
-                .filter(obj => obj !== this && obj.y>this.y-30 && obj.y<this.y+30)
+                .filter(obj => obj.hp > 0 && obj !== this && obj.y > this.y - 30 && obj.y < this.y + 30)
                 .forEach(obj => {
                     let hitboxes = obj.getHitboxes();
                     hitboxes.forEach(hitbox => {
@@ -316,10 +327,14 @@ export class KinematicObject extends GameObject {
                         if (hit) {
                             let direction = obj.x > this.x ? 1 : -1;
                             obj.forceX = 500 * direction;
-                            //obj.x += 50 * direction;
+                            obj.hp -= 10;
                             if(hitbox.poseId) {
                                 obj.queueMorph(hitbox.poseId, 0.1, true);
                                 obj.queueMorph(POSE_STAND, 0.2);
+                            }
+                            let worldHit = hit.getWorldRect();
+                            for(let i=0; i<10; i++) {
+                                obj.addParticle(worldHit.x, worldHit.y, 50, 0.4);
                             }
                         }
                     });

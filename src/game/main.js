@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
     //game.sfxPlayer.add("gamemusic", musicGame, true);
 
-    game.start();
+    //game.start();
     //game.sfxPlayer.playAudio("gamemusic");
 
     

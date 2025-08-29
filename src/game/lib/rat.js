@@ -1,5 +1,5 @@
 import { ctxArc, ctxBeginPath, ctxBezierCurveTo, ctxEllipse, ctxFill, ctxFillStyle, ctxLineTo, ctxLineWidth, ctxMoveTo, ctxStroke, ctxStrokeStyle, toRad } from "./utils.js";
-import { Bone, Hitbox, HITBOX_TYPE_ATTACK, HITBOX_TYPE_LOWER, HITBOX_TYPE_UPPER, KinematicObject, POSE_BLOCK, POSE_BOW, POSE_HIT_BODY, POSE_HIT_HEAD, POSE_KICK_A, POSE_KICK_B, POSE_PUNCH, POSE_PUNCH2, POSE_STAND, POSE_WALK_1, POSE_WALK_2, STATE_IDLE, STATE_WALKING } from "./kinematics.js";
+import { Bone, Hitbox, HITBOX_TYPE_ATTACK, HITBOX_TYPE_LOWER, HITBOX_TYPE_UPPER, KinematicObject, POSE_BLOCK, POSE_BOW, POSE_HIT_BODY, POSE_HIT_HEAD, POSE_KICK_A, POSE_KICK_B, POSE_KO, POSE_PUNCH, POSE_PUNCH2, POSE_STAND, POSE_WALK_1, POSE_WALK_2, STATE_IDLE, STATE_KO, STATE_WALKING } from "./kinematics.js";
 
 const headsize = 40;
 
@@ -122,6 +122,15 @@ const POSE_HIT_HEAD_DATA = [...POSE_STAND_DATA];
 POSE_HIT_HEAD_DATA[BONE_BODY] = -15;
 POSE_HIT_HEAD_DATA[BONE_NECK] = -15;
 
+const POSE_KO_DATA = [...POSE_STAND_DATA];
+POSE_KO_DATA[BONE_ROOT] = -170;
+POSE_KO_DATA[BONE_BODY] = -10;
+POSE_KO_DATA[BONE_NECK] = -30;
+POSE_KO_DATA[BONE_UPPER_LEG_LEFT] = 170;
+POSE_KO_DATA[BONE_ARM_LEFT] = -80;
+POSE_KO_DATA[BONE_FOREARM_LEFT] = -40;
+POSE_KO_DATA[BONE_ARM_RIGHT] = -20;
+POSE_KO_DATA[BONE_FOREARM_RIGHT] = -60;
 
 const LINE_ROUND = "round";
 const LINE_BUTT = "butt";
@@ -136,6 +145,8 @@ export class Rat extends KinematicObject {
         this.fur = FURCOLORS[Math.floor(Math.random()*FURCOLORS.length)];
         this.walkSpeed = 60 + Math.random()*20;
 
+        this.hp = 100;
+
         this.poseDefs[POSE_STAND] = POSE_STAND_DATA;
         this.poseDefs[POSE_WALK_1] = POSE_WALK_1_DATA;
         this.poseDefs[POSE_WALK_2] = POSE_WALK_2_DATA;
@@ -147,6 +158,7 @@ export class Rat extends KinematicObject {
         this.poseDefs[POSE_BLOCK] = POSE_BLOCK_DATA;
         this.poseDefs[POSE_HIT_BODY] = POSE_HIT_BODY_DATA;
         this.poseDefs[POSE_HIT_HEAD] = POSE_HIT_HEAD_DATA;
+        this.poseDefs[POSE_KO] = POSE_KO_DATA;
 
         this.tailWiggle = [
             [BONE_TAIL1, -130, 80],
@@ -193,6 +205,9 @@ export class Rat extends KinematicObject {
     }
 
     kiUpdate(delta) {
+        if(this.state === STATE_KO) {
+            return;
+        }
         //this.x -= this.walkSpeed * delta;
         if(this.kiTarget == null) {
             let targets = this.game.getGameObjects(["cat", "player"]);
@@ -356,10 +371,9 @@ export class Rat extends KinematicObject {
             ctxArc(ctx, this.bones[boneId].endX, this.bones[boneId].endY, 3 * this.sizing, 0, 2 * Math.PI);
             ctxFill(ctx);
         });
-
-        
         this.renderHitboxes(ctx);
-        
         ctx.restore();
+        this.renderParticles(ctx);
+        
     }
 }
