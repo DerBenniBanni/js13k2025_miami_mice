@@ -28,6 +28,7 @@ export class Game {
         this.ctx = this.canvas.getContext("2d");
         this.isGameRunning = false;
         this.gameObjects = [];
+        this.enemies = []; // cache for enemy objects
         this.lastUpdateTime = 0;
 
         this.sfxPlayer = new SFXPlayer(); // Sound effect player
@@ -62,36 +63,31 @@ export class Game {
         this.gameLoop();
         this.initObjects()
     }
+
     initObjects() {
         let cat1 = this.addGameObject(new Player(300, 900, 1));
         cat1.giColors = ['#fff', '#777'];
+        /*
         let cat2 = this.addGameObject(new Cat(1200, 900));
         cat2.invertX = true;
         cat2.giColors = ['#d00', '#600'];
         cat2.pose(POSE_STAND);
+        */
         let rat = this.addGameObject(new Rat(710, 900));
-        rat.invertX = true;
+        let rat2 = this.addGameObject(new Rat(715, 900));
+        let rat3 = this.addGameObject(new Rat(712, 900));
+        //rat.invertX = true;
+        /*
         let rat2 = this.addGameObject(new Rat(1000, 700));
         rat2.invertX = true;
-
-/*
-        let foo = ()=> {
-            cat2.queueMorph(null, 1);
-            cat2.queueMorph(POSE_BOW, 1);
-            cat2.queueMorph(null, 1);
-            cat2.queueMorph(POSE_STAND, 0.5);
-            cat2.queueMorph(null, 1);
-            cat2.queueMorph(POSE_KICK, 0.2);
-            cat2.queueMorph(null, 0.5);
-            cat2.queueMorph(POSE_PUNCH2, 0.3);
-            cat2.queueMorph(null, 0.2);
-            cat2.queueMorph(POSE_PUNCH, 0.3);
-            cat2.queueMorph(null, 0.5);
-            cat2.queueMorph(POSE_STAND, 0.5);
-        }
-        foo();
-        window.setInterval(foo, 7200);
         */
+    }
+
+    getGameObjects(types) {
+        if (!types) {
+            return this.gameObjects;
+        }
+        return this.gameObjects.filter(obj => types.includes(obj.type));
     }
 
     gameLoop() {
@@ -110,6 +106,7 @@ export class Game {
     }
 
     update(deltaTime) {
+        this.enemies = this.getGameObjects(["rat"]);
         this.gameObjects.forEach(obj => {
             obj.update(deltaTime);
         });

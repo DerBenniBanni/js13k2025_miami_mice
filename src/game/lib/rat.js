@@ -1,5 +1,5 @@
 import { ctxArc, ctxBeginPath, ctxBezierCurveTo, ctxEllipse, ctxFill, ctxFillStyle, ctxLineTo, ctxLineWidth, ctxMoveTo, ctxStroke, ctxStrokeStyle, toRad } from "./utils.js";
-import { Bone, KinematicObject, POSE_BLOCK, POSE_BOW, POSE_KICK, POSE_PUNCH, POSE_PUNCH2, POSE_STAND, POSE_WALK_1, POSE_WALK_2, STATE_IDLE, STATE_WALKING } from "./kinematics.js";
+import { Bone, Hitbox, HITBOX_TYPE_ATTACK, HITBOX_TYPE_LOWER, HITBOX_TYPE_UPPER, KinematicObject, POSE_BLOCK, POSE_BOW, POSE_HIT_BODY, POSE_HIT_HEAD, POSE_KICK_A, POSE_KICK_B, POSE_PUNCH, POSE_PUNCH2, POSE_STAND, POSE_WALK_1, POSE_WALK_2, STATE_IDLE, STATE_WALKING } from "./kinematics.js";
 
 const headsize = 40;
 
@@ -75,15 +75,25 @@ POSE_PUNCH2_DATA[BONE_UPPER_LEG_LEFT] = 160;
 POSE_PUNCH2_DATA[BONE_LOWER_LEG_LEFT] = 40;
 POSE_PUNCH2_DATA[BONE_UPPER_LEG_RIGHT] = 200;
 
-const POSE_KICK_DATA = [...POSE_STAND_DATA];
-POSE_KICK_DATA[BONE_UPPER_LEG_LEFT] = 60;
-POSE_KICK_DATA[BONE_LOWER_LEG_LEFT] = 10;
-POSE_KICK_DATA[BONE_BODY] = -40;
-POSE_KICK_DATA[BONE_UPPER_LEG_RIGHT] = 185;
-POSE_KICK_DATA[BONE_ARM_LEFT] = 80;
-POSE_KICK_DATA[BONE_FOREARM_LEFT] = -150;
-POSE_KICK_DATA[BONE_ARM_RIGHT] = -0;
-POSE_KICK_DATA[BONE_FOREARM_RIGHT] = -130;
+const POSE_KICK_A_DATA = [...POSE_STAND_DATA];
+POSE_KICK_A_DATA[BONE_UPPER_LEG_LEFT] = 40;
+POSE_KICK_A_DATA[BONE_LOWER_LEG_LEFT] = 90;
+POSE_KICK_A_DATA[BONE_BODY] = -40;
+POSE_KICK_A_DATA[BONE_UPPER_LEG_RIGHT] = 185;
+POSE_KICK_A_DATA[BONE_ARM_LEFT] = 80;
+POSE_KICK_A_DATA[BONE_FOREARM_LEFT] = -150;
+POSE_KICK_A_DATA[BONE_ARM_RIGHT] = -0;
+POSE_KICK_A_DATA[BONE_FOREARM_RIGHT] = -130;
+
+const POSE_KICK_B_DATA = [...POSE_STAND_DATA];
+POSE_KICK_B_DATA[BONE_UPPER_LEG_LEFT] = 90;
+POSE_KICK_B_DATA[BONE_LOWER_LEG_LEFT] = 10;
+POSE_KICK_B_DATA[BONE_BODY] = -40;
+POSE_KICK_B_DATA[BONE_UPPER_LEG_RIGHT] = 185;
+POSE_KICK_B_DATA[BONE_ARM_LEFT] = 80;
+POSE_KICK_B_DATA[BONE_FOREARM_LEFT] = -150;
+POSE_KICK_B_DATA[BONE_ARM_RIGHT] = -0;
+POSE_KICK_B_DATA[BONE_FOREARM_RIGHT] = -130;
 
 const POSE_BOW_DATA = [...POSE_STAND_DATA];
 POSE_BOW_DATA[BONE_BODY] = 60;
@@ -102,24 +112,41 @@ POSE_BLOCK_DATA[BONE_LOWER_LEG_LEFT] = 70;
 POSE_BLOCK_DATA[BONE_UPPER_LEG_RIGHT] = 180;
 POSE_BLOCK_DATA[BONE_LOWER_LEG_RIGHT] = 20;
 
+
+const POSE_HIT_BODY_DATA = [...POSE_STAND_DATA];
+POSE_HIT_BODY_DATA[BONE_ROOT] = -110;
+POSE_HIT_BODY_DATA[BONE_BODY] = 30;
+POSE_HIT_BODY_DATA[BONE_NECK] = 30;
+
+const POSE_HIT_HEAD_DATA = [...POSE_STAND_DATA];
+POSE_HIT_HEAD_DATA[BONE_BODY] = -15;
+POSE_HIT_HEAD_DATA[BONE_NECK] = -15;
+
+
 const LINE_ROUND = "round";
 const LINE_BUTT = "butt";
 
-const FURCOLOR = "#462626ff";
+const FURCOLORS = ["#462626","#777","#494034"];
+const GIOLORS = ["#000","#010","#100","#002"];
 
 export class Rat extends KinematicObject {
     constructor(x,y,type = "rat") {
         super(x,y,type);
-        this.giColors = ['#000', '#666'];
+        this.giColors = [GIOLORS[Math.floor(Math.random()*GIOLORS.length)], '#333'];
+        this.fur = FURCOLORS[Math.floor(Math.random()*FURCOLORS.length)];
+        this.walkSpeed = 60 + Math.random()*20;
 
         this.poseDefs[POSE_STAND] = POSE_STAND_DATA;
         this.poseDefs[POSE_WALK_1] = POSE_WALK_1_DATA;
         this.poseDefs[POSE_WALK_2] = POSE_WALK_2_DATA;
         this.poseDefs[POSE_PUNCH] = POSE_PUNCH_DATA;
         this.poseDefs[POSE_PUNCH2] = POSE_PUNCH2_DATA;
-        this.poseDefs[POSE_KICK] = POSE_KICK_DATA;
+        this.poseDefs[POSE_KICK_A] = POSE_KICK_A_DATA;
+        this.poseDefs[POSE_KICK_B] = POSE_KICK_B_DATA;
         this.poseDefs[POSE_BOW] = POSE_BOW_DATA;
         this.poseDefs[POSE_BLOCK] = POSE_BLOCK_DATA;
+        this.poseDefs[POSE_HIT_BODY] = POSE_HIT_BODY_DATA;
+        this.poseDefs[POSE_HIT_HEAD] = POSE_HIT_HEAD_DATA;
 
         this.tailWiggle = [
             [BONE_TAIL1, -130, 80],
@@ -134,17 +161,22 @@ export class Rat extends KinematicObject {
         this.rootBone = new Bone(155, -90, this);
         this.bones[BONE_ROOT] = this.rootBone;
         this.addBone(BONE_UPPER_LEG_LEFT, 90, toRad(60), BONE_ROOT);
-        this.addBone(BONE_LOWER_LEG_LEFT, 60, toRad(30), BONE_UPPER_LEG_LEFT);
+        this.addBone(BONE_LOWER_LEG_LEFT, 60, toRad(30), BONE_UPPER_LEG_LEFT)
+            .addHitboxEnd(new Hitbox(0, 0, 40, 40, HITBOX_TYPE_ATTACK));
         this.addBone(BONE_UPPER_LEG_RIGHT, 90, toRad(100), BONE_ROOT);
         this.addBone(BONE_LOWER_LEG_RIGHT, 60, toRad(20), BONE_UPPER_LEG_RIGHT);
-        this.addBone(BONE_BODY, 80, toRad(-100), BONE_ROOT);
-        this.addBone(BONE_NECK, headsize, toRad(-10), BONE_BODY);
+        this.addBone(BONE_BODY, 80, toRad(-100), BONE_ROOT)
+            .addHitboxStart(new Hitbox(0, 0, 100, 100, HITBOX_TYPE_LOWER, POSE_HIT_BODY));
+        this.addBone(BONE_NECK, headsize, toRad(-10), BONE_BODY)
+            .addHitboxEnd(new Hitbox(0, 0, 100, 80, HITBOX_TYPE_UPPER, POSE_HIT_HEAD));
         this.addBone(BONE_SHOULDER_LEFT, 10, toRad(80), BONE_BODY);
         this.addBone(BONE_ARM_LEFT, 80, toRad(40), BONE_SHOULDER_LEFT);
-        this.addBone(BONE_FOREARM_LEFT, 80, toRad(-100), BONE_ARM_LEFT);
+        this.addBone(BONE_FOREARM_LEFT, 80, toRad(-100), BONE_ARM_LEFT)
+            .addHitboxEnd(new Hitbox(0, 0, 40, 40, HITBOX_TYPE_ATTACK));
         this.addBone(BONE_SHOULDER_RIGHT, 10, toRad(-100), BONE_BODY);
         this.addBone(BONE_ARM_RIGHT, 80, toRad(-30), BONE_SHOULDER_RIGHT);
-        this.addBone(BONE_FOREARM_RIGHT, 80, toRad(-90), BONE_ARM_RIGHT);
+        this.addBone(BONE_FOREARM_RIGHT, 80, toRad(-90), BONE_ARM_RIGHT)
+            .addHitboxEnd(new Hitbox(0, 0, 40, 40, HITBOX_TYPE_ATTACK));
         this.addBone(BONE_FACE, headsize*0.55, toRad(0), BONE_NECK);
         this.addBone(BONE_NOSE, headsize*2.5, toRad(0), BONE_NECK);
         this.addBone(BONE_EAR1, headsize*1.2, toRad(0), BONE_NECK);
@@ -162,10 +194,53 @@ export class Rat extends KinematicObject {
 
     kiUpdate(delta) {
         //this.x -= this.walkSpeed * delta;
+        if(this.kiTarget == null) {
+            let targets = this.game.getGameObjects(["cat", "player"]);
+            this.kiTarget = targets[Math.floor(Math.random() * targets.length)];
+        } else {
+            // Move towards the target
+            let dx = this.kiTarget.x - this.x;
+            if(dx < 0) {
+                this.invertX = true;
+            } else {
+                this.invertX = false;
+            }
+            dx = this.kiTarget.x - this.x + 180 * (this.invertX ? 1 : -1) * this.sizing;
+            let dy = this.kiTarget.y - this.y;
+            let distance = Math.sqrt(dx * dx + dy * dy);
+            if (distance > 10) {
+                this.state = STATE_WALKING;
+                let x = this.x + (dx / distance) * this.walkSpeed * delta;
+                let y = this.y + (dy / distance) * this.walkSpeed * delta;
+                let blockingRat = this.game.enemies.find(rat => {
+                    if(rat == this) return false;
+                    let ex = rat.x - this.x;
+                    let ey = rat.y - this.y;
+                    let ed = Math.sqrt(ex * ex + ey * ey);
+                    if (ed < 120 * this.sizing) {
+                        return true;
+                    }
+                    return false;
+                });
+                if(blockingRat) {
+                    dx = this.x - blockingRat.x;
+                    dy = this.y - blockingRat.y;
+                    distance = Math.sqrt(dx * dx + dy * dy);
+                    x = this.x + (dx / distance) * this.walkSpeed * delta;
+                    y = this.y + (dy / distance) * this.walkSpeed * delta;
+                    
+                } 
+                this.x = x;
+                this.y = y;
+                
+            } else {
+                this.state = STATE_IDLE;    
+            }
+        }
     }
 
     renderRat(bone, ctx, renderChildren = true) {
-        ctxStrokeStyle(ctx, FURCOLOR);
+        ctxStrokeStyle(ctx, this.fur);
         ctxLineWidth(ctx, 40 * this.sizing);
         ctx.lineCap = "round";
         ctxBeginPath(ctx);
@@ -220,7 +295,7 @@ export class Rat extends KinematicObject {
         this.renderSuit(this.bones[BONE_UPPER_LEG_LEFT], ctx);
 
         //tail
-        ctxStrokeStyle(ctx, FURCOLOR);
+        ctxStrokeStyle(ctx, this.fur);
         ctxLineWidth(ctx, 15 * this.sizing);
         ctx.lineCap = "round";
         ctxBeginPath(ctx);
@@ -242,13 +317,13 @@ export class Rat extends KinematicObject {
         
        
         // ear1
-        ctxFillStyle(ctx, FURCOLOR);
+        ctxFillStyle(ctx, this.fur);
         ctxBeginPath(ctx);
         ctxArc(ctx, this.bones[BONE_EAR1].endX, this.bones[BONE_EAR1].endY, headsize * this.sizing*0.6, 0, 2 * Math.PI);
         ctxFill(ctx);
 
         // ear2
-        ctxFillStyle(ctx, FURCOLOR);
+        ctxFillStyle(ctx, this.fur);
         ctxBeginPath(ctx);
         ctxArc(ctx, this.bones[BONE_EAR2].endX, this.bones[BONE_EAR2].endY, headsize * this.sizing*0.6, 0, 2 * Math.PI);
         ctxFill(ctx);
@@ -257,13 +332,13 @@ export class Rat extends KinematicObject {
         ctxArc(ctx, this.bones[BONE_EAR2].endX, this.bones[BONE_EAR2].endY, headsize * this.sizing*0.5, 0, 2 * Math.PI);
         ctxFill(ctx);
         // Head
-        ctxFillStyle(ctx, FURCOLOR);
+        ctxFillStyle(ctx, this.fur);
         let neck = this.bones[BONE_NECK];
         ctxBeginPath(ctx);
         ctxArc(ctx, neck.endX, neck.endY, headsize * this.sizing, 0, 2 * Math.PI);
         ctxFill(ctx);
         // Face
-        ctxFillStyle(ctx, FURCOLOR);
+        ctxFillStyle(ctx, this.fur);
         ctxBeginPath(ctx);
         ctxMoveTo(ctx, this.bones[BONE_FACE].endX, this.bones[BONE_FACE].endY);
         ctxLineTo(ctx, this.bones[BONE_NOSE].endX, this.bones[BONE_NOSE].endY);
@@ -281,6 +356,9 @@ export class Rat extends KinematicObject {
             ctxArc(ctx, this.bones[boneId].endX, this.bones[boneId].endY, 3 * this.sizing, 0, 2 * Math.PI);
             ctxFill(ctx);
         });
+
+        
+        this.renderHitboxes(ctx);
         
         ctx.restore();
     }

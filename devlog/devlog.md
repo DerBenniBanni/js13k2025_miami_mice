@@ -102,3 +102,27 @@ Theme announced: Black Cat
 ![rats](img/008_rats.png)
 
 **devtime:** 2h evening
+
+## 2025-08-26
+
+* added hitboxes
+* made the postures of the rats more evil/agressive
+
+**devtime:** 1.5h evening
+
+## 2025-08-27
+
+* added bone-animations for hits (configureable for each hitbox)
+
+![hit anim](img/010_hit_animations.gif)
+
+**devtime:** 0.5h workcommute, 1h evening
+
+## 2025-08-28
+
+* added an enemy-ki, they now move to the players area and dont overlap
+* random gi- and fur-colors for the enemies
+
+**devtime:** 0.5h workcommute, 1.5h evening
+
+
