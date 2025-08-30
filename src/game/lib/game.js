@@ -2,6 +2,7 @@ import { Cat } from "./cat.js";
 import { POSE_STAND } from "./kinematics.js";
 import { Player } from "./player.js";
 import { Rat } from "./rat.js";
+import { RatKing } from "./ratking.js";
 import SFXPlayer from "./soundbox/sfxplayer.js";
 
 export const ACTION_MOVE_LEFT_PLAYER_1 = 0;
@@ -58,7 +59,8 @@ export class Game {
     }
 
     start(callback) {
-        document.querySelectorAll('.mainmenu,.bigtext,.neon,.cast').forEach(div=>div.style.display='none');
+        //document.querySelectorAll('.mainmenu,.bigtext,.neon,.cast').forEach(div=>div.style.display='none');
+        document.querySelectorAll('.mainmenu').forEach(div=>div.style.display='none');
         this.isGameRunning = true;
         this.gameLoop();
         this.initObjects()
@@ -73,10 +75,10 @@ export class Game {
         cat2.giColors = ['#d00', '#600'];
         cat2.pose(POSE_STAND);
         */
-        let rat = this.addGameObject(new Rat(710, 900));
+        let rat = this.addGameObject(new Rat(750, 950));
         //rat.state = 6;
-        let rat2 = this.addGameObject(new Rat(715, 900));
-        let rat3 = this.addGameObject(new Rat(712, 900));
+        let ratking = this.addGameObject(new RatKing(1200, 850));
+        //let rat3 = this.addGameObject(new Rat(712, 900));
         //rat.invertX = true;
         /*
         let rat2 = this.addGameObject(new Rat(1000, 700));

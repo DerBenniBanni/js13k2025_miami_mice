@@ -144,6 +144,7 @@ export class Rat extends KinematicObject {
         this.giColors = [GIOLORS[Math.floor(Math.random()*GIOLORS.length)], '#333'];
         this.fur = FURCOLORS[Math.floor(Math.random()*FURCOLORS.length)];
         this.walkSpeed = 60 + Math.random()*20;
+        this.renderEars = true;
 
         this.hp = 100;
 
@@ -205,6 +206,7 @@ export class Rat extends KinematicObject {
     }
 
     kiUpdate(delta) {
+
         if(this.state === STATE_KO) {
             return;
         }
@@ -332,20 +334,13 @@ export class Rat extends KinematicObject {
         
        
         // ear1
-        ctxFillStyle(ctx, this.fur);
-        ctxBeginPath(ctx);
-        ctxArc(ctx, this.bones[BONE_EAR1].endX, this.bones[BONE_EAR1].endY, headsize * this.sizing*0.6, 0, 2 * Math.PI);
-        ctxFill(ctx);
+        if(this.renderEars) {
+            ctxFillStyle(ctx, this.fur);
+            ctxBeginPath(ctx);
+            ctxArc(ctx, this.bones[BONE_EAR1].endX, this.bones[BONE_EAR1].endY, headsize * this.sizing*0.6, 0, 2 * Math.PI);
+            ctxFill(ctx);
+        }
 
-        // ear2
-        ctxFillStyle(ctx, this.fur);
-        ctxBeginPath(ctx);
-        ctxArc(ctx, this.bones[BONE_EAR2].endX, this.bones[BONE_EAR2].endY, headsize * this.sizing*0.6, 0, 2 * Math.PI);
-        ctxFill(ctx);
-        ctxFillStyle(ctx, "#844");
-        ctxBeginPath(ctx);
-        ctxArc(ctx, this.bones[BONE_EAR2].endX, this.bones[BONE_EAR2].endY, headsize * this.sizing*0.5, 0, 2 * Math.PI);
-        ctxFill(ctx);
         // Head
         ctxFillStyle(ctx, this.fur);
         let neck = this.bones[BONE_NECK];
@@ -364,6 +359,17 @@ export class Rat extends KinematicObject {
         ctxBeginPath(ctx);
         ctxArc(ctx, this.bones[BONE_NOSE].endX, this.bones[BONE_NOSE].endY, 5 * this.sizing, 0, 2 * Math.PI);
         ctxFill(ctx);
+        // ear2
+        if(this.renderEars) {
+            ctxFillStyle(ctx, this.fur);
+            ctxBeginPath(ctx);
+            ctxArc(ctx, this.bones[BONE_EAR2].endX, this.bones[BONE_EAR2].endY, headsize * this.sizing*0.6, 0, 2 * Math.PI);
+            ctxFill(ctx);
+            ctxFillStyle(ctx, "#844");
+            ctxBeginPath(ctx);
+            ctxArc(ctx, this.bones[BONE_EAR2].endX, this.bones[BONE_EAR2].endY, headsize * this.sizing*0.5, 0, 2 * Math.PI);
+            ctxFill(ctx);
+        }
         //eyes
         [BONE_EYE1, BONE_EYE2].forEach((boneId) => {
             ctxBeginPath(ctx);
@@ -372,8 +378,12 @@ export class Rat extends KinematicObject {
             ctxFill(ctx);
         });
         this.renderHitboxes(ctx);
+        this.renderSpecials(ctx);
         ctx.restore();
         this.renderParticles(ctx);
         
+    }
+    renderSpecials(ctx) {
+        // Render special effects or features unique to the rat type
     }
 }
