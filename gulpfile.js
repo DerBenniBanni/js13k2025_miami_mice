@@ -10,20 +10,20 @@ import deleteFiles from 'gulp-delete-files';
 const config = {
     src: {
         html: 'src/**.html',
-        //css: 'src/css/**.css',
+        css: 'src/**.css',
         js: 'src/game/**.js'
         //images: 'src/images/**'
     },
     build: {
         dir: 'build',
-        //css: 'style.css',
+        css: 'style.css',
         js: 'main.js',
         jsMin: 'main.min.js'
         //images: 'build/images'
     },
     dist: {
         dir: 'dist',
-        //css: 'style.min.css',
+        css: 'style.min.css',
         js: 'game.min.js'
         //images: 'dist/images'
     },
@@ -44,7 +44,7 @@ gulp.task('buildHTML', () => {
     console.log('Building HTML...');
     return gulp.src(config.src.html)
         .pipe(replaceHTML({
-            //css: config.build.css,
+            css: config.build.css,
             js: config.build.jsMin
         }))
         .pipe(gulp.dest(config.build.dir));
@@ -97,6 +97,6 @@ gulp.task('default', gulp.series(
     'webpackJS',
     roadRollJs,
     'buildHTML',
-    //'buildCSS',
+    'buildCSS',
     'zip'
 ));

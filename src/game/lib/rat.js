@@ -216,43 +216,47 @@ export class Rat extends KinematicObject {
             this.kiTarget = targets[Math.floor(Math.random() * targets.length)];
         } else {
             // Move towards the target
-            let dx = this.kiTarget.x - this.x;
-            if(dx < 0) {
-                this.invertX = true;
-            } else {
-                this.invertX = false;
-            }
-            dx = this.kiTarget.x - this.x + 180 * (this.invertX ? 1 : -1) * this.sizing;
-            let dy = this.kiTarget.y - this.y;
-            let distance = Math.sqrt(dx * dx + dy * dy);
-            if (distance > 10) {
-                this.state = STATE_WALKING;
-                let x = this.x + (dx / distance) * this.walkSpeed * delta;
-                let y = this.y + (dy / distance) * this.walkSpeed * delta;
-                let blockingRat = this.game.enemies.find(rat => {
-                    if(rat == this) return false;
-                    let ex = rat.x - this.x;
-                    let ey = rat.y - this.y;
-                    let ed = Math.sqrt(ex * ex + ey * ey);
-                    if (ed < 120 * this.sizing) {
-                        return true;
-                    }
-                    return false;
-                });
-                if(blockingRat) {
-                    dx = this.x - blockingRat.x;
-                    dy = this.y - blockingRat.y;
-                    distance = Math.sqrt(dx * dx + dy * dy);
-                    x = this.x + (dx / distance) * this.walkSpeed * delta;
-                    y = this.y + (dy / distance) * this.walkSpeed * delta;
-                    
-                } 
-                this.x = x;
-                this.y = y;
+            this.kiWalk(delta);
+        }
+    }
+
+    kiWalk(delta) {
+        let dx = this.kiTarget.x - this.x;
+        if(dx < 0) {
+            this.invertX = true;
+        } else {
+            this.invertX = false;
+        }
+        dx = this.kiTarget.x - this.x + 180 * (this.invertX ? 1 : -1) * this.sizing;
+        let dy = this.kiTarget.y - this.y;
+        let distance = Math.sqrt(dx * dx + dy * dy);
+        if (distance > 10) {
+            this.state = STATE_WALKING;
+            let x = this.x + (dx / distance) * this.walkSpeed * delta;
+            let y = this.y + (dy / distance) * this.walkSpeed * delta;
+            let blockingRat = this.game.enemies.find(rat => {
+                if(rat == this) return false;
+                let ex = rat.x - this.x;
+                let ey = rat.y - this.y;
+                let ed = Math.sqrt(ex * ex + ey * ey);
+                if (ed < 120 * this.sizing) {
+                    return true;
+                }
+                return false;
+            });
+            if(blockingRat) {
+                dx = this.x - blockingRat.x;
+                dy = this.y - blockingRat.y;
+                distance = Math.sqrt(dx * dx + dy * dy);
+                x = this.x + (dx / distance) * this.walkSpeed * delta;
+                y = this.y + (dy / distance) * this.walkSpeed * delta;
                 
-            } else {
-                this.state = STATE_IDLE;    
-            }
+            } 
+            this.x = x;
+            this.y = y;
+            
+        } else {
+            this.state = STATE_IDLE;    
         }
     }
 

@@ -125,4 +125,17 @@ Theme announced: Black Cat
 
 **devtime:** 0.5h workcommute, 1.5h evening
 
+## 2025-08-29
+
+* new character: the Rat King
+
+**devtime:** 1.5h evening
+
+
+## 2025-08-20
+
+* started to add an intro
+
+**devtime:** 1.5h evening
+
 

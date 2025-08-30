@@ -44,8 +44,7 @@ export class RatKing extends Rat {
         this.invertX = true;
     }
 
-    kiUpdate(delta) {
-    }
+
     
     renderSpecials(ctx) {
        [BONE_EYE2].forEach((boneId) => {

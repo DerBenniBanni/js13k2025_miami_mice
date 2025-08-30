@@ -23,6 +23,29 @@ const keyActionMap = {
     "KeyJ": ACTION_KICK_PLAYER_1
 };
 
+const SCENE_INTRO = 0;
+const SCENE_STAGE = 1;
+const SCENES = [];
+SCENES[SCENE_INTRO] = (game) => {
+    let cat = game.addGameObject(new Cat(300, 900));
+    cat.giColors = ['#fff', '#777'];
+    let ratking = game.addGameObject(new RatKing(2100, 900));
+    ratking.kiTarget = {x:1500, y:900};
+    game.texts = [
+        {text: "Welcome Furball!<br>I am the RAT KING!<br><br>This is my city!<br>Stay out of my way!", align:"right" }
+    ];
+    game.txtPointer = -1;
+    game.nextText();
+
+};
+
+SCENES[SCENE_STAGE] = (game) => {
+    let player = game.addGameObject(new Player(300, 900, 1));
+    player.giColors = ['#fff', '#777'];
+    let rat = game.addGameObject(new Rat(1800, 900));
+};
+
+
 export class Game {
     constructor(canvasId) {
         this.canvas = document.getElementById(canvasId);
@@ -31,6 +54,9 @@ export class Game {
         this.gameObjects = [];
         this.enemies = []; // cache for enemy objects
         this.lastUpdateTime = 0;
+
+        this.texts = [];
+        this.txtPointer = -1;
 
         this.sfxPlayer = new SFXPlayer(); // Sound effect player
 
@@ -48,6 +74,17 @@ export class Game {
         });
     }
 
+    nextText() {
+        let txt = document.querySelector('.txt');
+        if (this.txtPointer < this.texts.length - 1) {
+            this.txtPointer++;
+            txt.innerHTML = this.texts[this.txtPointer].text;
+            txt.style.textAlign = this.texts[this.txtPointer].align || "center";
+        } else {
+            txt.innerHTML = "";
+        }
+    }
+
     getActionState(action) {
         return this.actions[action] || false;
     }
@@ -59,14 +96,22 @@ export class Game {
     }
 
     start(callback) {
-        //document.querySelectorAll('.mainmenu,.bigtext,.neon,.cast').forEach(div=>div.style.display='none');
-        document.querySelectorAll('.mainmenu').forEach(div=>div.style.display='none');
+        //this.sfxPlayer.playAudio("gamemusic");
+        document.querySelectorAll('.mainmenu,.neon,.cast').forEach(div=>div.style.opacity = 0);
+        
+        document.querySelector('.mainmenu').style.display = "none";
+        document.querySelector('.bigtext').style.fontSize = "33vh";
+        document.querySelector('.bigtext').style.opacity = "0";
+        document.querySelector('.bigtext').style.top = "15vh";
+        document.querySelector('.bigtext').style.zIndex = "20";
         this.isGameRunning = true;
         this.gameLoop();
-        this.initObjects()
+        this.initObjects(SCENE_INTRO);
     }
 
-    initObjects() {
+    initObjects(scene) {
+        SCENES[scene](this);
+        return;
         let cat1 = this.addGameObject(new Player(300, 900, 1));
         cat1.giColors = ['#fff', '#777'];
         /*
@@ -77,7 +122,7 @@ export class Game {
         */
         let rat = this.addGameObject(new Rat(750, 950));
         //rat.state = 6;
-        let ratking = this.addGameObject(new RatKing(1200, 850));
+        let ratking = this.addGameObject(new RatKing(1200, 1100));
         //let rat3 = this.addGameObject(new Rat(712, 900));
         //rat.invertX = true;
         /*

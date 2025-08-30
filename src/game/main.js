@@ -2,19 +2,10 @@ import { Game } from "./lib/game.js";
 
 import musicGame from "./lib/soundbox/music_game.js";
 
-
+const q = (s) => document.querySelector(s);
 window.game = null;
 document.addEventListener("DOMContentLoaded", () => {
-    game = new Game("gameCanvas");
-    
-    //game.sfxPlayer.add("gamemusic", musicGame, true);
-
-    game.start();
-    //game.sfxPlayer.playAudio("gamemusic");
-
-    
-    
-    let water = document.querySelector('.water');
+    let water = q('.water');
     for(let y = 0; y < 45; y++) {
         let wave = water.cloneNode(true);
         wave.firstElementChild.style.animationDuration = (2 + Math.random() * 2) + 's';
@@ -26,4 +17,19 @@ document.addEventListener("DOMContentLoaded", () => {
         document.body.insertBefore(wave, water);
     }
     water.remove();
+
+    setTimeout(() => {
+        game = new Game("gameCanvas");
+
+        //game.sfxPlayer.add("gamemusic", musicGame, true);
+
+        //game.start();
+        //game.sfxPlayer.playAudio("gamemusic");
+
+        q('.load').remove();
+        q('.intro').style.opacity = '1';
+    }, 100);
+        
+    
+    
 });
