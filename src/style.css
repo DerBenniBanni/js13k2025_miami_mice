@@ -8,9 +8,7 @@ body {
     align-items: center;
 }
 canvas {
-    display: absolute;
-    top:0;
-    left:0;
+    outline: 1000px solid #555;
     aspect-ratio: 16 / 9;
     max-width: 100vw;
     max-height: 100vh;
@@ -169,7 +167,7 @@ canvas {
 }
 
 .txt {
-    top:40vh;
+    top:32vh;
     left:10vw;
     right:10vw;
     font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;

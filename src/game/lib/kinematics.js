@@ -14,6 +14,7 @@ export const POSE_CHECK_ATTACK = 10;
 export const POSE_HIT_HEAD = 11;
 export const POSE_HIT_BODY = 12;
 export const POSE_KO= 13;
+export const POSE_TALK= 14;
 
 export const STATE_IDLE = 1;
 export const STATE_WALKING = 2;
@@ -168,7 +169,7 @@ export class KinematicObject extends GameObject {
         super(x,y, type);
         this.rootBone = new Bone(0, 0, this);
         this.bones = [];
-        this.lastMorph = {poseId: null, duration: 1};
+        this.lastMorph = {poseId: null, duration: 1, data: {}};
         this.morphQueue = [];
         this.morphFrom = [];
         this.morphTo = [];
@@ -186,6 +187,7 @@ export class KinematicObject extends GameObject {
         this.forceX = 0;
         this.forceY = 0;
         this.kiTarget = null;
+        this.kiTargetReached = null; // callback when kiTarget is reached (cutscenes)
         this.hp = 100;
     }
 
@@ -224,8 +226,8 @@ export class KinematicObject extends GameObject {
         this.updateAngles();
     }
 
-    morph(poseId, duration) {
-        this.lastMorph = { poseId, duration };
+    morph(poseId, duration, data) {
+        this.lastMorph = { poseId, duration, data };
         this.morphFrom = this.bones.map(bone => bone.angle);
         if(poseId) {
             this.morphTo = this.poseDefs[poseId].map(angle => toRad(angle));
@@ -249,15 +251,15 @@ export class KinematicObject extends GameObject {
         this.morphQueue = [];
     }
 
-    queueMorph(poseId, duration, immediate = false) {
+    queueMorph(poseId, duration, immediate = false, data = {}) {
         if (immediate) {
             this.clearMorph();
             this.morphTimer = 0
         }
-        this.morphQueue.push({ poseId, duration });
+        this.morphQueue.push({ poseId, duration, data });
         if (this.morphTimer <= 0) {
             const nextMorph = this.morphQueue.shift();
-            this.morph(nextMorph.poseId, nextMorph.duration);
+            this.morph(nextMorph.poseId, nextMorph.duration, nextMorph.data);
         }
     }
 
@@ -296,7 +298,7 @@ export class KinematicObject extends GameObject {
                     if(nextMorph.poseId == POSE_CHECK_ATTACK) {
                         this.checkAttackHitboxes();
                     } else {
-                        this.morph(nextMorph.poseId, nextMorph.duration);
+                        this.morph(nextMorph.poseId, nextMorph.duration, nextMorph.data);
                     }
                 }
             }
@@ -358,6 +360,58 @@ export class KinematicObject extends GameObject {
         this.hitboxes.forEach(hitbox => {
             hitbox.render(ctx);
         });
+    }
+
+    
+    
+    kiWalk(delta) {
+        if(this.kiTarget == null) {
+            return;
+        }
+        let oldState = this.state;
+        let dx = this.kiTarget.x - this.x;
+        if(dx < 0) {
+            this.invertX = true;
+        } else {
+            this.invertX = false;
+        }
+        dx = this.kiTarget.x - this.x + 180 * (this.invertX ? 1 : -1) * this.sizing;
+        let dy = this.kiTarget.y - this.y;
+        let distance = Math.sqrt(dx * dx + dy * dy);
+        if (distance > 10) {
+            this.state = STATE_WALKING;
+            let x = this.x + (dx / distance) * this.walkSpeed * delta;
+            let y = this.y + (dy / distance) * this.walkSpeed * delta;
+            let blockingRat = this.game.enemies.find(rat => {
+                if(rat == this) return false;
+                let ex = rat.x - this.x;
+                let ey = rat.y - this.y;
+                let ed = Math.sqrt(ex * ex + ey * ey);
+                if (ed < 120 * this.sizing) {
+                    return true;
+                }
+                return false;
+            });
+            if(blockingRat) {
+                dx = this.x - blockingRat.x;
+                dy = this.y - blockingRat.y;
+                distance = Math.sqrt(dx * dx + dy * dy);
+                x = this.x + (dx / distance) * this.walkSpeed * delta;
+                y = this.y + (dy / distance) * this.walkSpeed * delta;
+                
+            } 
+            this.x = x;
+            this.y = y;
+            
+        } else {
+            this.state = STATE_IDLE;
+            if(oldState == STATE_WALKING) {
+                this.queueMorph(POSE_STAND,0.2,true);
+            }
+            if(this.kiTargetReached) {
+                this.kiTargetReached();
+            }  
+        }
     }
 }
 

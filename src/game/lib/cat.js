@@ -309,4 +309,13 @@ export class Cat extends KinematicObject {
         
         ctx.restore();
     }
+
+    kiUpdate(delta) {
+        if(this.game.cutscene.length === 0 && this.kiTarget == null) {
+            return;
+        } else {
+            // Move towards the target
+            this.kiWalk(delta);
+        }
+    }
 }

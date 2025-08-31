@@ -6,6 +6,7 @@ import fs from 'fs';
 import { Packer } from 'roadroller';
 import gulpCheckFilesize from 'gulp-check-filesize';
 import deleteFiles from 'gulp-delete-files';
+import GulpCleanCss from 'gulp-clean-css';
 
 const config = {
     src: {
@@ -53,6 +54,7 @@ gulp.task('buildHTML', () => {
 gulp.task('buildCSS', () => {
     console.log('Building CSS...');
     return gulp.src(config.src.css)
+        .pipe(GulpCleanCss())
         .pipe(gulp.dest(config.build.dir));
 });
 

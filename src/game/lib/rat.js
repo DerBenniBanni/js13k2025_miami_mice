@@ -1,5 +1,5 @@
 import { ctxArc, ctxBeginPath, ctxBezierCurveTo, ctxEllipse, ctxFill, ctxFillStyle, ctxLineTo, ctxLineWidth, ctxMoveTo, ctxStroke, ctxStrokeStyle, toRad } from "./utils.js";
-import { Bone, Hitbox, HITBOX_TYPE_ATTACK, HITBOX_TYPE_LOWER, HITBOX_TYPE_UPPER, KinematicObject, POSE_BLOCK, POSE_BOW, POSE_HIT_BODY, POSE_HIT_HEAD, POSE_KICK_A, POSE_KICK_B, POSE_KO, POSE_PUNCH, POSE_PUNCH2, POSE_STAND, POSE_WALK_1, POSE_WALK_2, STATE_IDLE, STATE_KO, STATE_WALKING } from "./kinematics.js";
+import { Bone, Hitbox, HITBOX_TYPE_ATTACK, HITBOX_TYPE_LOWER, HITBOX_TYPE_UPPER, KinematicObject, POSE_BLOCK, POSE_BOW, POSE_HIT_BODY, POSE_HIT_HEAD, POSE_KICK_A, POSE_KICK_B, POSE_KO, POSE_PUNCH, POSE_PUNCH2, POSE_STAND, POSE_TALK, POSE_WALK_1, POSE_WALK_2, STATE_IDLE, STATE_KO, STATE_WALKING } from "./kinematics.js";
 
 const headsize = 40;
 
@@ -160,6 +160,7 @@ export class Rat extends KinematicObject {
         this.poseDefs[POSE_HIT_BODY] = POSE_HIT_BODY_DATA;
         this.poseDefs[POSE_HIT_HEAD] = POSE_HIT_HEAD_DATA;
         this.poseDefs[POSE_KO] = POSE_KO_DATA;
+        this.poseDefs[POSE_TALK] = POSE_STAND_DATA;
 
         this.tailWiggle = [
             [BONE_TAIL1, -130, 80],
@@ -210,53 +211,12 @@ export class Rat extends KinematicObject {
         if(this.state === STATE_KO) {
             return;
         }
-        //this.x -= this.walkSpeed * delta;
-        if(this.kiTarget == null) {
+        if(this.game.cutscene.length === 0 && this.kiTarget == null) {
             let targets = this.game.getGameObjects(["cat", "player"]);
             this.kiTarget = targets[Math.floor(Math.random() * targets.length)];
         } else {
             // Move towards the target
             this.kiWalk(delta);
-        }
-    }
-
-    kiWalk(delta) {
-        let dx = this.kiTarget.x - this.x;
-        if(dx < 0) {
-            this.invertX = true;
-        } else {
-            this.invertX = false;
-        }
-        dx = this.kiTarget.x - this.x + 180 * (this.invertX ? 1 : -1) * this.sizing;
-        let dy = this.kiTarget.y - this.y;
-        let distance = Math.sqrt(dx * dx + dy * dy);
-        if (distance > 10) {
-            this.state = STATE_WALKING;
-            let x = this.x + (dx / distance) * this.walkSpeed * delta;
-            let y = this.y + (dy / distance) * this.walkSpeed * delta;
-            let blockingRat = this.game.enemies.find(rat => {
-                if(rat == this) return false;
-                let ex = rat.x - this.x;
-                let ey = rat.y - this.y;
-                let ed = Math.sqrt(ex * ex + ey * ey);
-                if (ed < 120 * this.sizing) {
-                    return true;
-                }
-                return false;
-            });
-            if(blockingRat) {
-                dx = this.x - blockingRat.x;
-                dy = this.y - blockingRat.y;
-                distance = Math.sqrt(dx * dx + dy * dy);
-                x = this.x + (dx / distance) * this.walkSpeed * delta;
-                y = this.y + (dy / distance) * this.walkSpeed * delta;
-                
-            } 
-            this.x = x;
-            this.y = y;
-            
-        } else {
-            this.state = STATE_IDLE;    
         }
     }
 

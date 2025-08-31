@@ -1,9 +1,10 @@
 import { Game } from "./lib/game.js";
-
 import musicGame from "./lib/soundbox/music_game.js";
 
 const q = (s) => document.querySelector(s);
+
 window.game = null;
+
 document.addEventListener("DOMContentLoaded", () => {
     let water = q('.water');
     for(let y = 0; y < 45; y++) {
@@ -21,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setTimeout(() => {
         game = new Game("gameCanvas");
 
-        //game.sfxPlayer.add("gamemusic", musicGame, true);
+        game.sfxPlayer.add("gamemusic", musicGame, true);
 
         //game.start();
         //game.sfxPlayer.playAudio("gamemusic");

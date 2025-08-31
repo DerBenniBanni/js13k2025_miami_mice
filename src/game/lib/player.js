@@ -46,27 +46,33 @@ export class Player extends Cat {
             noInput = false;
             moveAllowed = false;
         }
-        if (moveAllowed && this.game.getActionState(ACTION_MOVE_LEFT_PLAYER_1)) {
-            this.x -= this.walkSpeed * deltaTime;
-            this.state = STATE_WALKING;
-            noInput = false;
-            this.invertX = true
-        }
-        if (moveAllowed && this.game.getActionState(ACTION_MOVE_RIGHT_PLAYER_1)) {
-            this.x += this.walkSpeed * deltaTime;
-            this.state = STATE_WALKING;
-            noInput = false;
-            this.invertX = false;
-        }
-        if (moveAllowed && this.game.getActionState(ACTION_MOVE_UP_PLAYER_1)) {
-            this.y -= this.walkSpeed*0.8 * deltaTime;
-            this.state = STATE_WALKING;
-            noInput = false;
-        }
-        if (moveAllowed && this.game.getActionState(ACTION_MOVE_DOWN_PLAYER_1)) {
-            this.y += this.walkSpeed*0.8 * deltaTime;
-            this.state = STATE_WALKING;
-            noInput = false;
+        if (moveAllowed) {
+            let left = this.game.getActionState(ACTION_MOVE_LEFT_PLAYER_1);
+            let right = this.game.getActionState(ACTION_MOVE_RIGHT_PLAYER_1);
+            let up = this.game.getActionState(ACTION_MOVE_UP_PLAYER_1);
+            let down = this.game.getActionState(ACTION_MOVE_DOWN_PLAYER_1);
+            if (left) {
+                this.x -= this.walkSpeed * left * deltaTime;
+                this.state = STATE_WALKING;
+                noInput = false;
+                this.invertX = true
+            }
+            if (right) {
+                this.x += this.walkSpeed * right * deltaTime;
+                this.state = STATE_WALKING;
+                noInput = false;
+                this.invertX = false;
+            }
+            if (up) {
+                this.y -= this.walkSpeed * 0.8 * up * deltaTime;
+                this.state = STATE_WALKING;
+                noInput = false;
+            }
+            if (down) {
+                this.y += this.walkSpeed * 0.8 * down * deltaTime;
+                this.state = STATE_WALKING;
+                noInput = false;
+            }
         }
         
         if (noInput) {
