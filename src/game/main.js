@@ -22,13 +22,13 @@ document.addEventListener("DOMContentLoaded", () => {
     setTimeout(() => {
         game = new Game("gameCanvas");
 
-        game.sfxPlayer.add("gamemusic", musicGame, true);
-
-        //game.start();
-        //game.sfxPlayer.playAudio("gamemusic");
+        //game.sfxPlayer.add("gamemusic", musicGame, true);
 
         q('.load').remove();
         q('.intro').style.opacity = '1';
+
+        //game.start();
+
     }, 100);
         
     

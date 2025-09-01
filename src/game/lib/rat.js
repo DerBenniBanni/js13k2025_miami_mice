@@ -1,5 +1,5 @@
 import { ctxArc, ctxBeginPath, ctxBezierCurveTo, ctxEllipse, ctxFill, ctxFillStyle, ctxLineTo, ctxLineWidth, ctxMoveTo, ctxStroke, ctxStrokeStyle, toRad } from "./utils.js";
-import { Bone, Hitbox, HITBOX_TYPE_ATTACK, HITBOX_TYPE_LOWER, HITBOX_TYPE_UPPER, KinematicObject, POSE_BLOCK, POSE_BOW, POSE_HIT_BODY, POSE_HIT_HEAD, POSE_KICK_A, POSE_KICK_B, POSE_KO, POSE_PUNCH, POSE_PUNCH2, POSE_STAND, POSE_TALK, POSE_WALK_1, POSE_WALK_2, STATE_IDLE, STATE_KO, STATE_WALKING } from "./kinematics.js";
+import { Bone, Hitbox, HITBOX_TYPE_ATTACK, HITBOX_TYPE_LOWER, HITBOX_TYPE_UPPER, KinematicObject, POSE_BLOCK, POSE_BOW, POSE_CHECK_ATTACK, POSE_HIT_BODY, POSE_HIT_HEAD, POSE_KICK_A, POSE_KICK_B, POSE_KO, POSE_PUNCH, POSE_PUNCH2, POSE_STAND, POSE_TALK, POSE_WALK_1, POSE_WALK_2, STATE_IDLE, STATE_KICK, STATE_KO, STATE_PUNCH, STATE_WALKING } from "./kinematics.js";
 
 const headsize = 40;
 
@@ -138,6 +138,12 @@ const LINE_BUTT = "butt";
 const FURCOLORS = ["#462626","#777","#494034"];
 const GIOLORS = ["#000","#010","#100","#002"];
 
+const ATTACKS = {
+    "PUNCH": {state: STATE_PUNCH, poses: [[POSE_PUNCH, 0.2]]},
+    "KICK": {state: STATE_KICK, poses: [[POSE_KICK_A, 0.2], [POSE_KICK_B, 0.2]]},
+    "PUNCH2": {state: STATE_PUNCH, poses: [[POSE_PUNCH2, 0.2]]}
+};
+
 export class Rat extends KinematicObject {
     constructor(x,y,type = "rat") {
         super(x,y,type);
@@ -161,6 +167,12 @@ export class Rat extends KinematicObject {
         this.poseDefs[POSE_HIT_HEAD] = POSE_HIT_HEAD_DATA;
         this.poseDefs[POSE_KO] = POSE_KO_DATA;
         this.poseDefs[POSE_TALK] = POSE_STAND_DATA;
+
+        this.attackFrequency = 2; // 2 seconds
+        this.attackDuration = 0.5; // 0.5 seconds
+        this.attackTimer = 0;
+        this.attackPoseIdx = 0;
+        this.attackPattern = ["PUNCH","KICK","PUNCH2","PUNCH","KICK"];
 
         this.tailWiggle = [
             [BONE_TAIL1, -130, 80],
@@ -207,16 +219,39 @@ export class Rat extends KinematicObject {
     }
 
     kiUpdate(delta) {
-
+        let lastState = this.state;
         if(this.state === STATE_KO) {
             return;
         }
-        if(this.game.cutscene.length === 0 && this.kiTarget == null) {
+        if(this.game.cutsceneRunning) {
+            this.kiWalk(delta);
+            return;
+        } 
+        if(this.kiTarget == null) {
             let targets = this.game.getGameObjects(["cat", "player"]);
             this.kiTarget = targets[Math.floor(Math.random() * targets.length)];
         } else {
-            // Move towards the target
-            this.kiWalk(delta);
+            this.attackTimer += delta;
+            let distanceX = this.kiTarget.x - this.x;
+            let distanceY = Math.abs(this.kiTarget.y - this.y);
+            let distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
+            if (distance < 200 * this.sizing && distanceY < 9) {
+                if (this.attackTimer > this.attackFrequency) {
+                    this.attackTimer = 0;
+                    this.attackPoseIdx = (this.attackPoseIdx + 1) % this.attackPattern.length;
+                    let attack = ATTACKS[this.attackPattern[this.attackPoseIdx]];
+                    this.state = attack.state;
+                    attack.poses.forEach(pose => {
+                        this.queueMorph(pose[0], pose[1]);
+                    });
+                    this.queueMorph(POSE_CHECK_ATTACK, 0);
+                    this.queueMorph(POSE_STAND, 0.2);
+                }
+                
+            } else {
+                // Move towards the target
+                this.kiWalk(delta);
+            }
         }
     }
 

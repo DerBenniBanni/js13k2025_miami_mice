@@ -131,11 +131,22 @@ Theme announced: Black Cat
 
 **devtime:** 1.5h evening
 
-
-## 2025-08-20
+## 2025-08-30
 
 * started to add an intro
 
 **devtime:** 1.5h evening
 
+## 2025-08-31
 
+* cutscene-support added
+
+**devtime:** 2h afternoon
+
+## 2025-09-01
+
+* cutscene-support refactored
+* enemy ki updated, to fight back
+* ko-state of player added
+
+**devtime:** 2h night

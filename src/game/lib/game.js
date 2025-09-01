@@ -31,22 +31,29 @@ SCENES[SCENE_INTRO] = (game) => {
     let cat = game.addGameObject(new Cat(-200, 900));
     cat.giColors = ['#fff', '#777'];
     let ratking = game.addGameObject(new RatKing(2100, 800));
+    ratking.walkSpeed = 200;
+    //let rat1 = game.addGameObject(new Rat(2200, 700));
+    //rat1.walkSpeed = 300;
+    //let rat2 = game.addGameObject(new Rat(2200, 1000));
+    //rat2.walkSpeed = 300;
     
     game.cutscene = [
         (game) => {
-            ratking.walkSpeed = 200;
-            ratking.kiTarget = {x:1500, y:880};
+            
+            ratking.kiTarget = {x:1400, y:880};
             ratking.kiTargetReached = () => {
                 ratking.kiTargetReached = null;
                 game.nextCutscene();
             };
+            //rat1.kiTarget = {x:1700, y:700};
+            //rat2.kiTarget = {x:1700, y:1050};
             cat.walkSpeed = 300;
             cat.kiTarget = {x:400, y:900};
         },
         (game) => {
             game.texts = [
                 {
-                    text: "RAT KING: <br>Ho Furball!<br>I am the RAT KING!<br><br>This is my city!<br>Stay out of my way!", 
+                    text: "RAT KING: <br>Agent Furball! Finally, we meet in person.<br>So, the Feline Bureau of Investigation has come to play!<br><br>This is my city!<br>Stay out of my way!", 
                     align:"right"
                 }
             ];
@@ -70,11 +77,13 @@ SCENES[SCENE_INTRO] = (game) => {
         (game) => {
             game.nextText();
             ratking.queueMorph(POSE_WALK_2, 0.2, true);
-            ratking.kiTarget = {x:2300, y:1000};
+            ratking.kiTarget = {x:2300, y:900};
             ratking.kiTargetReached = () => {
                 ratking.kiTargetReached = null;
                 game.initObjects(SCENE_STAGE);
             };
+            //rat1.kiTarget = {x:2400, y:700};
+            //rat2.kiTarget = {x:2400, y:1200};
             cat.kiTarget = {x:-400, y:900};
             cat.queueMorph(POSE_WALK_2, 0.2, true);
         }
@@ -107,6 +116,7 @@ export class Game {
         this.cutscene = [];
         this.cutsceneCallback = null;
         this.cutsceneSkip = 1;
+        this.cutsceneRunning = false;
 
         this.keys = {};
         this.actions = [];
@@ -130,6 +140,7 @@ export class Game {
         this.clearText();
         if (this.cutscene.length > 0) {
             this.cutscene.shift()(this);
+            this.cutsceneRunning = true;
         }
     }
 
@@ -159,7 +170,7 @@ export class Game {
     }
 
     start(callback) {
-        //this.sfxPlayer.playAudio("gamemusic");
+        this.sfxPlayer.playAudio("gamemusic");
         document.querySelectorAll('.mainmenu,.neon,.cast').forEach(div=>div.style.opacity = 0);
         
         document.querySelector('.mainmenu').style.display = "none";
@@ -169,29 +180,12 @@ export class Game {
         document.querySelector('.bigtext').style.zIndex = "20";
         this.isGameRunning = true;
         this.gameLoop();
-        this.initObjects(SCENE_INTRO);
+        this.initObjects(SCENE_INTRO);  // SCENE_INTRO, SCENE_STAGE
     }
 
     initObjects(scene) {
+        this.cutsceneRunning = false;
         SCENES[scene](this);
-        return;
-        let cat1 = this.addGameObject(new Player(300, 900, 1));
-        cat1.giColors = ['#fff', '#777'];
-        /*
-        let cat2 = this.addGameObject(new Cat(1200, 900));
-        cat2.invertX = true;
-        cat2.giColors = ['#d00', '#600'];
-        cat2.pose(POSE_STAND);
-        */
-        let rat = this.addGameObject(new Rat(750, 950));
-        //rat.state = 6;
-        let ratking = this.addGameObject(new RatKing(1200, 1100));
-        //let rat3 = this.addGameObject(new Rat(712, 900));
-        //rat.invertX = true;
-        /*
-        let rat2 = this.addGameObject(new Rat(1000, 700));
-        rat2.invertX = true;
-        */
     }
 
     getGameObjects(types) {

@@ -380,6 +380,9 @@ export class KinematicObject extends GameObject {
         let distance = Math.sqrt(dx * dx + dy * dy);
         if (distance > 10) {
             this.state = STATE_WALKING;
+            if(oldState != STATE_WALKING) {
+                this.queueMorph(POSE_WALK_2,0.2,true);
+            }
             let x = this.x + (dx / distance) * this.walkSpeed * delta;
             let y = this.y + (dy / distance) * this.walkSpeed * delta;
             let blockingRat = this.game.enemies.find(rat => {

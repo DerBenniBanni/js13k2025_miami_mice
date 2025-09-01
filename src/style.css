@@ -168,10 +168,11 @@ canvas {
 
 .txt {
     top:32vh;
-    left:10vw;
-    right:10vw;
-    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    left:20vw;
+    right:20vw;
+    font-family: cursive;
     font-size: 3.5vh;
     color: #fff;
     text-shadow: 0 0 5px #000,0 4px 10px #000;
+    z-index: 20;
 }

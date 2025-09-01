@@ -1,5 +1,5 @@
 import { Cat } from "./cat.js";
-import { POSE_BLOCK, POSE_CHECK_ATTACK, POSE_KICK_A, POSE_KICK_B, POSE_PUNCH, POSE_PUNCH2, POSE_STAND, POSE_WALK_1, POSE_WALK_2, STATE_BLOCK, STATE_IDLE, STATE_KICK, STATE_PUNCH, STATE_WALKING } from "./kinematics.js";
+import { POSE_BLOCK, POSE_CHECK_ATTACK, POSE_KICK_A, POSE_KICK_B, POSE_KO, POSE_PUNCH, POSE_PUNCH2, POSE_STAND, POSE_WALK_1, POSE_WALK_2, STATE_BLOCK, STATE_IDLE, STATE_KICK, STATE_KO, STATE_PUNCH, STATE_WALKING } from "./kinematics.js";
 import { ACTION_MOVE_LEFT_PLAYER_1, ACTION_MOVE_RIGHT_PLAYER_1,ACTION_MOVE_UP_PLAYER_1, ACTION_MOVE_DOWN_PLAYER_1, ACTION_BLOCK_PLAYER_1, ACTION_KICK_PLAYER_1, ACTION_PUNCH_PLAYER_1 } from "./game.js";
 
 export class Player extends Cat {
@@ -16,6 +16,14 @@ export class Player extends Cat {
 
     update(deltaTime) {
         let previousState = this.state;
+        if(this.hp <= 0) {
+            this.state = STATE_KO;
+            if(previousState != STATE_KO) {
+                this.queueMorph(POSE_KO, 0.8, true);
+            }
+            super.update(deltaTime);
+            return;
+        }
         let noInput = true;
         let moveAllowed = true;
         if (this.game.getActionState(ACTION_KICK_PLAYER_1)) {
