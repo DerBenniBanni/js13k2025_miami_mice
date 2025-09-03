@@ -139,7 +139,7 @@ canvas {
     z-index:9;
     rotate: -7deg;
 }
-.mainmenu > div.btn{
+.btn{
     top:70vh;
     text-align: center;
     font-size: 10vh;

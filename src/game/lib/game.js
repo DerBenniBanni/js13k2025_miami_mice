@@ -24,7 +24,9 @@ const keyActionMap = {
 };
 
 const SCENE_INTRO = 0;
-const SCENE_STAGE = 1;
+const SCENE_STAGE_1 = 1;
+const SCENE_STAGE_2 = 2;
+
 const SCENES = [];
 SCENES[SCENE_INTRO] = (game) => {
 
@@ -32,10 +34,10 @@ SCENES[SCENE_INTRO] = (game) => {
     cat.giColors = ['#fff', '#777'];
     let ratking = game.addGameObject(new RatKing(2100, 800));
     ratking.walkSpeed = 200;
-    //let rat1 = game.addGameObject(new Rat(2200, 700));
-    //rat1.walkSpeed = 300;
-    //let rat2 = game.addGameObject(new Rat(2200, 1000));
-    //rat2.walkSpeed = 300;
+    let rat1 = game.addGameObject(new Rat(2200, 700));
+    rat1.walkSpeed = 300;
+    let rat2 = game.addGameObject(new Rat(2200, 1000));
+    rat2.walkSpeed = 300;
     
     game.cutscene = [
         (game) => {
@@ -45,8 +47,8 @@ SCENES[SCENE_INTRO] = (game) => {
                 ratking.kiTargetReached = null;
                 game.nextCutscene();
             };
-            //rat1.kiTarget = {x:1700, y:700};
-            //rat2.kiTarget = {x:1700, y:1050};
+            rat1.kiTarget = {x:1700, y:700};
+            rat2.kiTarget = {x:1700, y:1050};
             cat.walkSpeed = 300;
             cat.kiTarget = {x:400, y:900};
         },
@@ -80,10 +82,10 @@ SCENES[SCENE_INTRO] = (game) => {
             ratking.kiTarget = {x:2300, y:900};
             ratking.kiTargetReached = () => {
                 ratking.kiTargetReached = null;
-                game.initObjects(SCENE_STAGE);
+                game.initObjects(SCENE_STAGE_1);
             };
-            //rat1.kiTarget = {x:2400, y:700};
-            //rat2.kiTarget = {x:2400, y:1200};
+            rat1.kiTarget = {x:2400, y:700};
+            rat2.kiTarget = {x:2400, y:1200};
             cat.kiTarget = {x:-400, y:900};
             cat.queueMorph(POSE_WALK_2, 0.2, true);
         }
@@ -91,11 +93,33 @@ SCENES[SCENE_INTRO] = (game) => {
     game.nextCutscene();
 };
 
-SCENES[SCENE_STAGE] = (game) => {
+SCENES[SCENE_STAGE_1] = (game) => {
     game.gameObjects = [];
     let player = game.addGameObject(new Player(400, 900, 1));
     player.giColors = ['#fff', '#777'];
     let rat = game.addGameObject(new Rat(1800, 900));
+    game.sceneWonCallback = (game) => {
+        let rats = game.getGameObjects(["rat"]);
+        if(rats.length === 0) {
+            game.initObjects(SCENE_STAGE_2);
+        }
+    };
+};
+
+SCENES[SCENE_STAGE_2] = (game) => {
+    game.gameObjects = [];
+    let player = game.addGameObject(new Player(900, 900, 1));
+    player.giColors = ['#fff', '#777'];
+    game.addGameObject(new Rat(1800, 800));
+    game.addGameObject(new Rat(1900, 1000));
+    game.addGameObject(new Rat(100, 800));
+    game.addGameObject(new Rat(200, 1000));
+    game.sceneWonCallback = (game) => {
+        let rats = game.getGameObjects(["rat"]);
+        if(rats.length === 0) {
+            game.initObjects(SCENE_STAGE_2);
+        }
+    };
 };
 
 
@@ -117,6 +141,9 @@ export class Game {
         this.cutsceneCallback = null;
         this.cutsceneSkip = 1;
         this.cutsceneRunning = false;
+
+        this.currentScene = null;
+        this.sceneWonCallback = null;
 
         this.keys = {};
         this.actions = [];
@@ -174,18 +201,26 @@ export class Game {
         document.querySelectorAll('.mainmenu,.neon,.cast').forEach(div=>div.style.opacity = 0);
         
         document.querySelector('.mainmenu').style.display = "none";
-        document.querySelector('.bigtext').style.fontSize = "33vh";
-        document.querySelector('.bigtext').style.opacity = "0";
-        document.querySelector('.bigtext').style.top = "15vh";
-        document.querySelector('.bigtext').style.zIndex = "20";
+        document.querySelector('.miamimice').style.fontSize = "33vh";
+        document.querySelector('.miamimice').style.opacity = "0";
+        document.querySelector('.miamimice').style.top = "15vh";
+        document.querySelector('.miamimice').style.zIndex = "20";
         this.isGameRunning = true;
         this.gameLoop();
-        this.initObjects(SCENE_INTRO);  // SCENE_INTRO, SCENE_STAGE
+        this.initObjects(SCENE_INTRO);  // SCENE_INTRO, SCENE_STAGE_1
     }
 
     initObjects(scene) {
         this.cutsceneRunning = false;
+        this.currentScene = scene;
+        this.sceneWonCallback = null;
         SCENES[scene](this);
+    }
+    retry() {
+        document.querySelector('.gameover').style.opacity = 0;
+        this.gameObjects = [];
+        this.enemies = [];
+        this.initObjects(this.currentScene);
     }
 
     getGameObjects(types) {
@@ -204,7 +239,10 @@ export class Game {
 
         if (this.isGameRunning) {
             this.checkGamepads();
+            this.gameObjects = this.gameObjects.filter(obj => obj.ttl >= 0);
             this.gameObjects.sort((a, b) => a.y - b.y);
+            if(this.sceneWonCallback) 
+                this.sceneWonCallback(this);
             this.update(deltaTime);
             this.render();
             requestAnimationFrame(() => this.gameLoop());

@@ -22,6 +22,7 @@ export class Player extends Cat {
                 this.queueMorph(POSE_KO, 0.8, true);
             }
             super.update(deltaTime);
+            document.querySelector('.gameover').style.opacity = 1;
             return;
         }
         let noInput = true;

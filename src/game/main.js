@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setTimeout(() => {
         game = new Game("gameCanvas");
 
-        //game.sfxPlayer.add("gamemusic", musicGame, true);
+        game.sfxPlayer.add("gamemusic", musicGame, true);
 
         q('.load').remove();
         q('.intro').style.opacity = '1';

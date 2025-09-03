@@ -150,3 +150,11 @@ Theme announced: Black Cat
 * ko-state of player added
 
 **devtime:** 2h night
+
+
+## 2025-09-03
+
+* gameover screen + retry stage added
+* stages are now linked (callback that checks if the stage is cleared and loads the next one)
+
+**devtime:** 1.5h night

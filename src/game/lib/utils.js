@@ -50,3 +50,6 @@ export const ctxRestore = (ctx) => {
 export const ctxTranslate = (ctx, x, y) => {
   ctx.translate(x, y);
 };
+export const clamp = (value, min, max) => {
+  return Math.max(min, Math.min(max, value));
+};

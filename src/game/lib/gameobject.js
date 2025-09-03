@@ -9,9 +9,11 @@ export class GameObject {
         this.game = null;
         this.type = type;
         this.particles = [];
+        this.ttl = Infinity;
     }
 
     update(delta) {
+        this.ttl -= delta;
         this.particles.forEach(p => {
             p.ttl -= delta;
             p.r += p.dr * delta;

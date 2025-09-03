@@ -186,9 +186,12 @@ export class KinematicObject extends GameObject {
         this.hitboxes = [];
         this.forceX = 0;
         this.forceY = 0;
-        this.kiTarget = null;
+        this.kiTarget = null;   // target position for the kinematic object
         this.kiTargetReached = null; // callback when kiTarget is reached (cutscenes)
-        this.hp = 100;
+        this.hp = 100; // health points
+        this.fadeTimeout = 5; // seconds after which the object will fade out
+        this.fadeDuration = 2; // seconds the fade lasts
+        this.fadeTimer = 0; // current fade time
     }
 
     getHitboxes(attack = false) {
@@ -276,8 +279,13 @@ export class KinematicObject extends GameObject {
             } 
         }
         this.updateSizing();
-        if(this.hp <= 0 && this.state !== STATE_KO) {
-            this.state = STATE_KO;
+        if(this.hp <= 0) {
+            if(this.state !== STATE_KO) {
+                this.state = STATE_KO;
+                this.fadeTimer = 0;
+                this.ttl = this.fadeTimeout + this.fadeDuration + 0.5;
+            }
+            this.fadeTimer += delta;
         }
         this.updateMorph(delta);
     }

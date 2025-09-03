@@ -1,4 +1,4 @@
-import { ctxArc, ctxBeginPath, ctxBezierCurveTo, ctxEllipse, ctxFill, ctxFillStyle, ctxLineTo, ctxLineWidth, ctxMoveTo, ctxStroke, ctxStrokeStyle, toRad } from "./utils.js";
+import { clamp, ctxArc, ctxBeginPath, ctxBezierCurveTo, ctxEllipse, ctxFill, ctxFillStyle, ctxLineTo, ctxLineWidth, ctxMoveTo, ctxStroke, ctxStrokeStyle, toRad } from "./utils.js";
 import { Bone, Hitbox, HITBOX_TYPE_ATTACK, HITBOX_TYPE_LOWER, HITBOX_TYPE_UPPER, KinematicObject, POSE_BLOCK, POSE_BOW, POSE_CHECK_ATTACK, POSE_HIT_BODY, POSE_HIT_HEAD, POSE_KICK_A, POSE_KICK_B, POSE_KO, POSE_PUNCH, POSE_PUNCH2, POSE_STAND, POSE_TALK, POSE_WALK_1, POSE_WALK_2, STATE_IDLE, STATE_KICK, STATE_KO, STATE_PUNCH, STATE_WALKING } from "./kinematics.js";
 
 const headsize = 40;
@@ -149,7 +149,7 @@ export class Rat extends KinematicObject {
         super(x,y,type);
         this.giColors = [GIOLORS[Math.floor(Math.random()*GIOLORS.length)], '#333'];
         this.fur = FURCOLORS[Math.floor(Math.random()*FURCOLORS.length)];
-        this.walkSpeed = 60 + Math.random()*20;
+        this.walkSpeed = 120 + Math.random()*60;
         this.renderEars = true;
 
         this.hp = 100;
@@ -170,7 +170,7 @@ export class Rat extends KinematicObject {
 
         this.attackFrequency = 2; // 2 seconds
         this.attackDuration = 0.5; // 0.5 seconds
-        this.attackTimer = 0;
+        this.attackTimer = 1.5;
         this.attackPoseIdx = 0;
         this.attackPattern = ["PUNCH","KICK","PUNCH2","PUNCH","KICK"];
 
@@ -302,6 +302,9 @@ export class Rat extends KinematicObject {
     render(ctx) {
         
         ctx.save();
+        if(this.fadeTimer > this.fadeTimeout) {
+            ctx.globalAlpha = clamp(1 - (this.fadeTimer - this.fadeTimeout) / this.fadeDuration, 0, 1);
+        }
         ctx.translate(this.x, this.y);
         this.renderShadow(ctx);
         this.renderRat(this.bones[BONE_SHOULDER_LEFT], ctx);
