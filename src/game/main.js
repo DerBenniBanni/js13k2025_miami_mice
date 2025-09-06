@@ -1,5 +1,7 @@
 import { Game } from "./lib/game.js";
 import musicGame from "./lib/soundbox/music_game.js";
+import sfxHit from "./lib/soundbox/sfx_hit.js";
+import sfxSwoosh from "./lib/soundbox/sfx_swoosh.js";
 
 const q = (s) => document.querySelector(s);
 
@@ -23,6 +25,8 @@ document.addEventListener("DOMContentLoaded", () => {
         game = new Game("gameCanvas");
 
         game.sfxPlayer.add("gamemusic", musicGame, true);
+        game.sfxPlayer.add("hit", sfxHit);
+        game.sfxPlayer.add("swoosh", sfxSwoosh);
 
         q('.load').remove();
         q('.intro').style.opacity = '1';

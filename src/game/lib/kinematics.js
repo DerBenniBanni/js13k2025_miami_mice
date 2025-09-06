@@ -1,5 +1,5 @@
 import { GameObject } from "./gameobject.js";
-import { ctxBeginPath, ctxEllipse, ctxFill, ctxFillStyle, ctxRect, ctxStroke, ctxStrokeStyle, toRad } from "./utils.js";
+import { ctxBeginPath, ctxEllipse, ctxFill, ctxFillStyle, ctxRect, ctxRestore, ctxSave, ctxStroke, ctxStrokeStyle, toRad } from "./utils.js";
 
 export const POSE_STAND = 1;
 export const POSE_WALK_1 = 2;
@@ -15,6 +15,9 @@ export const POSE_HIT_HEAD = 11;
 export const POSE_HIT_BODY = 12;
 export const POSE_KO= 13;
 export const POSE_TALK= 14;
+export const POSE_THROW_1 = 15;
+export const POSE_THROW_2 = 16;
+export const POSE_THROW_EXECUTE = 17;
 
 export const STATE_IDLE = 1;
 export const STATE_WALKING = 2;
@@ -22,6 +25,7 @@ export const STATE_BLOCK = 3;
 export const STATE_PUNCH = 4;
 export const STATE_KICK = 5;
 export const STATE_KO = 6;
+export const STATE_THROW = 7;
 
 export const HITBOX_TYPE_UPPER = 1;
 export const HITBOX_TYPE_LOWER = 2;
@@ -40,8 +44,8 @@ export class Hitbox {
     }
 
     getRect() {
-        let w = this.width * this.bone.kinematicObject.sizing;
-        let h = this.height * this.bone.kinematicObject.sizing;
+        let w = this.width * (this.bone ? this.bone.kinematicObject.sizing : 1);
+        let h = this.height * (this.bone ? this.bone.kinematicObject.sizing : 1);
         return {
             x: this.x - w / 2,
             y: this.y - h / 2,
@@ -240,8 +244,12 @@ export class KinematicObject extends GameObject {
                 this.lastPunch = 2;
             }
         } else {
+            if(this.state === STATE_IDLE) {
+                let mutatePose = 5; // wiggle the idle pose a bit
+                this.morphTo = this.poseDefs[POSE_STAND].map(angle => toRad(angle + Math.random() * mutatePose - mutatePose / 2));
+            }
             // wiggle the tail
-            this.morphTo = this.bones.map(bone => bone.angle);
+            //this.morphTo = this.bones.map(bone => bone.angle);
         }
         this.tailWiggle.forEach(part => {
             this.morphTo[part[0]] = toRad(part[1] + Math.random() * part[2]);
@@ -254,15 +262,15 @@ export class KinematicObject extends GameObject {
         this.morphQueue = [];
     }
 
-    queueMorph(poseId, duration, immediate = false, data = {}) {
+    queueMorph(poseId, duration, immediate = false, data = {}, mutatePose = 0) {
         if (immediate) {
             this.clearMorph();
             this.morphTimer = 0
         }
-        this.morphQueue.push({ poseId, duration, data });
+        this.morphQueue.push({ poseId, duration, data, mutatePose });
         if (this.morphTimer <= 0) {
             const nextMorph = this.morphQueue.shift();
-            this.morph(nextMorph.poseId, nextMorph.duration, nextMorph.data);
+            this.morph(nextMorph.poseId, nextMorph.duration, nextMorph.data, nextMorph.mutatePose);
         }
     }
 
@@ -302,10 +310,15 @@ export class KinematicObject extends GameObject {
             this.morphTimer -= delta;
             if(this.morphTimer <= 0) {
                 if(this.morphQueue.length > 0) {
-                    const nextMorph = this.morphQueue.shift();
+                    let nextMorph = this.morphQueue.shift();
                     if(nextMorph.poseId == POSE_CHECK_ATTACK) {
                         this.checkAttackHitboxes();
-                    } else {
+                        nextMorph = this.morphQueue.shift();
+                    } else if(nextMorph.poseId == POSE_THROW_EXECUTE) {
+                        this.handleThrow();
+                        nextMorph = this.morphQueue.shift();
+                    }
+                    if(nextMorph) {
                         this.morph(nextMorph.poseId, nextMorph.duration, nextMorph.data);
                     }
                 }
@@ -320,9 +333,13 @@ export class KinematicObject extends GameObject {
                     this.queueMorph(POSE_KO, 0.4, true);
                 }
             } else {
-                this.queueMorph(null, 1);
+                this.queueMorph(null, 0.6);
             }
         }
+    }
+
+    handleThrow() {
+        // Implement throw handling logic in subclasses
     }
 
     checkAttackHitboxes() {
@@ -335,12 +352,15 @@ export class KinematicObject extends GameObject {
                     hitboxes.forEach(hitbox => {
                         let hit = activeAttackHitboxes.find(activeHitbox => activeHitbox.intersects(hitbox))
                         if (hit) {
+                            this.game.sfxPlayer.playAudio("hit");
                             let direction = obj.x > this.x ? 1 : -1;
                             obj.forceX = 500 * direction;
-                            obj.hp -= 10;
-                            if(hitbox.poseId) {
-                                obj.queueMorph(hitbox.poseId, 0.1, true);
-                                obj.queueMorph(POSE_STAND, 0.2);
+                            if(obj.state != STATE_BLOCK) {
+                                obj.hp -= 10;
+                                if(hitbox.poseId) {
+                                    obj.queueMorph(hitbox.poseId, 0.1, true);
+                                    obj.queueMorph(POSE_STAND, 0.2);
+                                }
                             }
                             let worldHit = hit.getWorldRect();
                             for(let i=0; i<10; i++) {
@@ -353,7 +373,7 @@ export class KinematicObject extends GameObject {
     }
 
     renderShadow(ctx, x, y, w, h) {
-        ctx.save();
+        ctxSave(ctx);
         ctxFillStyle(ctx, "#0001");
         
         [1,0.8,0.6,0.4].forEach(scale => {
@@ -361,7 +381,7 @@ export class KinematicObject extends GameObject {
             ctxEllipse(ctx, x, y, w * scale * this.sizing, h * scale * this.sizing, 0, 0, 2 * Math.PI);
             ctxFill(ctx);
         });
-        ctx.restore();
+        ctxRestore(ctx);
     }
 
     renderHitboxes(ctx) {

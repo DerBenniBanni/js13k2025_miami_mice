@@ -176,3 +176,40 @@ canvas {
     text-shadow: 0 0 5px #000,0 4px 10px #000;
     z-index: 20;
 }
+.stats {
+    z-index: 30;
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.health {
+    top: 96vh;
+    left: 35vw;
+    width: 30vw;
+    height: 2vh;
+    border: 0.3vh solid #000;
+    background-color: #400;
+    box-shadow: 0 0 5px #000,0 0 10px #000 inset;
+}
+.healthbar {
+    height: 100%;
+    background: linear-gradient(0deg, rgb(117, 0, 0), rgb(255, 0, 0), rgb(255, 105, 105));
+    box-shadow: 0 0 5px #000,0 0 10px #000 inset;
+    transition: width 0.5s ease-out;
+}
+.stamina {
+    top: 93vh;
+    left: 35vw;
+    width: 30vw;
+    height: 2vh;
+    border: 0.3vh solid #000;
+    background-color: #400;
+    box-shadow: 0 0 5px #000,0 0 10px #000 inset;
+}
+.staminabar {
+    height: 100%;
+    background: linear-gradient(0deg, rgb(0, 27, 117), rgb(0, 119, 255), rgb(105, 255, 248));
+    box-shadow: 0 0 5px #000,0 0 10px #000 inset;
+    transition: width 0.5s ease-out;
+
+}

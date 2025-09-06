@@ -1,5 +1,6 @@
 import { clamp, ctxArc, ctxBeginPath, ctxBezierCurveTo, ctxEllipse, ctxFill, ctxFillStyle, ctxLineTo, ctxLineWidth, ctxMoveTo, ctxStroke, ctxStrokeStyle, toRad } from "./utils.js";
-import { Bone, Hitbox, HITBOX_TYPE_ATTACK, HITBOX_TYPE_LOWER, HITBOX_TYPE_UPPER, KinematicObject, POSE_BLOCK, POSE_BOW, POSE_CHECK_ATTACK, POSE_HIT_BODY, POSE_HIT_HEAD, POSE_KICK_A, POSE_KICK_B, POSE_KO, POSE_PUNCH, POSE_PUNCH2, POSE_STAND, POSE_TALK, POSE_WALK_1, POSE_WALK_2, STATE_IDLE, STATE_KICK, STATE_KO, STATE_PUNCH, STATE_WALKING } from "./kinematics.js";
+import { Bone, Hitbox, HITBOX_TYPE_ATTACK, HITBOX_TYPE_LOWER, HITBOX_TYPE_UPPER, KinematicObject, POSE_BLOCK, POSE_BOW, POSE_CHECK_ATTACK, POSE_HIT_BODY, POSE_HIT_HEAD, POSE_KICK_A, POSE_KICK_B, POSE_KO, POSE_PUNCH, POSE_PUNCH2, POSE_STAND, POSE_TALK, POSE_THROW_1, POSE_THROW_2, POSE_THROW_EXECUTE, POSE_WALK_1, POSE_WALK_2, STATE_IDLE, STATE_KICK, STATE_KO, STATE_PUNCH, STATE_THROW, STATE_WALKING } from "./kinematics.js";
+import { Projectile } from "./projectile.js";
 
 const headsize = 40;
 
@@ -132,6 +133,20 @@ POSE_KO_DATA[BONE_FOREARM_LEFT] = -40;
 POSE_KO_DATA[BONE_ARM_RIGHT] = -20;
 POSE_KO_DATA[BONE_FOREARM_RIGHT] = -60;
 
+
+const POSE_THROW_1_DATA = [...POSE_STAND_DATA];
+POSE_THROW_1_DATA[BONE_ARM_LEFT] = -140;
+POSE_THROW_1_DATA[BONE_FOREARM_LEFT] = 20;
+POSE_THROW_1_DATA[BONE_ARM_RIGHT] = -120;
+POSE_THROW_1_DATA[BONE_FOREARM_RIGHT] = -30;
+
+
+const POSE_THROW_2_DATA = [...POSE_STAND_DATA];
+POSE_THROW_2_DATA[BONE_ARM_LEFT] = -10;
+POSE_THROW_2_DATA[BONE_FOREARM_LEFT] = -10;
+POSE_THROW_2_DATA[BONE_ARM_RIGHT] = -20;
+POSE_THROW_2_DATA[BONE_FOREARM_RIGHT] = -120;
+
 const LINE_ROUND = "round";
 const LINE_BUTT = "butt";
 
@@ -151,6 +166,7 @@ export class Rat extends KinematicObject {
         this.fur = FURCOLORS[Math.floor(Math.random()*FURCOLORS.length)];
         this.walkSpeed = 120 + Math.random()*60;
         this.renderEars = true;
+        this.isThrower = false;
 
         this.hp = 100;
 
@@ -167,10 +183,12 @@ export class Rat extends KinematicObject {
         this.poseDefs[POSE_HIT_HEAD] = POSE_HIT_HEAD_DATA;
         this.poseDefs[POSE_KO] = POSE_KO_DATA;
         this.poseDefs[POSE_TALK] = POSE_STAND_DATA;
+        this.poseDefs[POSE_THROW_1] = POSE_THROW_1_DATA;
+        this.poseDefs[POSE_THROW_2] = POSE_THROW_2_DATA;
 
-        this.attackFrequency = 2; // 2 seconds
+        this.attackFrequency = 1.5; // 2 seconds
         this.attackDuration = 0.5; // 0.5 seconds
-        this.attackTimer = 1.5;
+        this.attackTimer = 1.3;
         this.attackPoseIdx = 0;
         this.attackPattern = ["PUNCH","KICK","PUNCH2","PUNCH","KICK"];
 
@@ -235,6 +253,7 @@ export class Rat extends KinematicObject {
             let distanceX = this.kiTarget.x - this.x;
             let distanceY = Math.abs(this.kiTarget.y - this.y);
             let distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
+            this.invertX = distanceX < 0;
             if (distance < 200 * this.sizing && distanceY < 9) {
                 if (this.attackTimer > this.attackFrequency) {
                     this.attackTimer = 0;
@@ -248,6 +267,14 @@ export class Rat extends KinematicObject {
                     this.queueMorph(POSE_STAND, 0.2);
                 }
                 
+            } else if(distanceY < 30 && Math.abs(distanceX) > 300 * this.sizing && this.isThrower) {
+                if (this.attackTimer > this.attackFrequency) {
+                    this.attackTimer = 0;
+                    this.state = STATE_THROW;
+                    this.queueMorph(POSE_THROW_1, 0.5, true);
+                    this.queueMorph(POSE_THROW_2, 0.2);
+                    this.queueMorph(POSE_THROW_EXECUTE, 0);
+                }
             } else {
                 // Move towards the target
                 this.kiWalk(delta);
@@ -387,5 +414,15 @@ export class Rat extends KinematicObject {
     }
     renderSpecials(ctx) {
         // Render special effects or features unique to the rat type
+    }
+
+
+    handleThrow() {
+        let x = this.bones[BONE_FOREARM_LEFT].endX + this.x;
+        let y = this.y;
+        let h = this.bones[BONE_FOREARM_LEFT].endY;
+        let dx = 300 * (this.invertX ? -1 : 1);
+        let dy = 0;
+        this.game.addGameObject(new Projectile(x, y, h, dx, dy, this));
     }
 }

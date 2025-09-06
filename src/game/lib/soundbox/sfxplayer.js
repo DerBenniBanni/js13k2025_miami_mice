@@ -14,7 +14,7 @@ export default class SFXPlayer {
         this.sfx[name].loop = loop;
         if(loop) {
             this.sfx[name].addEventListener('timeupdate', function(){
-                let buffer = .1
+                let buffer = .15
                 if(this.currentTime > this.duration - buffer){
                     this.currentTime = 0
                     this.play()

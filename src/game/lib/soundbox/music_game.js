@@ -127,7 +127,7 @@
           37, // NOISE_VOL
           0, // ENV_ATTACK
           1, // ENV_SUSTAIN
-          87, // ENV_RELEASE
+          97, // ENV_RELEASE
           35, // ENV_EXP_DECAY
           0, // ARP_CHORD
           0, // ARP_SPEED
@@ -139,7 +139,7 @@
           193, // FX_FREQ
           171, // FX_RESONANCE
           59, // FX_DIST
-          7, // FX_DRIVE
+          11, // FX_DRIVE
           39, // FX_PAN_AMT
           3, // FX_PAN_FREQ
           71, // FX_DELAY_AMT
@@ -181,7 +181,7 @@
           20, // FX_FREQ
           0, // FX_RESONANCE
           24, // FX_DIST
-          23, // FX_DRIVE
+          4, // FX_DRIVE
           89, // FX_PAN_AMT
           4, // FX_PAN_FREQ
           123, // FX_DELAY_AMT

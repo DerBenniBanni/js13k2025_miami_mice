@@ -9,31 +9,31 @@
       songData: [
         { // Instrument 0
           i: [
-          3, // OSC1_WAVEFORM
-          40, // OSC1_VOL
-          96, // OSC1_SEMI
-          27, // OSC1_XENV
-          2, // OSC2_WAVEFORM
-          36, // OSC2_VOL
-          97, // OSC2_SEMI
+          0, // OSC1_WAVEFORM
+          0, // OSC1_VOL
+          92, // OSC1_SEMI
+          0, // OSC1_XENV
+          0, // OSC2_WAVEFORM
+          0, // OSC2_VOL
+          92, // OSC2_SEMI
           0, // OSC2_DETUNE
-          128, // OSC2_XENV
-          255, // NOISE_VOL
-          13, // ENV_ATTACK
-          39, // ENV_SUSTAIN
-          65, // ENV_RELEASE
-          35, // ENV_EXP_DECAY
-          83, // ARP_CHORD
-          5, // ARP_SPEED
+          0, // OSC2_XENV
+          80, // NOISE_VOL
+          20, // ENV_ATTACK
+          0, // ENV_SUSTAIN
+          53, // ENV_RELEASE
+          32, // ENV_EXP_DECAY
+          0, // ARP_CHORD
+          0, // ARP_SPEED
           0, // LFO_WAVEFORM
-          24, // LFO_AMT
-          7, // LFO_FREQ
+          231, // LFO_AMT
+          6, // LFO_FREQ
           1, // LFO_FX_FREQ
           3, // FX_FILTER
-          5, // FX_FREQ
-          235, // FX_RESONANCE
-          141, // FX_DIST
-          120, // FX_DRIVE
+          89, // FX_FREQ
+          93, // FX_RESONANCE
+          97, // FX_DIST
+          31, // FX_DRIVE
           0, // FX_PAN_AMT
           0, // FX_PAN_FREQ
           0, // FX_DELAY_AMT
@@ -53,4 +53,3 @@
       endPattern: 0,  // End pattern
       numChannels: 1  // Number of channels
     };
-

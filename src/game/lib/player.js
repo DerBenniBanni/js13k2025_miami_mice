@@ -15,6 +15,8 @@ export class Player extends Cat {
     }
 
     update(deltaTime) {
+        document.querySelector('.stats .health .healthbar').style.width = Math.floor((this.hp / 100)*100) + '%';
+        //document.querySelector('.stats .stamina .staminabar').style.width = (this.stamina / this.maxStamina * 100) + '%';
         let previousState = this.state;
         if(this.hp <= 0) {
             this.state = STATE_KO;
@@ -27,30 +29,33 @@ export class Player extends Cat {
         }
         let noInput = true;
         let moveAllowed = true;
-        if (this.game.getActionState(ACTION_KICK_PLAYER_1)) {
+        
+        if(noInput && this.game.getActionState(ACTION_BLOCK_PLAYER_1)) {
+            this.state = STATE_BLOCK;
+            if(previousState != STATE_BLOCK) {
+                this.queueMorph(POSE_BLOCK, 0.1, true);
+            }
+            noInput = false;
+            moveAllowed = false;
+        }
+        if (noInput && this.game.getActionState(ACTION_KICK_PLAYER_1)) {
             this.state = STATE_KICK;
             if(previousState != STATE_KICK) {
                 this.queueMorph(POSE_KICK_A, 0.1, true);
                 this.queueMorph(POSE_KICK_B, 0.1);
                 this.queueMorph(POSE_CHECK_ATTACK, 0);
+                this.game.sfxPlayer.playAudio("swoosh");
             }
             noInput = false;
             moveAllowed = false;
         }
-        if (this.game.getActionState(ACTION_PUNCH_PLAYER_1)) {
+        if (noInput && this.game.getActionState(ACTION_PUNCH_PLAYER_1)) {
             this.state = STATE_PUNCH;
             if(previousState != STATE_PUNCH) {
                 let pose = this.lastPunch == 1 ? POSE_PUNCH2 : POSE_PUNCH;
                 this.queueMorph(pose, 0.1, true);
                 this.queueMorph(POSE_CHECK_ATTACK, 0);
-            }
-            noInput = false;
-            moveAllowed = false;
-        }
-        if(noInput && this.game.getActionState(ACTION_BLOCK_PLAYER_1)) {
-            this.state = STATE_BLOCK;
-            if(previousState != STATE_BLOCK) {
-                this.queueMorph(POSE_BLOCK, 0.1, true);
+                this.game.sfxPlayer.playAudio("swoosh");
             }
             noInput = false;
             moveAllowed = false;

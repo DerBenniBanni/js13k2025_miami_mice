@@ -1,5 +1,5 @@
 import { Cat } from "./cat.js";
-import { POSE_STAND, POSE_WALK_1, POSE_WALK_2 } from "./kinematics.js";
+import { POSE_CHECK_ATTACK, POSE_STAND, POSE_THROW_1, POSE_THROW_2, POSE_THROW_EXECUTE, POSE_WALK_1, POSE_WALK_2, STATE_BLOCK, STATE_THROW } from "./kinematics.js";
 import { Player } from "./player.js";
 import { Rat } from "./rat.js";
 import { RatKing } from "./ratking.js";
@@ -26,12 +26,13 @@ const keyActionMap = {
 const SCENE_INTRO = 0;
 const SCENE_STAGE_1 = 1;
 const SCENE_STAGE_2 = 2;
+const SCENE_STAGE_3 = 3;
 
 const SCENES = [];
 SCENES[SCENE_INTRO] = (game) => {
-
     let cat = game.addGameObject(new Cat(-200, 900));
     cat.giColors = ['#fff', '#777'];
+
     let ratking = game.addGameObject(new RatKing(2100, 800));
     ratking.walkSpeed = 200;
     let rat1 = game.addGameObject(new Rat(2200, 700));
@@ -107,6 +108,21 @@ SCENES[SCENE_STAGE_1] = (game) => {
 };
 
 SCENES[SCENE_STAGE_2] = (game) => {
+    game.gameObjects = [];
+    let player = game.addGameObject(new Player(400, 900, 1));
+    player.giColors = ['#fff', '#777'];
+    game.addGameObject(new Rat(1800, 800));
+    let rat = game.addGameObject(new Rat(1800, 900));
+    rat.isThrower = true;
+    game.sceneWonCallback = (game) => {
+        let rats = game.getGameObjects(["rat"]);
+        if(rats.length === 0) {
+            game.initObjects(SCENE_STAGE_3);
+        }
+    };
+};
+
+SCENES[SCENE_STAGE_3] = (game) => {
     game.gameObjects = [];
     let player = game.addGameObject(new Player(900, 900, 1));
     player.giColors = ['#fff', '#777'];
@@ -234,8 +250,9 @@ export class Game {
         if (!this.isGameRunning) return;
 
         const currentTime = performance.now();
-        const deltaTime = (currentTime - this.lastUpdateTime) / 1000; // Convert to seconds
+        let deltaTime = (currentTime - this.lastUpdateTime) / 1000; // Convert to seconds
         this.lastUpdateTime = currentTime;
+        deltaTime = Math.min(deltaTime, 0.05); // Cap deltaTime to avoid large jumps
 
         if (this.isGameRunning) {
             this.checkGamepads();
@@ -250,7 +267,7 @@ export class Game {
     }
     checkGamepads() {
         if(!navigator.getGamepads) return;
-        let connected = navigator.getGamepads().filter(pad => pad);
+        let connected = navigator.getGamepads().filter(pad => pad && pad.mapping === "standard" && pad.connected);
         let pad1 = connected[0];
         if (pad1) {
             this.actions[ACTION_KICK_PLAYER_1] = pad1.buttons[0].pressed;

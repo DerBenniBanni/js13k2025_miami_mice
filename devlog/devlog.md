@@ -158,3 +158,12 @@ Theme announced: Black Cat
 * stages are now linked (callback that checks if the stage is cleared and loads the next one)
 
 **devtime:** 1.5h night
+
+
+## 2025-09-06
+
+* cheese throwing rat added, projectiles also hit the player
+* blocking Pose now blocks attacks
+* healthbar added (and stamina bar, but stamina not yet implemented)
+
+**devtime:** 3h evening
