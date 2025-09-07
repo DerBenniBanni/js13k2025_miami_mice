@@ -175,6 +175,9 @@ canvas {
     color: #fff;
     text-shadow: 0 0 5px #000,0 4px 10px #000;
     z-index: 20;
+    background: #0004;
+    padding: 1vh;
+    border-radius: 2vh;
 }
 .stats {
     z-index: 30;
@@ -184,7 +187,7 @@ canvas {
 
 .health {
     top: 96vh;
-    left: 35vw;
+    left: 15vw;
     width: 30vw;
     height: 2vh;
     border: 0.3vh solid #000;
@@ -199,7 +202,7 @@ canvas {
 }
 .stamina {
     top: 93vh;
-    left: 35vw;
+    left: 15vw;
     width: 30vw;
     height: 2vh;
     border: 0.3vh solid #000;
@@ -212,4 +215,14 @@ canvas {
     box-shadow: 0 0 5px #000,0 0 10px #000 inset;
     transition: width 0.5s ease-out;
 
+}
+.score {
+    top: 93vh;
+    left: 48vw;
+    width: 30vw;
+    height: 2vh;
+    font-family: cursive;
+    font-size: 3.5vh;
+    color: #fff;
+    text-shadow: 0 0 5px #000,0 4px 10px #000;
 }

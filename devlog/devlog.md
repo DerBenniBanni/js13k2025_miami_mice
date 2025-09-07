@@ -167,3 +167,12 @@ Theme announced: Black Cat
 * healthbar added (and stamina bar, but stamina not yet implemented)
 
 **devtime:** 3h evening
+
+
+
+## 2025-09-07
+
+* score added
+* more stages, refactored stage definition
+
+**devtime:** 2h night

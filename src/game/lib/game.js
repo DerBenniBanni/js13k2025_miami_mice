@@ -3,6 +3,7 @@ import { POSE_CHECK_ATTACK, POSE_STAND, POSE_THROW_1, POSE_THROW_2, POSE_THROW_E
 import { Player } from "./player.js";
 import { Rat } from "./rat.js";
 import { RatKing } from "./ratking.js";
+import { SCENES } from "./scenes.js";
 import SFXPlayer from "./soundbox/sfxplayer.js";
 
 export const ACTION_MOVE_LEFT_PLAYER_1 = 0;
@@ -23,120 +24,7 @@ const keyActionMap = {
     "KeyJ": ACTION_KICK_PLAYER_1
 };
 
-const SCENE_INTRO = 0;
-const SCENE_STAGE_1 = 1;
-const SCENE_STAGE_2 = 2;
-const SCENE_STAGE_3 = 3;
 
-const SCENES = [];
-SCENES[SCENE_INTRO] = (game) => {
-    let cat = game.addGameObject(new Cat(-200, 900));
-    cat.giColors = ['#fff', '#777'];
-
-    let ratking = game.addGameObject(new RatKing(2100, 800));
-    ratking.walkSpeed = 200;
-    let rat1 = game.addGameObject(new Rat(2200, 700));
-    rat1.walkSpeed = 300;
-    let rat2 = game.addGameObject(new Rat(2200, 1000));
-    rat2.walkSpeed = 300;
-    
-    game.cutscene = [
-        (game) => {
-            
-            ratking.kiTarget = {x:1400, y:880};
-            ratking.kiTargetReached = () => {
-                ratking.kiTargetReached = null;
-                game.nextCutscene();
-            };
-            rat1.kiTarget = {x:1700, y:700};
-            rat2.kiTarget = {x:1700, y:1050};
-            cat.walkSpeed = 300;
-            cat.kiTarget = {x:400, y:900};
-        },
-        (game) => {
-            game.texts = [
-                {
-                    text: "RAT KING: <br>Agent Furball! Finally, we meet in person.<br>So, the Feline Bureau of Investigation has come to play!<br><br>This is my city!<br>Stay out of my way!", 
-                    align:"right"
-                }
-            ];
-            game.nextText();
-            game.cutsceneCallback = (game) => {
-                game.nextCutscene();
-            };
-        },
-        (game) => {
-            game.texts = [
-                {
-                    text: "Special Agent KUNG FURBALL:<br>You may have the police in your pocket.<br> But I am the law!<br>The Feline Bureau of Investigation will bring you to justice!", 
-                    align:"left"
-                }
-            ];
-            game.nextText();
-            game.cutsceneCallback = (game) => {  
-                game.nextCutscene();
-            };
-        },
-        (game) => {
-            game.nextText();
-            ratking.queueMorph(POSE_WALK_2, 0.2, true);
-            ratking.kiTarget = {x:2300, y:900};
-            ratking.kiTargetReached = () => {
-                ratking.kiTargetReached = null;
-                game.initObjects(SCENE_STAGE_1);
-            };
-            rat1.kiTarget = {x:2400, y:700};
-            rat2.kiTarget = {x:2400, y:1200};
-            cat.kiTarget = {x:-400, y:900};
-            cat.queueMorph(POSE_WALK_2, 0.2, true);
-        }
-    ];
-    game.nextCutscene();
-};
-
-SCENES[SCENE_STAGE_1] = (game) => {
-    game.gameObjects = [];
-    let player = game.addGameObject(new Player(400, 900, 1));
-    player.giColors = ['#fff', '#777'];
-    let rat = game.addGameObject(new Rat(1800, 900));
-    game.sceneWonCallback = (game) => {
-        let rats = game.getGameObjects(["rat"]);
-        if(rats.length === 0) {
-            game.initObjects(SCENE_STAGE_2);
-        }
-    };
-};
-
-SCENES[SCENE_STAGE_2] = (game) => {
-    game.gameObjects = [];
-    let player = game.addGameObject(new Player(400, 900, 1));
-    player.giColors = ['#fff', '#777'];
-    game.addGameObject(new Rat(1800, 800));
-    let rat = game.addGameObject(new Rat(1800, 900));
-    rat.isThrower = true;
-    game.sceneWonCallback = (game) => {
-        let rats = game.getGameObjects(["rat"]);
-        if(rats.length === 0) {
-            game.initObjects(SCENE_STAGE_3);
-        }
-    };
-};
-
-SCENES[SCENE_STAGE_3] = (game) => {
-    game.gameObjects = [];
-    let player = game.addGameObject(new Player(900, 900, 1));
-    player.giColors = ['#fff', '#777'];
-    game.addGameObject(new Rat(1800, 800));
-    game.addGameObject(new Rat(1900, 1000));
-    game.addGameObject(new Rat(100, 800));
-    game.addGameObject(new Rat(200, 1000));
-    game.sceneWonCallback = (game) => {
-        let rats = game.getGameObjects(["rat"]);
-        if(rats.length === 0) {
-            game.initObjects(SCENE_STAGE_2);
-        }
-    };
-};
 
 
 export class Game {
@@ -163,6 +51,11 @@ export class Game {
 
         this.keys = {};
         this.actions = [];
+
+        this.playerStats = [
+            {hp: 100, maxHp: 100, score: 0} // Player 1
+        ];
+        this.scoreElem = document.getElementById("sc");
         window.addEventListener("keydown", (e) => {
             if(e.code in keyActionMap) e.preventDefault();
             this.keys[e.code] = true;
@@ -193,13 +86,15 @@ export class Game {
             this.txtPointer++;
             txt.innerHTML = this.texts[this.txtPointer].text;
             txt.style.textAlign = this.texts[this.txtPointer].align || "center";
+            txt.style.display = "block";
         } else {
-            txt.innerHTML = "";
+            this.clearText();
         }
     }
     clearText() {
         let txt = document.querySelector('.txt');
         txt.innerHTML = "";
+        txt.style.display = "none";
     }
 
     getActionState(action) {
@@ -208,6 +103,7 @@ export class Game {
 
     addGameObject(obj) {
         obj.game = this;
+        if(obj.setStats) obj.setStats(this);
         this.gameObjects.push(obj);
         return obj;
     }
@@ -223,7 +119,7 @@ export class Game {
         document.querySelector('.miamimice').style.zIndex = "20";
         this.isGameRunning = true;
         this.gameLoop();
-        this.initObjects(SCENE_INTRO);  // SCENE_INTRO, SCENE_STAGE_1
+        this.initObjects(0); // Start with intro scene
     }
 
     initObjects(scene) {
@@ -236,6 +132,8 @@ export class Game {
         document.querySelector('.gameover').style.opacity = 0;
         this.gameObjects = [];
         this.enemies = [];
+        this.playerStats[0].hp = this.playerStats[0].maxHp;
+        this.playerStats[0].score = Math.round(this.playerStats[0].score * 0.5);
         this.initObjects(this.currentScene);
     }
 
@@ -254,16 +152,16 @@ export class Game {
         this.lastUpdateTime = currentTime;
         deltaTime = Math.min(deltaTime, 0.05); // Cap deltaTime to avoid large jumps
 
-        if (this.isGameRunning) {
-            this.checkGamepads();
-            this.gameObjects = this.gameObjects.filter(obj => obj.ttl >= 0);
-            this.gameObjects.sort((a, b) => a.y - b.y);
-            if(this.sceneWonCallback) 
-                this.sceneWonCallback(this);
-            this.update(deltaTime);
-            this.render();
-            requestAnimationFrame(() => this.gameLoop());
-        }
+        this.checkGamepads();
+        this.gameObjects = this.gameObjects.filter(obj => obj.ttl >= 0);
+        this.gameObjects.sort((a, b) => a.y - b.y);
+        if(this.sceneWonCallback) 
+            this.sceneWonCallback(this);
+        this.update(deltaTime);
+        this.render();
+        this.scoreElem.innerText = this.playerStats[0].score;
+        requestAnimationFrame(() => this.gameLoop());
+
     }
     checkGamepads() {
         if(!navigator.getGamepads) return;

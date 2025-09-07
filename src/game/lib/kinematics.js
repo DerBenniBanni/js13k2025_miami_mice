@@ -352,6 +352,10 @@ export class KinematicObject extends GameObject {
                     hitboxes.forEach(hitbox => {
                         let hit = activeAttackHitboxes.find(activeHitbox => activeHitbox.intersects(hitbox))
                         if (hit) {
+                            console.log("HIT!" + this.type + " -> " + obj.type);
+                            if(this.type == "cat") {
+                                this.score += 1;
+                            }
                             this.game.sfxPlayer.playAudio("hit");
                             let direction = obj.x > this.x ? 1 : -1;
                             obj.forceX = 500 * direction;

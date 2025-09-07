@@ -3,18 +3,31 @@ import { POSE_BLOCK, POSE_CHECK_ATTACK, POSE_KICK_A, POSE_KICK_B, POSE_KO, POSE_
 import { ACTION_MOVE_LEFT_PLAYER_1, ACTION_MOVE_RIGHT_PLAYER_1,ACTION_MOVE_UP_PLAYER_1, ACTION_MOVE_DOWN_PLAYER_1, ACTION_BLOCK_PLAYER_1, ACTION_KICK_PLAYER_1, ACTION_PUNCH_PLAYER_1 } from "./game.js";
 
 export class Player extends Cat {
-    constructor(x, y, playerNumber) {
+    constructor(x, y, playerNumber = 1) {
         super(x,y);
         this.playerNumber = playerNumber;
         this.score = 0;
+        this.maxHp = 100;
+        this.stamina = 100;
         this.walkSpeed = 250;
+        this.playerStatsIndex = playerNumber - 1;
     }
 
-    incrementScore() {
-        this.score++;
+    setStats(game) {
+        this.game = game;
+        this.hp = game.playerStats[this.playerStatsIndex].hp;
+        this.maxHp = game.playerStats[this.playerStatsIndex].maxHp;
+        this.score = game.playerStats[this.playerStatsIndex].score;
+    }
+    storeStats() {
+        if(!this.game) return;
+        this.game.playerStats[this.playerStatsIndex].hp = this.hp;
+        this.game.playerStats[this.playerStatsIndex].maxHp = this.maxHp;
+        this.game.playerStats[this.playerStatsIndex].score = this.score;
     }
 
     update(deltaTime) {
+        this.storeStats();
         document.querySelector('.stats .health .healthbar').style.width = Math.floor((this.hp / 100)*100) + '%';
         //document.querySelector('.stats .stamina .staminabar').style.width = (this.stamina / this.maxStamina * 100) + '%';
         let previousState = this.state;
@@ -88,7 +101,13 @@ export class Player extends Cat {
                 noInput = false;
             }
         }
-        
+        if(!this.game.cutsceneRunning) {
+            if(this.y < 650) this.y = 650;
+            if(this.y > 1050) this.y = 1050;
+            if(this.x < 100) this.x = 100;
+            if(this.x > 1820) this.x = 1820;
+        }
+
         if (noInput) {
             this.state = STATE_IDLE;
             if(previousState !== STATE_IDLE) {
