@@ -172,7 +172,7 @@ export class Cat extends KinematicObject {
         this.bones[BONE_ROOT] = this.rootBone;
         this.addBone(BONE_UPPER_LEG_LEFT, 100, toRad(60), BONE_ROOT);
         this.addBone(BONE_LOWER_LEG_LEFT, 80, toRad(30), BONE_UPPER_LEG_LEFT)
-            .addHitboxEnd(new Hitbox(0, 0, 40, 40, HITBOX_TYPE_ATTACK));
+            .addHitboxEnd(new Hitbox(0, 0, 40, 40, HITBOX_TYPE_ATTACK, null, 20));
         this.addBone(BONE_UPPER_LEG_RIGHT, 100, toRad(100), BONE_ROOT);
         this.addBone(BONE_LOWER_LEG_RIGHT, 80, toRad(20), BONE_UPPER_LEG_RIGHT);
         this.addBone(BONE_BODY, 100, toRad(-90), BONE_ROOT)

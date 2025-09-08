@@ -53,7 +53,7 @@ export class Game {
         this.actions = [];
 
         this.playerStats = [
-            {hp: 100, maxHp: 100, score: 0} // Player 1
+            {hp: 100, maxHp: 100, score: 0, stamina:100} // Player 1
         ];
         this.scoreElem = document.getElementById("sc");
         window.addEventListener("keydown", (e) => {
@@ -123,6 +123,7 @@ export class Game {
     }
 
     initObjects(scene) {
+        this.cutscene = [];
         this.cutsceneRunning = false;
         this.currentScene = scene;
         this.sceneWonCallback = null;

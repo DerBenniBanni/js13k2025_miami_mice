@@ -11,6 +11,13 @@ const setNextCutCb = (g) => {
         g.nextCutscene();
     };
 };
+const textCutScene = (g, t, a = 'center') => {
+    g.texts = [
+        {   text: t, align: a }
+    ];
+    g.nextText();
+    setNextCutCb(g);
+};
 
 const setSceneWonCallback = (g, n) => {
     g.sceneWonCallback = (g) => {
@@ -25,8 +32,6 @@ export const SCENES = [];
 SCENES[0] = (game) => {
     game.gameObjects = [];
     let cat = add(game, new Cat(-200, 900));
-    cat.giColors = ['#fff', '#777'];
-
     let ratking = add(game, new RatKing(2100, 800));
     ratking.walkSpeed = 200;
     let rat1 = add(game, new Rat(2200, 700));
@@ -35,6 +40,15 @@ SCENES[0] = (game) => {
     rat2.walkSpeed = 300;
     
     game.cutscene = [
+
+        (game) => {
+            textCutScene(game, "Welcome to Miami Mice!<br><br>Keyboard: WASD to move, H to punch, J to kick, B to block<br>Gamepad: Left stick to move, X to punch, A to kick, B to block<br><br>Press punch/kick to start","center");
+        },
+        (game) => {
+            textCutScene(game, "Miami Beach, 1992.<br>The notorious Rat King has taken over the city and is terrorizing its citizens.<br>Only one hero can stop him...<br>Special Agent KUNG FURBALL!");
+            cat.walkSpeed = 300;
+            cat.kiTarget = {x:400, y:900};
+        },
         (game) => {
             
             ratking.kiTarget = {x:1400, y:880};
@@ -44,28 +58,15 @@ SCENES[0] = (game) => {
             };
             rat1.kiTarget = {x:1700, y:700};
             rat2.kiTarget = {x:1700, y:1050};
-            cat.walkSpeed = 300;
-            cat.kiTarget = {x:400, y:900};
         },
         (game) => {
-            game.texts = [
-                {
-                    text: "RAT KING: <br>Agent Furball! Finally, we meet in person.<br>So, the Feline Bureau of Investigation has come to play!<br><br>This is my city!<br>Stay out of my way!", 
-                    align:"right"
-                }
-            ];
-            game.nextText();
-            setNextCutCb(game);
+            textCutScene(game, "Special Agent KUNG FURBALL:<br>I've tracked you down, Rat King!<br>Your reign of terror ends here!<br>You're under arrest!","left");
         },
         (game) => {
-            game.texts = [
-                {
-                    text: "Special Agent KUNG FURBALL:<br>You may have the police in your pocket.<br> But I am the law!<br>The Feline Bureau of Investigation will bring you to justice!", 
-                    align:"left"
-                }
-            ];
-            game.nextText();
-            setNextCutCb(game);
+            textCutScene(game, "RAT KING: <br>Agent Furball! Finally, we meet in person.<br>So, the Feline Bureau of Investigation has come to play!<br><br>This is my city!<br>Stay out of my way!", "right");
+        },
+        (game) => {
+            textCutScene(game, "Special Agent KUNG FURBALL:<br>You may have the police in your pocket.<br> But I am the law!<br>The Feline Bureau of Investigation will bring you to justice!", "left");
         },
         (game) => {
             game.nextText();
@@ -87,7 +88,6 @@ SCENES[0] = (game) => {
 SCENES[1] = (game) => {
     game.gameObjects = [];
     let player = add(game, new Player(400, 900, 1));
-    player.giColors = ['#fff', '#777'];
     let rat = add(game, new Rat(1800, 900));
     setSceneWonCallback(game, 2);
 };
@@ -95,7 +95,6 @@ SCENES[1] = (game) => {
 SCENES[2] = (game) => {
     game.gameObjects = [];
     let player = add(game, new Player(900, 900, 1));
-    player.giColors = ['#fff', '#777'];
     add(game, new Rat(1800, 800));
     add(game, new Rat(1900, 1000));
     add(game, new Rat(100, 800));
@@ -105,9 +104,7 @@ SCENES[2] = (game) => {
 
 SCENES[3] = (game) => {
     game.gameObjects = [];
-    let cat = add(game, new Cat(200, 900));
-    cat.giColors = ['#fff', '#777'];
-
+    add(game, new Cat(200, 900));
     let ratking = add(game, new RatKing(2100, 1050));
     ratking.walkSpeed = 200;
     let rat2 = add(game, new Rat(2200, 900));
@@ -115,7 +112,6 @@ SCENES[3] = (game) => {
     
     game.cutscene = [
         (game) => {
-            
             ratking.kiTarget = {x:1400, y:1050};
             ratking.kiTargetReached = () => {
                 ratking.kiTargetReached = null;
@@ -123,24 +119,10 @@ SCENES[3] = (game) => {
             };
         },
         (game) => {
-            game.texts = [
-                {
-                    text: "RAT KING: <br>So, Master Splinter the traitor sends his best?<br>Hah! You are no match for me, cat!", 
-                    align:"right"
-                }
-            ];
-            game.nextText();
-            setNextCutCb(game);
+            textCutScene(game, "RAT KING: <br>I see, Master Splinter the traitor trained you well.<br>Hah! But you are no match for me, kitty!", "right");
         },
         (game) => {
-            game.texts = [
-                {
-                    text: "RAT KING:<br>May I intoduce you to my best cheese thrower?<br>Il grande Alonzo Padano! <br>Prepare to meet your cheesy doom, kitty!",
-                    align:"right"
-                }
-            ];
-            game.nextText();
-            setNextCutCb(game);
+            textCutScene(game, "RAT KING:<br>May I introduce you to my best cheese thrower?<br>Il grande Alonzo Padano! <br>Prepare to meet your cheesy doom, Furball!", "right");
             rat2.kiTarget = {x:1700, y:900};
         },
         (game) => {
@@ -158,11 +140,75 @@ SCENES[3] = (game) => {
 
 SCENES[4] = (game) => {
     game.gameObjects = [];
-    let player = add(game, new Player(400, 900, 1));
-    player.giColors = ['#fff', '#777'];
+    add(game, new Player(400, 900, 1));
     add(game, new Rat(1800, 800));
-    let rat = add(game, new Rat(1700, 900));
-    rat.isThrower = true;
-    setSceneWonCallback(game, 4);
+    add(game, new Rat(1700, 900)).isThrower = true;
+    setSceneWonCallback(game, 5);
+};
+
+SCENES[5] = (game) => {
+    game.gameObjects = [];
+    add(game, new Player(400, 900, 1));
+    add(game, new Rat(1800, 800)).isThrower = true;
+    add(game, new Rat(1900, 1000));
+    add(game, new Rat(100, 800));
+    add(game, new Rat(200, 1000)).isThrower = true;
+    setSceneWonCallback(game, 6);
+};
+
+SCENES[6] = (game) => {
+    game.gameObjects = [];
+    add(game, new Cat(700, 900));
+    let ratking = add(game, new RatKing(2100, 1050));
+    ratking.walkSpeed = 200;
+    
+    game.cutscene = [
+        (game) => {
+            ratking.kiTarget = {x:1400, y:1050};
+            ratking.kiTargetReached = () => {
+                ratking.kiTargetReached = null;
+                game.nextCutscene();
+            };
+        },
+        (game) => {
+            textCutScene(game, "RAT KING: <br>What a shame! I am running out of kilobytes!<br>Ok, I will have to take matters into my own hands!<br>Showdown time!", "right");
+        },
+        (game) => {
+            setTimeout(() => game.initObjects(7), 200);
+        }
+    ];
+    game.nextCutscene();
+};
+
+SCENES[7] = (game) => {
+    game.gameObjects = [];
+    add(game, new Player(700, 900, 1));
+    add(game, new RatKing(1450, 1050)).hp = 200;
+    
+    add(game, new Rat(1800, 800)).isThrower = true;
+    add(game, new Rat(1900, 1000));
+    add(game, new Rat(100, 800));
+    add(game, new Rat(200, 1000)).isThrower = true;
+    
+    setSceneWonCallback(game, 8);
+};
+
+
+
+SCENES[8] = (game) => {
+    game.gameObjects = [];
+    add(game, new Player(700, 900, 1));
+    game.cutscene = [
+        (game) => {
+            textCutScene(game, "KUNG FURBALL: <br>Finally, justice is served!", "left");
+        },
+        (game) => {
+            game.texts = [
+                { text: "Thank you for playing Miami Mice!<br>I hope you enjoyed the game.<br><br>Made by: DerBenniBanni<br><br>Special thanks to Alkor and Randy \"Asdfdsgjkfstbjusvjfzbydasdf\" Tayler for<br>excellent naming suggestions.", align: "center" }
+            ];
+            game.nextText();
+        }
+    ];
+    game.nextCutscene();
 };
 

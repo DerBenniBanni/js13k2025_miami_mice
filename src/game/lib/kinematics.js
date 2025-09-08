@@ -33,12 +33,13 @@ export const HITBOX_TYPE_ATTACK = 3;
 
 
 export class Hitbox {
-    constructor(x, y, width, height, type, poseId = null) {
+    constructor(x, y, width, height, type, poseId = null, dmg = 10) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
         this.bone = null;
+        this.dmg = dmg;
         this.type = type;
         this.poseId = poseId;
     }
@@ -352,7 +353,6 @@ export class KinematicObject extends GameObject {
                     hitboxes.forEach(hitbox => {
                         let hit = activeAttackHitboxes.find(activeHitbox => activeHitbox.intersects(hitbox))
                         if (hit) {
-                            console.log("HIT!" + this.type + " -> " + obj.type);
                             if(this.type == "cat") {
                                 this.score += 1;
                             }
@@ -360,7 +360,7 @@ export class KinematicObject extends GameObject {
                             let direction = obj.x > this.x ? 1 : -1;
                             obj.forceX = 500 * direction;
                             if(obj.state != STATE_BLOCK) {
-                                obj.hp -= 10;
+                                obj.hp -= hit.dmg;
                                 if(hitbox.poseId) {
                                     obj.queueMorph(hitbox.poseId, 0.1, true);
                                     obj.queueMorph(POSE_STAND, 0.2);
