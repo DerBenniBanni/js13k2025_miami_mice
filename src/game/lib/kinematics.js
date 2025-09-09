@@ -368,7 +368,7 @@ export class KinematicObject extends GameObject {
                             }
                             let worldHit = hit.getWorldRect();
                             for(let i=0; i<10; i++) {
-                                obj.addParticle(worldHit.x, worldHit.y, 50, 0.4);
+                                obj.addParticle(worldHit.x, worldHit.y);
                             }
                         }
                     });
@@ -437,7 +437,6 @@ export class KinematicObject extends GameObject {
             } 
             this.x = x;
             this.y = y;
-            
         } else {
             this.state = STATE_IDLE;
             if(oldState == STATE_WALKING) {

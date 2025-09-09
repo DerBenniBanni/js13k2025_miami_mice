@@ -29,7 +29,7 @@ const config = {
         js: 'game.min.js'
         //images: 'dist/images'
     },
-    zipFileName: 'blackBeltCats.zip',
+    zipFileName: 'miami_mice.zip',
     zipFileSizeLimit: 13 * 1024 // 13 KB
 };
 

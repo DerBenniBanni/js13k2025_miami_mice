@@ -2,6 +2,15 @@ import { ctxBeginPath, ctxFill, ctxFillStyle, ctxRect, ctxRestore, ctxRotate, ct
 
 export const PARTICLE_HIT = 1;
 
+const pDefs = [];
+pDefs[PARTICLE_HIT] = {
+    s: 50,
+    ttl: 0.8,
+    color: "#ccc2",
+    dx: 200,
+    dy: 200
+};
+
 export class GameObject {
     constructor(x, y, type = "gameObject") {
         this.x = x;
@@ -31,23 +40,26 @@ export class GameObject {
             ctxRotate(ctx, p.r);
             ctxBeginPath(ctx);
             let s = p.s * p.ttl/p.ittl;
-            ctxFillStyle(ctx,'#ccc3');
+            ctxFillStyle(ctx,p.c);
             ctxRect(ctx, -s/2, -s/2, s, s);
             ctxFill(ctx);
             ctxRestore(ctx);    
         });
     }
 
-    addParticle(x,y,s,ttl, type=PARTICLE_HIT) {
+    addParticle(x,y,type=PARTICLE_HIT) {
+        let def = pDefs[type];
         this.particles.push({
             x,y, // position
-            dx: Math.random() * 200 - 100, dy: Math.random() * 200 - 130,
-            s, // size
-            ttl, // lifetime in seconds
+            dx: Math.random() * def.dx - (def.dx / 2), 
+            dy: Math.random() * def.dy - (def.dy / 2),
+            s: def.s, // size
+            ttl: def.ttl, // lifetime in seconds
             type,
-            ittl:ttl, // initial lifetime
+            ittl:def.ttl, // initial lifetime
             r:0, // rotation
-            dr: 20 * (Math.random() > 0.5 ? 1 : -1) // rotation delta
+            dr: 30 * (Math.random() > 0.5 ? 1 : -1), // rotation delta
+            c:def.color // color
         });
     }
 

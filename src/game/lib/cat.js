@@ -320,6 +320,7 @@ export class Cat extends KinematicObject {
         this.renderHitboxes(ctx);
         
         ctx.restore();
+        this.renderParticles(ctx);
     }
 
     kiUpdate(delta) {

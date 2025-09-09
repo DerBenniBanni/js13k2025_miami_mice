@@ -34,7 +34,8 @@
         <div class="a cast e">ARNOLD SCHWARZENMOUSER &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; JEAN CLAWS VAN DAMME</div>
         <div class="a cast cast2 e">feat. &nbsp;&nbsp; DANNY DE CHEETO &nbsp;&nbsp; as &nbsp;&nbsp; &quot;RAT KING&quot;</div>
         <div class="a mainmenu">
-            <div class="a btn" onclick="game.start();">START</div>
+            <div class="a btn start" onclick="game.start();">START</div>
+            <div class="a btn horde" onclick="game.startHorde();">HORDE MODE</div>
         </div>
     </div>
     <div class="a txt" style="display: none;"></div>
@@ -44,10 +45,17 @@
             <div class="a text">GAME OVER</div>
         </div>
         <div class="a btn" onclick="game.retry();">RETRY STAGE</div>
+        <div class="a hint">Retry costs half of your current score</div>
     </div>
     <div class="a stats">
-        <div class="a stamina"><div class="staminabar" style="width: 100%;"></div></div>
-        <div class="a health"><div class="healthbar" style="width: 100%;"></div></div>
+        <div class="a stamina">
+            <div class="a staminabar" style="width: 100%;"></div>
+            <div class="a stat">STAMINA</div>
+        </div>
+        <div class="a health">
+            <div class="a healthbar" style="width: 100%;"></div>
+            <div class="a stat">HEALTH</div>
+        </div>
         <div class="a score">SCORE: <span id="sc">0</span></div>
     </div>
 </body>

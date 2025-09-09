@@ -151,14 +151,12 @@ Theme announced: Black Cat
 
 **devtime:** 2h night
 
-
 ## 2025-09-03
 
 * gameover screen + retry stage added
 * stages are now linked (callback that checks if the stage is cleared and loads the next one)
 
 **devtime:** 1.5h night
-
 
 ## 2025-09-06
 
@@ -168,11 +166,23 @@ Theme announced: Black Cat
 
 **devtime:** 3h evening
 
-
-
 ## 2025-09-07
 
 * score added
 * more stages, refactored stage definition
+
+**devtime:** 2h night
+
+## 2025-09-08
+
+* stamina added
+* more stages
+
+**devtime:** 2h night
+
+## 2025-09-09
+
+* horde mode added
+* improved styles for stats and score
 
 **devtime:** 2h night

@@ -60,13 +60,13 @@ SCENES[0] = (game) => {
             rat2.kiTarget = {x:1700, y:1050};
         },
         (game) => {
-            textCutScene(game, "Special Agent KUNG FURBALL:<br>I've tracked you down, Rat King!<br>Your reign of terror ends here!<br>You're under arrest!","left");
+            textCutScene(game, "Special Agent <b>KUNG FURBALL</b>:<br>I've tracked you down, Rat King!<br>Your reign of terror ends here!<br>You're under arrest!","left");
         },
         (game) => {
-            textCutScene(game, "RAT KING: <br>Agent Furball! Finally, we meet in person.<br>So, the Feline Bureau of Investigation has come to play!<br><br>This is my city!<br>Stay out of my way!", "right");
+            textCutScene(game, "<b>RAT KING</b>: <br>Agent Furball! Finally, we meet in person.<br>So, the Feline Bureau of Investigation has come to play!<br><br>This is my city!<br>Stay out of my way!", "right");
         },
         (game) => {
-            textCutScene(game, "Special Agent KUNG FURBALL:<br>You may have the police in your pocket.<br> But I am the law!<br>The Feline Bureau of Investigation will bring you to justice!", "left");
+            textCutScene(game, "Special Agent <b>KUNG FURBALL</b>:<br>You may have the police in your pocket.<br> But I am the law!<br>The Feline Bureau of Investigation will bring you to justice!", "left");
         },
         (game) => {
             game.nextText();
@@ -119,10 +119,10 @@ SCENES[3] = (game) => {
             };
         },
         (game) => {
-            textCutScene(game, "RAT KING: <br>I see, Master Splinter the traitor trained you well.<br>Hah! But you are no match for me, kitty!", "right");
+            textCutScene(game, "<b>RAT KING</b>: <br>I see, Master Splinter the traitor trained you well.<br>Hah! But you are no match for me, kitty!", "right");
         },
         (game) => {
-            textCutScene(game, "RAT KING:<br>May I introduce you to my best cheese thrower?<br>Il grande Alonzo Padano! <br>Prepare to meet your cheesy doom, Furball!", "right");
+            textCutScene(game, "<b>RAT KING</b>:<br>May I introduce you to my best cheese thrower?<br>Il grande Alonzo Padano! <br>Prepare to meet your cheesy doom, Furball!", "right");
             rat2.kiTarget = {x:1700, y:900};
         },
         (game) => {
@@ -171,7 +171,7 @@ SCENES[6] = (game) => {
             };
         },
         (game) => {
-            textCutScene(game, "RAT KING: <br>What a shame! I am running out of kilobytes!<br>Ok, I will have to take matters into my own hands!<br>Showdown time!", "right");
+            textCutScene(game, "<b>RAT KING</b>: <br>What a shame! I am running out of kilobytes!<br>Ok, I will have to take matters into my own hands!<br>Showdown time!", "right");
         },
         (game) => {
             setTimeout(() => game.initObjects(7), 200);
@@ -200,11 +200,11 @@ SCENES[8] = (game) => {
     add(game, new Player(700, 900, 1));
     game.cutscene = [
         (game) => {
-            textCutScene(game, "KUNG FURBALL: <br>Finally, justice is served!", "left");
+            textCutScene(game, "<b>KUNG FURBALL</b>: <br>Finally, justice is served!", "left");
         },
         (game) => {
             game.texts = [
-                { text: "Thank you for playing Miami Mice!<br>I hope you enjoyed the game.<br><br>Made by: DerBenniBanni<br><br>Special thanks to Alkor and Randy \"Asdfdsgjkfstbjusvjfzbydasdf\" Tayler for<br>excellent naming suggestions.", align: "center" }
+                { text: "Thank you for playing Miami Mice!<br>I hope you enjoyed the game.<br><br>Made by: DerBenniBanni<br><br>Special thanks to Alkor and Randy Tayler for<br>excellent naming suggestions.", align: "center" }
             ];
             game.nextText();
         }
@@ -212,3 +212,25 @@ SCENES[8] = (game) => {
     game.nextCutscene();
 };
 
+SCENES[9] = (game) => {
+    game.gameObjects = [];
+    if(!game.hordePlayer) {
+        game.hordePlayer = new Player(950, 900, 1);
+    }
+    add(game, game.hordePlayer);
+
+    for(let i=0; i<game.hordeStage; i++) {
+        let dx = Math.random() < 0.5 ? -1 : 1;
+        let x = 960 + dx * (960 + i*200 +Math.random()*80);
+        let y = Math.random() * 350 + 700;
+        let rat = add(game, new Rat(x, y));
+        if(Math.random() < 0.5) rat.isThrower = true;
+    }
+    game.sceneWonCallback = (g) => {
+        let rats = g.getGameObjects(["rat"]);
+        if(rats.length === 0) {
+            game.hordeStage++;
+            g.initObjects(9);
+        }
+    };
+}

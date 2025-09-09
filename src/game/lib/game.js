@@ -52,6 +52,9 @@ export class Game {
         this.keys = {};
         this.actions = [];
 
+        this.hordeStage = 0;
+        this.hordePlayer = null;
+
         this.playerStats = [
             {hp: 100, maxHp: 100, score: 0, stamina:100} // Player 1
         ];
@@ -108,7 +111,16 @@ export class Game {
         return obj;
     }
 
-    start(callback) {
+    startHorde() {
+        this.hordeStage = 1;
+        this.start(9);
+    }
+
+    start(stage = 0) {
+        if(stage != 9){
+            this.hordeStage = 0;
+            this.hordePlayer = null;
+        }
         this.sfxPlayer.playAudio("gamemusic");
         document.querySelectorAll('.mainmenu,.neon,.cast').forEach(div=>div.style.opacity = 0);
         
@@ -119,7 +131,7 @@ export class Game {
         document.querySelector('.miamimice').style.zIndex = "20";
         this.isGameRunning = true;
         this.gameLoop();
-        this.initObjects(0); // Start with intro scene
+        this.initObjects(stage);
     }
 
     initObjects(scene) {

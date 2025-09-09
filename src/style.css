@@ -149,6 +149,17 @@ canvas {
     z-index:9;
     cursor: pointer;
 }
+.btn:hover {
+    color: #ffa;
+    text-shadow: 0 0 5px #000,0 4px 10px #fff;
+    transform: scale(1.1);
+}
+.btn.start {
+    top:60vh;
+}
+.btn.horde {
+    top:75vh;
+}
 .cast {
     top: 18vh;
     font-size: 3.5vh;
@@ -164,6 +175,17 @@ canvas {
 .load {
     font-size: 6vh;
     top:60vh;
+}
+.hint {
+    top:82vh;
+    left:20vw;
+    right:20vw;
+    font-family: cursive;
+    font-size: 3vh;
+    color: #fff;
+    text-shadow: 0 0 5px #000,0 4px 10px #000;
+    z-index: 20;
+    text-align: center;
 }
 
 .txt {
@@ -188,43 +210,58 @@ canvas {
 }
 
 .health {
-    top: 96vh;
+    top: 95vh;
     left: 15vw;
     width: 30vw;
-    height: 2vh;
-    border: 0.3vh solid #000;
+    height: 2.8vh;
+    border: 0.4vh solid #000;
     background-color: #400;
     box-shadow: 0 0 5px #000,0 0 10px #000 inset;
+    border-radius: 2vh;
 }
 .healthbar {
     height: 100%;
     background: linear-gradient(0deg, rgb(117, 0, 0), rgb(255, 0, 0), rgb(255, 105, 105));
     box-shadow: 0 0 5px #000,0 0 10px #000 inset;
     transition: width 0.5s ease-out;
+    border-radius: 2vh;
 }
 .stamina {
-    top: 93vh;
+    top: 91vh;
     left: 15vw;
     width: 30vw;
-    height: 2vh;
-    border: 0.3vh solid #000;
+    height: 2.8vh;
+    border: 0.4vh solid #000;
     background-color: #400;
     box-shadow: 0 0 5px #000,0 0 10px #000 inset;
+    border-radius: 2vh;
 }
 .staminabar {
     height: 100%;
     background: linear-gradient(0deg, rgb(0, 27, 117), rgb(0, 119, 255), rgb(105, 255, 248));
     box-shadow: 0 0 5px #000,0 0 10px #000 inset;
     transition: width 0.5s ease-out;
+    border-radius: 2vh;
 
 }
 .score {
-    top: 93vh;
+    top: 92vh;
     left: 48vw;
     width: 30vw;
-    height: 2vh;
+    height: 5vh;
+    border: 0.4vh solid #000;
+    background-color: #222;
+    box-shadow: 0 0 5px #000,0 0 10px #000 inset;
     font-family: cursive;
     font-size: 3.5vh;
     color: #fff;
     text-shadow: 0 0 5px #000,0 4px 10px #000;
+    padding-left: 1vw;
+    border-radius: 2vh;
+}
+.stat {
+    font-size:2vh;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    color:#fffa;
+    padding-left: 1vw;
 }

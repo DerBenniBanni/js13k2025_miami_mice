@@ -47,7 +47,7 @@ export class Projectile extends GameObject {
                         }
                         let worldHit = hit.getWorldRect();
                         for(let i=0; i<10; i++) {
-                            obj.addParticle(worldHit.x, worldHit.y, 50, 0.4);
+                            obj.addParticle(worldHit.x, worldHit.y);
                         }
                     }
                 });
