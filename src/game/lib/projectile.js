@@ -30,14 +30,15 @@ export class Projectile extends GameObject {
                 hitboxes.forEach(hitbox => {
                     let hit = projectileHitbox.intersects(hitbox) ? hitbox : null;
                     if (hit) {
+                        this.game.sfxPlayer.playAudio("hit");
                         if(obj.state == STATE_BLOCK) {
-                            this.ttl = 1; // destroy projectile
+                            // deflect projectile
+                            this.ttl = 1; 
                             this.dx *= -1;
                             this.dy = Math.random() * 300 - 150;
                             return;
                         }
                         this.ttl = -1; // destroy projectile
-                        this.game.sfxPlayer.playAudio("hit");
                         let direction = obj.x > this.x ? 1 : -1;
                         obj.forceX = 500 * direction;
                         obj.hp -= 10;

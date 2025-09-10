@@ -24,7 +24,7 @@ const keyActionMap = {
     "KeyJ": ACTION_KICK_PLAYER_1
 };
 
-
+const CUTSCENE_SKIP_TIME = 0.5; // seconds until cutscene can be skipped
 
 
 export class Game {
@@ -43,7 +43,7 @@ export class Game {
 
         this.cutscene = [];
         this.cutsceneCallback = null;
-        this.cutsceneSkip = 1;
+        this.cutsceneSkip = CUTSCENE_SKIP_TIME;
         this.cutsceneRunning = false;
 
         this.currentScene = null;
@@ -74,7 +74,7 @@ export class Game {
     nextCutscene() {
         this.cutsceneCallback = null;
         this.txtPointer = -1
-        this.cutsceneSkip = 1;
+        this.cutsceneSkip = CUTSCENE_SKIP_TIME;
         this.texts = [];
         this.clearText();
         if (this.cutscene.length > 0) {

@@ -1,5 +1,5 @@
 import { Cat } from "./cat.js";
-import { POSE_WALK_2 } from "./kinematics.js";
+import { POSE_KNOCKDOWN, POSE_STAND, POSE_WALK_2 } from "./kinematics.js";
 import { Player } from "./player.js";
 import { Rat } from "./rat.js";
 import { RatKing } from "./ratking.js";
@@ -78,8 +78,7 @@ SCENES[0] = (game) => {
             };
             rat1.kiTarget = {x:2400, y:700};
             rat2.kiTarget = {x:2400, y:1200};
-            cat.kiTarget = {x:-400, y:900};
-            cat.queueMorph(POSE_WALK_2, 0.2, true);
+            game.keepObjects = [new Player(cat.x, cat.y, 1)];
         }
     ];
     game.nextCutscene();
@@ -87,7 +86,8 @@ SCENES[0] = (game) => {
 
 SCENES[1] = (game) => {
     game.gameObjects = [];
-    let player = add(game, new Player(400, 900, 1));
+    game.keepObjects.forEach(o => add(game, o));
+    game.keepObjects = [];
     let rat = add(game, new Rat(1800, 900));
     setSceneWonCallback(game, 2);
 };
@@ -103,12 +103,13 @@ SCENES[2] = (game) => {
 };
 
 SCENES[3] = (game) => {
+    setBackground('dusk');
     game.gameObjects = [];
-    add(game, new Cat(200, 900));
+    add(game, new Cat(400, 900));
     let ratking = add(game, new RatKing(2100, 1050));
     ratking.walkSpeed = 200;
-    let rat2 = add(game, new Rat(2200, 900));
-    rat2.walkSpeed = 300;
+    let throwerRat = add(game, new Rat(2200, 900));
+    throwerRat.walkSpeed = 300;
     
     game.cutscene = [
         (game) => {
@@ -123,7 +124,7 @@ SCENES[3] = (game) => {
         },
         (game) => {
             textCutScene(game, "<b>RAT KING</b>:<br>May I introduce you to my best cheese thrower?<br>Il grande Alonzo Padano! <br>Prepare to meet your cheesy doom, Furball!", "right");
-            rat2.kiTarget = {x:1700, y:900};
+            throwerRat.kiTarget = {x:1550, y:900};
         },
         (game) => {
             game.nextText();
@@ -133,6 +134,9 @@ SCENES[3] = (game) => {
                 ratking.kiTargetReached = null;
                 game.initObjects(4); 
             };
+            throwerRat.isThrower = true;
+            throwerRat.walkSpeed = 100;
+            game.keepObjects = [throwerRat];
         }
     ];
     game.nextCutscene();
@@ -141,8 +145,13 @@ SCENES[3] = (game) => {
 SCENES[4] = (game) => {
     game.gameObjects = [];
     add(game, new Player(400, 900, 1));
-    add(game, new Rat(1800, 800));
-    add(game, new Rat(1700, 900)).isThrower = true;
+    add(game, new Rat(2100, 750));
+    add(game, new Rat(2300, 1000));
+    game.keepObjects.forEach(o =>  {
+        o.kiTarget = null;
+        add(game, o);
+    });
+    game.keepObjects = [];
     setSceneWonCallback(game, 5);
 };
 
@@ -157,6 +166,7 @@ SCENES[5] = (game) => {
 };
 
 SCENES[6] = (game) => {
+    setBackground('night');
     game.gameObjects = [];
     add(game, new Cat(700, 900));
     let ratking = add(game, new RatKing(2100, 1050));
@@ -204,9 +214,29 @@ SCENES[8] = (game) => {
         },
         (game) => {
             game.texts = [
-                { text: "Thank you for playing Miami Mice!<br>I hope you enjoyed the game.<br><br>Made by: DerBenniBanni<br><br>Special thanks to Alkor and Randy Tayler for<br>excellent naming suggestions.", align: "center" }
+                { text: "Thank you for playing Miami Mice!<br>I hope you enjoyed the game.<br><br>Made by: DerBenniBanni<br><br>Special thanks to Alkor and Randy Tayler for<br>excellent naming suggestions<br>and to rob180Nsx for the knockdown gameplay hints.<br><br>Press action to restart.", align: "center" }
             ];
             game.nextText();
+            q('.mainmenu').style.display = null;
+            q('.miamimice').style.fontSize = null;
+            q('.miamimice').style.opacity = null;
+            q('.miamimice').style.top = '5vh';
+            q('.miamimice').style.zIndex = null;
+            q('.neno')
+            game.cutsceneCallback = (g) => {
+                g.gameObjects = [];
+                g.playerStats = [
+                    {hp: 100, maxHp: 100, score: 0, stamina:100} // Player 1
+                ];
+                q('.intro').style.opacity = '1';
+                document.querySelectorAll('.mainmenu,.neon,.cast').forEach(div=>div.style.opacity = null);
+                q('.mainmenu').style.display = null;
+                q('.miamimice').style.fontSize = null;
+                q('.miamimice').style.opacity = null;
+                q('.miamimice').style.top = null;
+                q('.miamimice').style.zIndex = null;
+                g.nextText();
+            };
         }
     ];
     game.nextCutscene();

@@ -18,6 +18,7 @@ export const POSE_TALK= 14;
 export const POSE_THROW_1 = 15;
 export const POSE_THROW_2 = 16;
 export const POSE_THROW_EXECUTE = 17;
+export const POSE_KNOCKDOWN = 18;
 
 export const STATE_IDLE = 1;
 export const STATE_WALKING = 2;
@@ -26,6 +27,7 @@ export const STATE_PUNCH = 4;
 export const STATE_KICK = 5;
 export const STATE_KO = 6;
 export const STATE_THROW = 7;
+export const STATE_KNOCKDOWN = 8;
 
 export const HITBOX_TYPE_UPPER = 1;
 export const HITBOX_TYPE_LOWER = 2;
@@ -194,9 +196,10 @@ export class KinematicObject extends GameObject {
         this.kiTarget = null;   // target position for the kinematic object
         this.kiTargetReached = null; // callback when kiTarget is reached (cutscenes)
         this.hp = 100; // health points
-        this.fadeTimeout = 5; // seconds after which the object will fade out
-        this.fadeDuration = 2; // seconds the fade lasts
+        this.fadeTimeout = 2; // seconds after which the object will fade out
+        this.fadeDuration = 1; // seconds the fade lasts
         this.fadeTimer = 0; // current fade time
+        this.updateSizing();
     }
 
     getHitboxes(attack = false) {
@@ -205,7 +208,7 @@ export class KinematicObject extends GameObject {
 
 
     addBone(id, length, angle, parentId = BONE_ROOT) {
-        let bone = new Bone(length * this.sizing, angle, this);
+        let bone = new Bone(length, angle, this);
         this.bones[id] = bone;
         this.bones[parentId].addChild(bone);
         return bone;
@@ -343,11 +346,22 @@ export class KinematicObject extends GameObject {
         // Implement throw handling logic in subclasses
     }
 
+    handleHit() {
+        // Implement hit handling logic in subclasses
+    }
+
     checkAttackHitboxes() {
         let activeAttackHitboxes = this.getHitboxes(true);
         if (activeAttackHitboxes.length > 0) {
             this.game.getGameObjects()
-                .filter(obj => obj.hp > 0 && obj !== this && obj.y > this.y - 30 && obj.y < this.y + 30)
+                .filter(obj => 
+                    obj.type != this.type 
+                    && obj.hp > 0 
+                    && obj !== this 
+                    && obj.y > this.y - 30 
+                    && obj.y < this.y + 30 
+                    && obj.state != STATE_KNOCKDOWN
+                )
                 .forEach(obj => {
                     let hitboxes = obj.getHitboxes();
                     hitboxes.forEach(hitbox => {
@@ -365,6 +379,7 @@ export class KinematicObject extends GameObject {
                                     obj.queueMorph(hitbox.poseId, 0.1, true);
                                     obj.queueMorph(POSE_STAND, 0.2);
                                 }
+                                obj.handleHit();
                             }
                             let worldHit = hit.getWorldRect();
                             for(let i=0; i<10; i++) {

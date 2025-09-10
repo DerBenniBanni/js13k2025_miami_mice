@@ -25,15 +25,11 @@ canvas {
 }
 .sky {
     height: 50vh;
-    background: 
-    linear-gradient(0deg, #ff9 0%, transparent 70%),
-    radial-gradient(circle, #ef4 10%, #fa4 11%, #40f 75%);
 }
 .water {
     top: 32vh;
     height: 0.55vh;
-    background-color: rgba(79, 70, 252, 1);
-    background: #4F46FC;
+    background: #00a;
     overflow: hidden;
 }
 .water_sun {

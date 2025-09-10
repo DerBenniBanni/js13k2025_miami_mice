@@ -1,5 +1,5 @@
 import { clamp, ctxArc, ctxBeginPath, ctxBezierCurveTo, ctxEllipse, ctxFill, ctxFillStyle, ctxLineTo, ctxLineWidth, ctxMoveTo, ctxStroke, ctxStrokeStyle, toRad } from "./utils.js";
-import { Bone, Hitbox, HITBOX_TYPE_ATTACK, HITBOX_TYPE_LOWER, HITBOX_TYPE_UPPER, KinematicObject, POSE_BLOCK, POSE_BOW, POSE_CHECK_ATTACK, POSE_HIT_BODY, POSE_HIT_HEAD, POSE_KICK_A, POSE_KICK_B, POSE_KO, POSE_PUNCH, POSE_PUNCH2, POSE_STAND, POSE_TALK, POSE_THROW_1, POSE_THROW_2, POSE_THROW_EXECUTE, POSE_WALK_1, POSE_WALK_2, STATE_IDLE, STATE_KICK, STATE_KO, STATE_PUNCH, STATE_THROW, STATE_WALKING } from "./kinematics.js";
+import { Bone, Hitbox, HITBOX_TYPE_ATTACK, HITBOX_TYPE_LOWER, HITBOX_TYPE_UPPER, KinematicObject, POSE_BLOCK, POSE_BOW, POSE_CHECK_ATTACK, POSE_HIT_BODY, POSE_HIT_HEAD, POSE_KICK_A, POSE_KICK_B, POSE_KNOCKDOWN, POSE_KO, POSE_PUNCH, POSE_PUNCH2, POSE_STAND, POSE_TALK, POSE_THROW_1, POSE_THROW_2, POSE_THROW_EXECUTE, POSE_WALK_1, POSE_WALK_2, STATE_IDLE, STATE_KICK, STATE_KNOCKDOWN, STATE_KO, STATE_PUNCH, STATE_THROW, STATE_WALKING } from "./kinematics.js";
 import { Projectile } from "./projectile.js";
 
 const headsize = 40;
@@ -147,6 +147,20 @@ POSE_THROW_2_DATA[BONE_FOREARM_LEFT] = -10;
 POSE_THROW_2_DATA[BONE_ARM_RIGHT] = -20;
 POSE_THROW_2_DATA[BONE_FOREARM_RIGHT] = -120;
 
+const POSE_KNOCKDOWN_DATA = [...POSE_STAND_DATA];
+POSE_KNOCKDOWN_DATA[BONE_ROOT] = -175;
+POSE_KNOCKDOWN_DATA[BONE_BODY] = 60;
+POSE_KNOCKDOWN_DATA[BONE_ARM_LEFT] = 10;
+POSE_KNOCKDOWN_DATA[BONE_FOREARM_LEFT] = -120;
+POSE_KNOCKDOWN_DATA[BONE_ARM_RIGHT] = -10;
+POSE_KNOCKDOWN_DATA[BONE_FOREARM_RIGHT] = -30;
+POSE_KNOCKDOWN_DATA[BONE_UPPER_LEG_LEFT] = 150;
+POSE_KNOCKDOWN_DATA[BONE_LOWER_LEG_LEFT] = 90;
+POSE_KNOCKDOWN_DATA[BONE_NECK] = 50;
+POSE_KNOCKDOWN_DATA[BONE_EAR1] = 20;
+POSE_KNOCKDOWN_DATA[BONE_EAR2] = -80;
+POSE_KNOCKDOWN_DATA[BONE_NOSE] = 100;
+
 const LINE_ROUND = "round";
 const LINE_BUTT = "butt";
 
@@ -169,6 +183,10 @@ export class Rat extends KinematicObject {
         this.isThrower = false;
 
         this.hp = 100;
+        this.knockdownInterval = 30; // lost hitpoints until next knockdown
+        this.nextKnockdown = this.hp - this.knockdownInterval;
+        this.knockdownTime = 2; // time until getting up again
+        this.knockdownTimer = 0;
 
         this.poseDefs[POSE_STAND] = POSE_STAND_DATA;
         this.poseDefs[POSE_WALK_1] = POSE_WALK_1_DATA;
@@ -185,6 +203,7 @@ export class Rat extends KinematicObject {
         this.poseDefs[POSE_TALK] = POSE_STAND_DATA;
         this.poseDefs[POSE_THROW_1] = POSE_THROW_1_DATA;
         this.poseDefs[POSE_THROW_2] = POSE_THROW_2_DATA;
+        this.poseDefs[POSE_KNOCKDOWN] = POSE_KNOCKDOWN_DATA;
 
         this.attackFrequency = 1.5; // 2 seconds
         this.attackDuration = 0.5; // 0.5 seconds
@@ -199,6 +218,16 @@ export class Rat extends KinematicObject {
         ];
         this.createBones();
         this.updateSizing();
+    }
+
+    handleHit() {
+        if(this.hp <= 0) return;
+        if(this.hp <= this.nextKnockdown && this.state != STATE_KNOCKDOWN) {
+            this.state = STATE_KNOCKDOWN;
+            this.knockdownTimer = 0;
+            this.queueMorph(POSE_KNOCKDOWN, 0.5, true);
+            this.nextKnockdown = this.hp - this.knockdownInterval;
+        }
     }
 
     createBones() {
@@ -245,6 +274,15 @@ export class Rat extends KinematicObject {
             this.kiWalk(delta);
             return;
         } 
+        if(this.state === STATE_KNOCKDOWN) {
+            this.knockdownTimer += delta;
+            if(this.knockdownTimer >= this.knockdownTime) {
+                this.state = STATE_IDLE;
+                this.knockdownTimer = 0;
+                this.queueMorph(POSE_STAND, 1, true);
+            }
+            return;
+        }
         if(this.kiTarget == null) {
             let targets = this.game.getGameObjects(["cat", "player"]);
             this.kiTarget = targets[Math.floor(Math.random() * targets.length)];

@@ -2,9 +2,9 @@ import { Cat } from "./cat.js";
 import { POSE_BLOCK, POSE_CHECK_ATTACK, POSE_KICK_A, POSE_KICK_B, POSE_KO, POSE_PUNCH, POSE_PUNCH2, POSE_STAND, POSE_WALK_1, POSE_WALK_2, STATE_BLOCK, STATE_IDLE, STATE_KICK, STATE_KO, STATE_PUNCH, STATE_WALKING } from "./kinematics.js";
 import { ACTION_MOVE_LEFT_PLAYER_1, ACTION_MOVE_RIGHT_PLAYER_1,ACTION_MOVE_UP_PLAYER_1, ACTION_MOVE_DOWN_PLAYER_1, ACTION_BLOCK_PLAYER_1, ACTION_KICK_PLAYER_1, ACTION_PUNCH_PLAYER_1 } from "./game.js";
 
-const STAMINA_RECHARGE_RATE = 5; // stamina points per second
-const STAMINA_COST_PUNCH = 10;
-const STAMINA_COST_KICK = 30;
+const STAMINA_RECHARGE_RATE = 10; // stamina points per second
+const STAMINA_COST_PUNCH = 5;
+const STAMINA_COST_KICK = 20;
 
 export class Player extends Cat {
     constructor(x, y, playerNumber = 1) {

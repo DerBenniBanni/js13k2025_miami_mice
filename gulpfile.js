@@ -7,7 +7,6 @@ import { Packer } from 'roadroller';
 import gulpCheckFilesize from 'gulp-check-filesize';
 import deleteFiles from 'gulp-delete-files';
 import GulpCleanCss from 'gulp-clean-css';
-import terser from 'gulp-terser';
 
 const config = {
     src: {
