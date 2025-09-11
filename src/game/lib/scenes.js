@@ -30,6 +30,7 @@ const setSceneWonCallback = (g, n) => {
 
 export const SCENES = [];
 SCENES[0] = (game) => {
+    setBackground('day');
     game.gameObjects = [];
     let cat = add(game, new Cat(-200, 900));
     let ratking = add(game, new RatKing(2100, 800));
@@ -236,6 +237,7 @@ SCENES[8] = (game) => {
                 q('.miamimice').style.top = null;
                 q('.miamimice').style.zIndex = null;
                 g.nextText();
+                setBackground('day');
             };
         }
     ];
@@ -243,6 +245,10 @@ SCENES[8] = (game) => {
 };
 
 SCENES[9] = (game) => {
+    let rand = Math.random();
+    if(rand < 0.33) setBackground('day');
+    else if(rand < 0.66) setBackground('dusk');
+    else setBackground('night');
     game.gameObjects = [];
     if(!game.hordePlayer) {
         game.hordePlayer = new Player(950, 900, 1);

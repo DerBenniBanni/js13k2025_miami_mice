@@ -12,20 +12,28 @@ MIAMI MICE is a beat-em-up style game inspired by classics like International Ka
 - **Original music**: Soundtrack and sound effects are composed using [SoundBox](https://sb.bitsnbites.eu/).
 - **Retro vibes**: Karate action, stylish backgrounds, and a cast of feline martial artists.
 
-## Controls
-- **WASD / Arrow keys / D-pad / Left Stick**: Move your character
-- **H / A / Gamepad button 1**: Punch
-- **J / B / Gamepad button 2**: Kick
-- **Enter / Start**: Start game or pause
+
+
+## Controls: Keyboard
+- **[WASD]**: Move your character
+- **[H]**: Punch
+- **[J]**: Kick (more damage, costs more stamina)
+- **[B]**: Block 
+
+## Controls: Gamepad
+- **Left Stick**: Move your character
+- **B**: Punch
+- **A**: Kick (more damage, costs more stamina)
+- **X**: Block
 
 ## How to Play
-1. Open "TODO: URL to game" in your browser.
+1. Open ["js13kgames.com - MIAMI MICE"](https://js13kgames.com/2025/games/miami-mice) in your desktop browser.
 2. Click on START to begin.
 3. Defeat waves of enemies and aim for a high score!  (score: to be done...)
 
 ## Technical Details
-- **Engine**: Custom JavaScript, no frameworks
-- **Graphics**: Procedural, no external images
+- **Engine**: Custom JavaScript, no frameworks, bone animation system
+- **Graphics**: Procedural, no images. Background HTML and CSS
 - **Audio**: SoundBox-generated music and SFX
 - **File size**: Under 13KB zipped (JS13k rules)
 

@@ -188,6 +188,18 @@ export class Game {
             this.actions[ACTION_MOVE_RIGHT_PLAYER_1] = pad1.axes[0] > 0.2 ? pad1.axes[0] : 0;
             this.actions[ACTION_MOVE_UP_PLAYER_1] = pad1.axes[1] < -0.2 ? pad1.axes[1]*-1 : 0;
             this.actions[ACTION_MOVE_DOWN_PLAYER_1] = pad1.axes[1] > 0.2 ? pad1.axes[1] : 0;
+            if(pad1.buttons[15].pressed) { // right dpad
+                this.actions[ACTION_MOVE_RIGHT_PLAYER_1] = 1;
+            }
+            if(pad1.buttons[14].pressed) { // left dpad
+                this.actions[ACTION_MOVE_LEFT_PLAYER_1] = 1;
+            }
+            if(pad1.buttons[12].pressed) { // up dpad
+                this.actions[ACTION_MOVE_UP_PLAYER_1] = 1;
+            }
+            if(pad1.buttons[13].pressed) { // down dpad
+                this.actions[ACTION_MOVE_DOWN_PLAYER_1] = 1;
+            }
         }
     }
 
