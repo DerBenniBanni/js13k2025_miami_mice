@@ -43,7 +43,7 @@ SCENES[0] = (game) => {
     game.cutscene = [
 
         (game) => {
-            textCutScene(game, "Welcome to Miami Mice!<br><br>Keyboard: WASD to move, H to punch, J to kick, B to block<br>Gamepad: Left stick to move, X to punch, A to kick, B to block<br><br>Press punch/kick to start","center");
+            textCutScene(game, "Welcome to Miami Mice!<br><br>Keyboard: WASD to move, H to punch, J to kick, B to block<br>Gamepad: Left stick to move, B to punch, A to kick, X to block<br><br>Press punch/kick to start","center");
         },
         (game) => {
             textCutScene(game, "Miami Beach, 1992.<br>The notorious Rat King has taken over the city and is terrorizing its citizens.<br>Only one hero can stop him...<br>Special Agent KUNG FURBALL!");
@@ -215,7 +215,7 @@ SCENES[8] = (game) => {
         },
         (game) => {
             game.texts = [
-                { text: "Thank you for playing Miami Mice!<br>I hope you enjoyed the game.<br><br>Made by: DerBenniBanni<br><br>Special thanks to Alkor and Randy Tayler for<br>excellent naming suggestions<br>and to Rob Louie for the knockdown gameplay hints.<br><br>Press action to restart.", align: "center" }
+                { text: "Thank you for playing Miami Mice!<br>I hope you enjoyed the (short) game.<br><br>Made by: DerBenniBanni<br><br>Special thanks to Alkor and Randy Tayler for<br>excellent naming suggestions<br>and to Rob Louie for the knockdown gameplay hints.<br><br>Press action to restart.", align: "center" }
             ];
             game.nextText();
             q('.mainmenu').style.display = null;
