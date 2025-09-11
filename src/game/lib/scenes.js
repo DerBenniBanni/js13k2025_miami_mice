@@ -214,7 +214,7 @@ SCENES[8] = (game) => {
         },
         (game) => {
             game.texts = [
-                { text: "Thank you for playing Miami Mice!<br>I hope you enjoyed the game.<br><br>Made by: DerBenniBanni<br><br>Special thanks to Alkor and Randy Tayler for<br>excellent naming suggestions<br>and to rob180Nsx for the knockdown gameplay hints.<br><br>Press action to restart.", align: "center" }
+                { text: "Thank you for playing Miami Mice!<br>I hope you enjoyed the game.<br><br>Made by: DerBenniBanni<br><br>Special thanks to Alkor and Randy Tayler for<br>excellent naming suggestions<br>and to Rob Louie for the knockdown gameplay hints.<br><br>Press action to restart.", align: "center" }
             ];
             game.nextText();
             q('.mainmenu').style.display = null;
